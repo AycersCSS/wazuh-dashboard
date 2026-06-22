@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Settings as SettingsIcon, Server, KeyRound, Bell, Palette, Save, Plus, Trash2, Copy, RefreshCcw, Eye, EyeOff, Check } from "lucide-react";
-import { Panel } from "@/components/ui/primitives";
+import { Card } from "@/components/ui";
 import { useTheme } from "@/hooks/useTheme";
 import { cn } from "@/lib/cn";
 import { useToasts } from "@/hooks/useToasts";
@@ -63,7 +63,7 @@ export default function SettingsPage() {
 
       <div className="grid grid-cols-12 gap-5">
         <aside className="col-span-12 lg:col-span-3">
-          <Panel>
+          <Card>
             <nav className="p-1.5">
               {sections.map(s => {
                 const Icon = s.icon;
@@ -79,12 +79,20 @@ export default function SettingsPage() {
                 );
               })}
             </nav>
-          </Panel>
+          </Card>
         </aside>
 
         <div className="col-span-12 lg:col-span-9 space-y-5">
           {active === "general" && (
-            <Panel title="General" subtitle="Defaults for new sessions and dashboards">
+            <Card header={
+              <>
+                <div className="min-w-0">
+                  <div className="text-[12.5px] font-semibold text-primary truncate">General</div>
+                  <div className="text-[11px] text-muted truncate">Defaults for new sessions and dashboards</div>
+                </div>
+                <div />
+              </>
+            }>
               <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                 <Field label="Default time range">
                   <select className="input input-noicon"><option>Last 1 hour</option><option>Last 24 hours</option><option>Last 7 days</option><option>Last 30 days</option></select>
@@ -105,13 +113,19 @@ export default function SettingsPage() {
                   </select>
                 </Field>
               </div>
-            </Panel>
+            </Card>
           )}
 
           {active === "cluster" && (
-            <Panel title="Cluster nodes" subtitle="3 nodes · 1 master / 2 workers"
-              actions={<button onClick={() => setAddingNode(true)} className="btn btn-sm"><Plus size={11} />Add node</button>}
-              flush
+            <Card padded={false} header={
+              <>
+                <div className="min-w-0">
+                  <div className="text-[12.5px] font-semibold text-primary truncate">Cluster nodes</div>
+                  <div className="text-[11px] text-muted truncate">3 nodes · 1 master / 2 workers</div>
+                </div>
+                <button onClick={() => setAddingNode(true)} className="btn btn-sm"><Plus size={11} />Add node</button>
+              </>
+            }
             >
               <ul className="divide-y divide-[var(--border-soft)]">
                 {[
@@ -139,11 +153,19 @@ export default function SettingsPage() {
                 confirmLabel="Decommission"
                 onConfirm={() => toasts.push({ variant: "warn", title: `Node ${confirmRemove} removed` })}
               />
-            </Panel>
+            </Card>
           )}
 
           {active === "api" && (
-            <Panel title="API & Tokens" subtitle="Use these tokens to integrate with external systems.">
+            <Card header={
+              <>
+                <div className="min-w-0">
+                  <div className="text-[12.5px] font-semibold text-primary truncate">API &amp; Tokens</div>
+                  <div className="text-[11px] text-muted truncate">Use these tokens to integrate with external systems.</div>
+                </div>
+                <div />
+              </>
+            }>
               <div className="p-4 space-y-3">
                 <div className="panel p-3">
                   <div className="text-[10.5px] uppercase tracking-wider text-muted">Wazuh API token</div>
@@ -174,11 +196,19 @@ export default function SettingsPage() {
                   </div>
                 </Field>
               </div>
-            </Panel>
+            </Card>
           )}
 
           {active === "notif" && (
-            <Panel title="Notifications" subtitle="Channels and rules">
+            <Card header={
+              <>
+                <div className="min-w-0">
+                  <div className="text-[12.5px] font-semibold text-primary truncate">Notifications</div>
+                  <div className="text-[11px] text-muted truncate">Channels and rules</div>
+                </div>
+                <div />
+              </>
+            }>
               <div className="p-4 space-y-2">
                 {notifToggles.map((n, i) => (
                   <div key={n.name} className="panel p-3 flex items-center gap-3">
@@ -196,11 +226,19 @@ export default function SettingsPage() {
                   </div>
                 ))}
               </div>
-            </Panel>
+            </Card>
           )}
 
           {active === "appearance" && (
-            <Panel title="Appearance" subtitle="Personal preferences">
+            <Card header={
+              <>
+                <div className="min-w-0">
+                  <div className="text-[12.5px] font-semibold text-primary truncate">Appearance</div>
+                  <div className="text-[11px] text-muted truncate">Personal preferences</div>
+                </div>
+                <div />
+              </>
+            }>
               <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="panel p-3">
                   <div className="text-[10.5px] uppercase tracking-wider text-muted mb-2">Theme</div>
@@ -227,7 +265,7 @@ export default function SettingsPage() {
                   </div>
                 </div>
               </div>
-            </Panel>
+            </Card>
           )}
 
           <div className="flex items-center justify-end gap-2">
