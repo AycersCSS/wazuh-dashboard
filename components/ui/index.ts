@@ -10,3 +10,5 @@ export { ErrorState } from "./ErrorState";
 export { Skeleton } from "./Skeleton";
 export { Drawer } from "./Drawer";
 export { Tabs } from "./Tabs";
+export { Table, type Column } from "./Table";
+export { DataGrid } from "./DataGrid";
