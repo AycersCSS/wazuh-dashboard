@@ -12,3 +12,6 @@ export { Drawer } from "./Drawer";
 export { Tabs } from "./Tabs";
 export { Table, type Column } from "./Table";
 export { DataGrid } from "./DataGrid";
+export { IconBadge } from "./IconBadge";
+export { Page, type Crumb } from "./Page";
+export { Tooltip } from "./Tooltip";
