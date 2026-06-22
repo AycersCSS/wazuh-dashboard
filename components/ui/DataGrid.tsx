@@ -36,7 +36,7 @@ export function DataGrid<T>({
     return arr;
   }, [rows, sort, columns]);
 
-  const withSortIndicators = columns.map(c => ({
+  const withSortIndicators = useMemo(() => columns.map(c => ({
     ...c,
     header: c.sortable ? (
       <button
@@ -52,7 +52,7 @@ export function DataGrid<T>({
         {sort?.key === c.key && (sort.dir === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />)}
       </button>
     ) : c.header
-  }));
+  })), [columns, sort]);
 
   return <Table columns={withSortIndicators} rows={sorted} rowKey={rowKey} {...rest} />;
 }
