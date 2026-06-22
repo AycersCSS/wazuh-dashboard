@@ -169,6 +169,8 @@ Centralizing this means every page has the same shape and the visual system is e
 
 Restyled to the new light palette. Same layout, same charts, same data flow. Components switch from `Kpi` → `StatCard`, `Panel` → `Card`. Background becomes `bg-app`. Health-strip dividers switch from `border-soft` to a lighter separator.
 
+Recharts explicit tokens for the Overview charts: axis/grid `stroke` `#E2E8F0`; tick labels `#94A3B8`; tooltip background `#FFFFFF`, border `#E2E8F0`, text `#0F172A`; tooltip cursor `rgba(79, 70, 229, 0.06)`. Area chart uses severity colors; the single-series Bar charts (MITRE, rule activity) use `#4F46E5`. Chart animations disabled when `prefers-reduced-motion: reduce`.
+
 ### 5.2 `/alerts` — primary analyst surface
 
 - **Header**: `Page` with `ShieldAlert` icon badge, "Alerts" title, "220 events in last 24h · 8 critical" description, actions: "Acknowledge all visible" (secondary), "Export" (secondary), "Open filter" (primary, focuses first filter).
