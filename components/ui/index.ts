@@ -4,3 +4,4 @@ export { Badge } from "./Badge";
 export { Input } from "./Input";
 export { SearchInput } from "./SearchInput";
 export { Select } from "./Select";
+export { StatCard } from "./StatCard";
