@@ -9,3 +9,4 @@ export { EmptyState } from "./EmptyState";
 export { ErrorState } from "./ErrorState";
 export { Skeleton } from "./Skeleton";
 export { Drawer } from "./Drawer";
+export { Tabs } from "./Tabs";
