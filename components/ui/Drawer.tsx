@@ -42,6 +42,7 @@ export function Drawer({ open, onClose, title, actions, width = "lg", children }
         ref={ref}
         role="dialog"
         aria-modal="true"
+        aria-label={typeof title === "string" ? title : undefined}
         tabIndex={-1}
         className={cn(
           "absolute right-0 top-0 bottom-0 w-full bg-white shadow-drawer flex flex-col animate-slide-in-right focus:outline-none",
