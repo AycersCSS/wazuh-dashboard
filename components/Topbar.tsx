@@ -148,7 +148,7 @@ export function Topbar() {
           </div>
         </div>
 
-        <button type="button" onClick={() => { toggle(); toasts.push({ variant: "info", title: `Switched to ${theme === "dark" ? "light" : "dark"} theme`, duration: 1500 }); }}
+        <button type="button" onClick={() => { toggle(); toasts.push({ variant: "info", title: "Switched to dark theme", duration: 1500 }); }}
           className="inline-flex items-center justify-center w-8 h-8 rounded-md text-slate-500 hover:text-slate-900 hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-600"
           aria-label="Toggle theme" title="Toggle theme">
           <span className="text-xs">Theme</span>
