@@ -39,8 +39,8 @@ export function Table<T>({
                   <input
                     type="checkbox"
                     aria-label="Select all rows"
-                    checked={allSelected}
-                    ref={el => { if (el) el.indeterminate = someSelected; }}
+                    checked={!!allSelected}
+                    ref={el => { if (el) el.indeterminate = !!someSelected; }}
                     onChange={e => {
                       const next = new Set(sel);
                       if (e.target.checked) rows.forEach(r => next.add(rowKey(r)));
