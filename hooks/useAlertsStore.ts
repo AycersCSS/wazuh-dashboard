@@ -46,8 +46,11 @@ function hydrateFromSeed() {
   );
 }
 
-function hydrateOnce() {
-  if (Object.keys(alertMap).length) return;
+let hydrated = false;
+
+function hydrateOnce(): boolean {
+  if (hydrated) return false;
+  hydrated = true;
   const persisted = {
     alerts: storage.get<Record<string, AlertState>>(KEY_ALERTS, null as unknown as Record<string, AlertState>),
     vulns:  storage.get<Record<string, { status: VulnState }>>(KEY_VULNS, null as unknown as Record<string, { status: VulnState }>),
@@ -65,6 +68,7 @@ function hydrateOnce() {
     hydrateFromSeed();
     persistAll();
   }
+  return true;
 }
 
 function persistAll() {
@@ -78,8 +82,9 @@ function persistAll() {
 export function useAlertsStore() {
   const snap = useSyncExternalStore(subscribe, snapshot, getServerSnapshot);
   useEffect(() => {
-    hydrateOnce();
-    notify();
+    if (hydrateOnce()) {
+      notify();
+    }
   }, []);
   return snap;
 }
