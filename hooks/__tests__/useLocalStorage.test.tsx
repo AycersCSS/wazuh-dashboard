@@ -5,7 +5,7 @@ import { useLocalStorage } from "../useLocalStorage";
 
 function Demo({ k, fallback }: { k: string; fallback: unknown }) {
   const [v, setV] = useLocalStorage<number>(k, fallback as number);
-  return <button onClick={() => setV((v + 1))}>{v}</button>;
+  return <button onClick={() => setV(prev => prev + 1)}>{v}</button>;
 }
 
 describe("useLocalStorage", () => {
