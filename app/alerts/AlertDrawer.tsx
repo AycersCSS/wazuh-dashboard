@@ -121,7 +121,7 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
 
       {escalate && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="absolute inset-0 bg-slate-900/40" onClick={() => setEscalate(false)} />
+          <button type="button" aria-label="Close dialog" onClick={() => setEscalate(false)} className="absolute inset-0 bg-slate-900/40" />
           <div className="relative bg-white border border-slate-200 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
             <div className="text-base font-semibold text-slate-900">Escalate to L2</div>
             <div className="text-sm text-slate-600 mt-2">

@@ -37,7 +37,7 @@ export function Drawer({ open, onClose, title, actions, width = "lg", children }
 
   return (
     <div className="fixed inset-0 z-50">
-      <div data-testid="backdrop" className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onClick={onClose} />
+      <button type="button" data-testid="backdrop" aria-label="Close drawer" onClick={onClose} className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" />
       <div
         ref={ref}
         role="dialog"

@@ -30,7 +30,7 @@ export function Modal({
 
   return (
     <div className="fixed inset-0 z-50 animate-slide-up" role="dialog" aria-modal="true" aria-label={typeof title === "string" ? title : undefined}>
-      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={onClose} />
+      <button type="button" aria-label="Close dialog" onClick={onClose} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
       <div className="relative grid h-full place-items-center p-4">
         <div
           ref={ref}
@@ -43,7 +43,7 @@ export function Modal({
                 {title && <div className="text-base font-semibold text-slate-900">{title}</div>}
                 {subtitle && <div className="text-sm text-slate-600 mt-0.5">{subtitle}</div>}
               </div>
-              <button onClick={onClose} className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100" aria-label="Close"><X size={14} /></button>
+              <button type="button" onClick={onClose} className="p-1 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100" aria-label="Close"><X size={14} /></button>
             </header>
           )}
           <div className="p-4">{children}</div>

@@ -112,7 +112,7 @@ export default function SettingsPage() {
 
       {confirmReset && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="absolute inset-0 bg-slate-900/40" onClick={() => setConfirmReset(false)} />
+          <button type="button" aria-label="Close dialog" onClick={() => setConfirmReset(false)} className="absolute inset-0 bg-slate-900/40" />
           <div className="relative bg-white border border-slate-200 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
             <div className="text-base font-semibold text-slate-900">Reset to defaults?</div>
             <div className="text-sm text-slate-600 mt-2">This clears all your acknowledgements, archived alerts, rule toggles, and CVE status changes. The page will reload.</div>

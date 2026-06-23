@@ -116,7 +116,7 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
 
       {confirm && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <div className="absolute inset-0 bg-slate-900/40" onClick={() => setConfirm(null)} />
+          <button type="button" aria-label="Close dialog" onClick={() => setConfirm(null)} className="absolute inset-0 bg-slate-900/40" />
           <div className="relative bg-white border border-slate-200 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
             <div className="text-base font-semibold text-slate-900">{confirm === "isolate" ? "Isolate agent" : "Restart agent"}</div>
             <div className="text-sm text-slate-600 mt-2">

@@ -26,7 +26,7 @@ export function Page({
             {breadcrumb && breadcrumb.length > 0 && (
               <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-slate-500 mb-1">
                 {breadcrumb.map((c, i) => (
-                  <span key={i} className="flex items-center gap-1">
+                  <span key={c.href ?? c.label} className="flex items-center gap-1">
                     {c.href ? <Link href={c.href} className="hover:text-slate-900">{c.label}</Link> : <span>{c.label}</span>}
                     {i < breadcrumb.length - 1 && <ChevronRight size={12} className="text-slate-300" />}
                   </span>

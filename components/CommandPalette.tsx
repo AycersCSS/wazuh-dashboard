@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useReducer, useRef, useMemo } from "react";
 import { Search, ArrowRight, Hash, Server, Bug, ShieldAlert, ScrollText } from "lucide-react";
 import { useCommandPalette } from "@/hooks/useCommandPalette";
 import { useRouter } from "next/navigation";
@@ -35,17 +35,30 @@ const recent: Hit[] = [
   { id: "r3", type: "cve",   label: "CVE-2024-3094",                  hint: "liblzma5 · 5 critical",   href: "/vulnerabilities",group: "Jump to" }
 ];
 
+type State = { q: string; idx: number };
+type Action = { type: "open" } | { type: "close" } | { type: "setQ"; q: string } | { type: "setIdx"; idx: number };
+
+function paletteReducer(s: State, a: Action): State {
+  switch (a.type) {
+    case "open":  return { q: "", idx: 0 };
+    case "close": return s;
+    case "setQ":  return { q: a.q, idx: 0 };
+    case "setIdx": return { ...s, idx: a.idx };
+  }
+}
+
 export function CommandPalette() {
   const { open, setOpen } = useCommandPalette();
-  const [q, setQ] = useState("");
-  const [idx, setIdx] = useState(0);
+  const [state, dispatch] = useReducer(paletteReducer, { q: "", idx: 0 });
+  const { q, idx } = state;
+  const setQ = (q: string) => dispatch({ type: "setQ", q });
+  const setIdx = (idx: number) => dispatch({ type: "setIdx", idx });
   const ref = useRef<HTMLInputElement>(null);
   const router = useRouter();
 
   useEffect(() => {
     if (!open) return;
-    setQ("");
-    setIdx(0);
+    dispatch({ type: "open" });
     const id = window.setTimeout(() => ref.current?.focus(), 30);
     return () => window.clearTimeout(id);
   }, [open]);
@@ -99,7 +112,7 @@ export function CommandPalette() {
     return [...alertHits, ...agentHits, ...cveHits, ...ruleHits, ...pageHits];
   }, [q]);
 
-  useEffect(() => { setIdx(0); }, [q]);
+  useEffect(() => { return; }, []);
 
   if (!open) return null;
 
@@ -109,8 +122,8 @@ export function CommandPalette() {
   }
 
   function onKey(e: React.KeyboardEvent) {
-    if (e.key === "ArrowDown") { e.preventDefault(); setIdx(i => Math.min(i + 1, results.length - 1)); }
-    if (e.key === "ArrowUp")   { e.preventDefault(); setIdx(i => Math.max(i - 1, 0)); }
+    if (e.key === "ArrowDown") { e.preventDefault(); setIdx(Math.min(idx + 1, results.length - 1)); }
+    if (e.key === "ArrowUp")   { e.preventDefault(); setIdx(Math.max(idx - 1, 0)); }
     if (e.key === "Enter")     { e.preventDefault(); if (results[idx]) choose(results[idx]); }
   }
 
@@ -123,7 +136,7 @@ export function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-50 animate-slide-up" role="dialog" aria-modal="true" aria-label="Command palette">
-      <div className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" onClick={() => setOpen(false)} />
+      <button type="button" aria-label="Close command palette" onClick={() => setOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
       <div className="relative mx-auto mt-[10vh] w-[min(640px,92vw)] bg-white border border-slate-200 rounded-xl shadow-pop overflow-hidden">
         <div className="flex items-center gap-2.5 h-12 px-3 border-b border-slate-200">
           <Search size={14} className="text-slate-500" />
@@ -133,6 +146,7 @@ export function CommandPalette() {
             onChange={e => setQ(e.target.value)}
             onKeyDown={onKey}
             placeholder="Search alerts, agents, CVEs, rules, or pages…"
+            aria-label="Search alerts, agents, CVEs, rules, or pages"
             className="flex-1 bg-transparent outline-none text-[13px] text-slate-900 placeholder:text-slate-500"
           />
           <span className="kbd">esc</span>

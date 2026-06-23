@@ -93,16 +93,17 @@ export default function LogsPage() {
             {v.getVirtualItems().map(vi => {
               const r = filtered[vi.index];
               return (
-                <div key={r.id}
+                <button key={r.id}
+                  type="button"
                   onClick={() => setActive(r)}
-                  className={cn("grid grid-cols-12 px-3 h-9 items-center text-xs border-b border-slate-100 hover:bg-slate-50 cursor-pointer absolute top-0 left-0 right-0")}
+                  className={cn("grid grid-cols-12 px-3 h-9 items-center text-xs border-b border-slate-100 hover:bg-slate-50 cursor-pointer absolute top-0 left-0 right-0 text-left")}
                   style={{ transform: `translateY(${vi.start}px)` }}>
                   <div className="col-span-2 text-slate-500 font-mono">{formatRelativeTime(r.ts)}</div>
                   <div className="col-span-2 text-slate-700 font-mono">{r.source}</div>
                   <div className="col-span-2"><Badge tone={r.severity} dot>{r.severity}</Badge></div>
                   <div className="col-span-2 text-slate-600 font-mono truncate">{r.agent}</div>
                   <div className="col-span-4 text-slate-700 truncate font-mono">{r.message}</div>
-                </div>
+                </button>
               );
             })}
           </div>
@@ -110,12 +111,12 @@ export default function LogsPage() {
       </Card>
 
       {active && (
-        <div className="fixed inset-0 z-50" onClick={() => setActive(null)}>
-          <div className="absolute inset-0 bg-slate-900/40" />
+        <div className="fixed inset-0 z-50">
+          <button type="button" aria-label="Close event detail" onClick={() => setActive(null)} className="absolute inset-0 bg-slate-900/40" />
           <div onClick={e => e.stopPropagation()} className="absolute right-0 top-0 bottom-0 w-full max-w-2xl bg-white shadow-drawer p-5 overflow-y-auto">
             <div className="flex items-center justify-between mb-3">
               <div className="text-sm font-semibold text-slate-900">Event {active.id}</div>
-              <button onClick={() => setActive(null)} className="text-xs text-slate-500 hover:text-slate-900">Close</button>
+              <button type="button" onClick={() => setActive(null)} className="text-xs text-slate-500 hover:text-slate-900">Close</button>
             </div>
             <pre className="text-xs bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto text-slate-700">
 {JSON.stringify(active, null, 2)}

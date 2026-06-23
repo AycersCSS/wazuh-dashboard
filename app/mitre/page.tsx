@@ -74,6 +74,7 @@ export default function MitrePage() {
                           type="button"
                           onClick={() => setActive(t.id)}
                           title={`${tech} - ${count} alerts`}
+                          aria-label={`${tech} - ${count} alerts`}
                           className="h-6 flex-1 rounded border border-slate-200"
                           style={{ background: `rgba(79, 70, 229, ${0.05 + intensity * 0.95})` }}
                         />
@@ -95,7 +96,7 @@ export default function MitrePage() {
                   <CardTitle>{activeTactic.tactic}</CardTitle>
                   <CardSubtitle>{activeTactic.id}</CardSubtitle>
                 </div>
-                <Button size="sm" variant="secondary" onClick={() => setActive(null)}>Clear</Button>
+                <Button size="sm" variant="secondary" onClick={() => setActive(null)} aria-label="Clear tactic selection">Clear</Button>
               </div>
               <ul className="p-3 space-y-2">
                 {activeTactic.techniques.map(tech => {

@@ -175,10 +175,10 @@ export function Topbar() {
                   { k: ["A"],         label: "Acknowledge selected alerts" },
                   { k: ["?"],         label: "Toggle this help" },
                   { k: ["Esc"],       label: "Close any overlay" }
-                ].map((s, i) => (
-                  <li key={i} className="px-3 h-8 flex items-center justify-between hover:bg-slate-50">
+                ].map(s => (
+                  <li key={s.label} className="px-3 h-8 flex items-center justify-between hover:bg-slate-50">
                     <span className="text-slate-600">{s.label}</span>
-                    <span className="flex items-center gap-1">{s.k.map((key, j) => <span key={j} className="kbd">{key}</span>)}</span>
+                    <span className="flex items-center gap-1">{s.k.map((key) => <span key={key} className="kbd">{key}</span>)}</span>
                   </li>
                 ))}
               </ul>
@@ -216,27 +216,26 @@ export function Topbar() {
                   { sev: "high",     title: "3 SSH brute-force attempts on edge-fw-002",   time: "14m" },
                   { sev: "medium",   title: "New CVE-2024-3094 detected on 4 agents",      time: "1h"  },
                   { sev: "info",     title: "Manager prod-01 restarted successfully",     time: "3h"  }
-                ].map((n, i) => (
-                  <li key={i} className="px-3 py-2.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 cursor-pointer"
-                      onClick={() => { setNotifOpen(false); toasts.push({ variant: n.sev as any, title: "Opened: " + n.title, duration: 2000 }); }}>
-                    <div className="flex items-start gap-2.5">
+                ].map((n) => (
+                  <li key={n.title + n.time}>
+                    <button type="button"
+                      onClick={() => { setNotifOpen(false); toasts.push({ variant: n.sev as any, title: "Opened: " + n.title, duration: 2000 }); }}
+                      className="w-full text-left px-3 py-2.5 border-b border-slate-100 last:border-0 hover:bg-slate-50 cursor-pointer">
                       <span className={cn(
-                        "mt-1.5 w-1.5 h-1.5 rounded-full flex-none",
+                        "mt-1.5 w-1.5 h-1.5 rounded-full flex-none inline-block align-middle mr-2.5",
                         n.sev === "critical" ? "bg-rose-500" :
                         n.sev === "high"     ? "bg-orange-500" :
                         n.sev === "medium"   ? "bg-amber-500" : "bg-sky-500"
                       )} />
-                      <div className="flex-1">
-                        <div className="text-xs text-slate-900 leading-snug">{n.title}</div>
-                        <div className="text-[10.5px] text-slate-500 mt-0.5">{n.time} ago</div>
-                      </div>
-                    </div>
+                      <span className="text-xs text-slate-900 leading-snug">{n.title}</span>
+                      <span className="block text-[10.5px] text-slate-500 mt-0.5">{n.time} ago</span>
+                    </button>
                   </li>
                 ))}
               </ul>
               <div className="px-3 h-9 flex items-center justify-between border-t border-slate-200">
                 <span className="text-[10.5px] text-slate-500">Showing 4 of 17</span>
-                <button onClick={() => setNotifOpen(false)} className="text-[11.5px] text-indigo-600 hover:text-indigo-700">View all</button>
+                <button type="button" onClick={() => setNotifOpen(false)} className="text-[11.5px] text-indigo-600 hover:text-indigo-700">View all</button>
               </div>
             </div>
           )}
@@ -283,6 +282,7 @@ export function Topbar() {
               </ul>
               <div className="border-t border-slate-200 py-1.5">
                 <button
+                  type="button"
                   onClick={() => toasts.push({ variant: "warn", title: "Signed out", description: "Redirecting to login..." })}
                   className="w-full flex items-center gap-2.5 px-3 h-8 text-xs text-rose-600 hover:bg-rose-50 transition-colors">
                   <LogOut size={13} />

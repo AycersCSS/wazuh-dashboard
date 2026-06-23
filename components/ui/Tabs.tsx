@@ -14,6 +14,7 @@ export function Tabs({ tabs, defaultId }: Props) {
         {tabs.map(t => (
           <button
             key={t.id}
+            type="button"
             role="tab"
             aria-selected={t.id === active}
             onClick={() => setActive(t.id)}
