@@ -52,5 +52,6 @@ export function TimeRangeProvider({ children }: { children: React.ReactNode }) {
     setCustomState({ fromMs, toMs });
   }, []);
 
-  return <RangeCtx.Provider value={{ range, setKey, setCustom }}>{children}</RangeCtx.Provider>;
+  const value = useMemo<Ctx>(() => ({ range, setKey, setCustom }), [range, setKey, setCustom]);
+  return <RangeCtx.Provider value={value}>{children}</RangeCtx.Provider>;
 }

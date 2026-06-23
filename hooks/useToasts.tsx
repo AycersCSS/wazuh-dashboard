@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { CheckCircle2, AlertTriangle, Info, X, ShieldAlert } from "lucide-react";
 import { cn } from "@/lib/cn";
 
@@ -18,6 +18,14 @@ type Ctx = {
   push: (t: Omit<Toast, "id">) => string;
   dismiss: (id: string) => void;
   toasts: Toast[];
+};
+
+const variantClass: Record<NonNullable<Toast["variant"]>, string> = {
+  info:    "border-sky-200 bg-sky-50 text-sky-900",
+  success: "border-emerald-200 bg-emerald-50 text-emerald-900",
+  warn:    "border-amber-200 bg-amber-50 text-amber-900",
+  error:   "border-rose-200 bg-rose-50 text-rose-900",
+  action:  "border-indigo-200 bg-indigo-50 text-indigo-900"
 };
 
 const ToastCtx = createContext<Ctx | null>(null);
@@ -45,8 +53,9 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
     return id;
   }, [dismiss]);
 
+  const value = useMemo<Ctx>(() => ({ push, dismiss, toasts }), [push, dismiss, toasts]);
   return (
-    <ToastCtx.Provider value={{ push, dismiss, toasts }}>
+    <ToastCtx.Provider value={value}>
       {children}
       <ToastViewport />
     </ToastCtx.Provider>
@@ -70,13 +79,6 @@ function ToastItem({ toast, onDismiss }: { toast: Toast; onDismiss: () => void }
     : variant === "error" ? ShieldAlert
     : variant === "action" ? CheckCircle2
     : Info;
-  const variantClass: Record<NonNullable<Toast["variant"]>, string> = {
-    info:    "border-sky-200 bg-sky-50 text-sky-900",
-    success: "border-emerald-200 bg-emerald-50 text-emerald-900",
-    warn:    "border-amber-200 bg-amber-50 text-amber-900",
-    error:   "border-rose-200 bg-rose-50 text-rose-900",
-    action:  "border-indigo-200 bg-indigo-50 text-indigo-900"
-  };
   const accent = variantClass[variant];
 
   return (

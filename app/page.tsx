@@ -72,14 +72,19 @@ export default function OverviewPage() {
       const cur = m.get(a.rule.mitre.id);
       m.set(a.rule.mitre.id, { tactic: a.rule.mitre.tactic, count: (cur?.count ?? 0) + 1 });
     });
-    return [...m.values()].sort((a, b) => b.count - a.count).slice(0, 7);
+    return Array.from(m.values()).toSorted((a, b) => b.count - a.count).slice(0, 7);
   }, []);
 
-  const topAgents = useMemo(() => agents
-    .filter(a => a.status === "active")
-    .map(a => ({ ...a, alertCount: alerts.filter(x => x.agent.id === a.id).length }))
-    .sort((a, b) => b.alertCount - a.alertCount)
-    .slice(0, 6), []);
+  const topAgents = useMemo(() => {
+    const counts = new Map<string, number>();
+    for (const x of alerts) counts.set(x.agent.id, (counts.get(x.agent.id) ?? 0) + 1);
+    const out: (typeof agents[number] & { alertCount: number })[] = [];
+    for (const a of agents) {
+      if (a.status !== "active") continue;
+      out.push({ ...a, alertCount: counts.get(a.id) ?? 0 });
+    }
+    return out.toSorted((a, b) => b.alertCount - a.alertCount).slice(0, 6);
+  }, []);
 
   const recent = alerts.slice(0, 8);
 

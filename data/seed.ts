@@ -210,7 +210,13 @@ export const kpi: KpiSummary = (() => {
     complianceScore:
       compliance.reduce((s, c) => s + c.pass, 0) /
       compliance.reduce((s, c) => s + c.total, 0),
-    mitreTechniquesObserved: new Set(alerts.filter(a => a.rule.mitre).map(a => a.rule.mitre!.technique)).size,
+    mitreTechniquesObserved: (() => {
+      const s = new Set<string>();
+      for (const a of alerts) {
+        if (a.rule.mitre) s.add(a.rule.mitre.technique);
+      }
+      return s.size;
+    })(),
     eventsPerSecond: 1284
   };
 })();
