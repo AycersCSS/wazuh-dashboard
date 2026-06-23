@@ -4,14 +4,20 @@ import { useRouter } from "next/navigation";
 
 const map: Record<string, string> = {
   O: "/",
+  M: "/microsoft-365",
+  N: "/ninjaone",
+  B: "/bitdefender",
+  C: "/cyber-essentials",
+  P: "/customer-portal",
   A: "/alerts",
   R: "/agents",
   V: "/vulnerabilities",
   F: "/fim",
-  C: "/compliance",
-  M: "/mitre",
-  L: "/logs",
-  T: "/threat-intel",
+  L: "/compliance",
+  T: "/mitre",
+  U: "/rules",
+  G: "/logs",
+  I: "/threat-intel",
   S: "/settings"
 };
 
@@ -28,7 +34,7 @@ export function useGoToShortcuts() {
         if (k === "G") { armed = "G"; timer = window.setTimeout(() => { armed = null; }, 800); }
         return;
       }
-      if (k === "?" ) { /* Help shortcut handled elsewhere */ armed = null; if (timer) clearTimeout(timer); return; }
+      if (k === "?" ) { armed = null; if (timer) clearTimeout(timer); return; }
       const dest = map[k];
       if (dest) {
         router.push(dest);
