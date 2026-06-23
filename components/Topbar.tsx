@@ -8,7 +8,7 @@ import { cn } from "@/lib/cn";
 import { formatCompact } from "@/lib/format";
 import { useTimeRange, type TimeRangeKey } from "@/hooks/useTimeRange";
 import { useToasts } from "@/hooks/useToasts";
-import { useGoToShortcuts";
+import { useGoToShortcuts } from "@/hooks/useGoToShortcuts";
 import { useCommandPalette } from "@/hooks/useCommandPalette";
 
 type TenantKey = "all" | "acme" | "globex" | "initech" | "stark";
