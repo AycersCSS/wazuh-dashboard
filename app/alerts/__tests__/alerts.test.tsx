@@ -1,3 +1,4 @@
+import React from "react";
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { TimeRangeProvider } from "@/hooks/useTimeRange";
@@ -11,7 +12,7 @@ function wrap(ui: React.ReactNode) {
 describe("/alerts page", () => {
   it("renders page header and table", () => {
     wrap(<AlertsPage />);
-    expect(screen.getByText("Alerts")).toBeInTheDocument();
-    expect(screen.getByText(/critical/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Alerts" })).toBeInTheDocument();
+    expect(screen.getAllByText(/critical/i).length).toBeGreaterThan(0);
   });
 });
