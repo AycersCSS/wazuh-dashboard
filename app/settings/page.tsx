@@ -1,318 +1,128 @@
 "use client";
 import { useState } from "react";
-import { Settings as SettingsIcon, Server, KeyRound, Bell, Palette, Save, Plus, Trash2, Copy, RefreshCcw, Eye, EyeOff, Check } from "lucide-react";
-import { Card } from "@/components/ui";
-import { useTheme } from "@/hooks/useTheme";
-import { cn } from "@/lib/cn";
+import { Settings, Download, RotateCcw } from "lucide-react";
+import { Page, Card, CardTitle, Button, Badge, Tooltip } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
-import { ConfirmDialog, Modal } from "@/components/Modal";
+import { useReset, useAlertsStore } from "@/hooks/useAlertsStore";
+import { alerts } from "@/data/seed";
 
-const sections = [
-  { id: "general",  label: "General",       icon: SettingsIcon },
-  { id: "cluster",  label: "Cluster",       icon: Server },
-  { id: "api",      label: "API & Tokens",  icon: KeyRound },
-  { id: "notif",    label: "Notifications", icon: Bell },
-  { id: "appearance",label: "Appearance",    icon: Palette }
-] as const;
+const integrations = [
+  { name: "VirusTotal",   status: "connected",  desc: "Hash and URL lookups" },
+  { name: "Slack",        status: "connected",  desc: "Critical alert notifications" },
+  { name: "PagerDuty",    status: "connected",  desc: "On-call escalation" },
+  { name: "Jira",         status: "disconnected", desc: "Ticket creation" }
+];
 
 export default function SettingsPage() {
-  const { theme, toggle } = useTheme();
   const toasts = useToasts();
-  const [active, setActive] = useState<typeof sections[number]["id"]>("general");
-  const [slackHook, setSlackHook] = useState("https://hooks.slack.com/services/REPLACE/WITH/YOUR-PATH");
-  const [pdKey, setPdKey] = useState("+1 555 0188 4421");
-  const [env, setEnv] = useState("us-east-1");
-  const [tz, setTz] = useState("UTC");
-  const [dateFmt, setDateFmt] = useState("YYYY-MM-DD HH:mm:ss");
-  const [density, setDensity] = useState<"Compact"|"Comfortable"|"Spacious">("Comfortable");
-  const [showToken, setShowToken] = useState(false);
-  const [rotated, setRotated] = useState(false);
-  const [notifToggles, setNotifToggles] = useState<{ name: string; channel: string; enabled: boolean }[]>([
-    { name: "Critical alerts", channel: "Slack + PagerDuty", enabled: true },
-    { name: "Agent down > 15m", channel: "Slack",            enabled: true },
-    { name: "Daily digest",     channel: "Email",            enabled: true },
-    { name: "Rule errors",      channel: "Slack",            enabled: false }
-  ]);
-  const [confirmRemove, setConfirmRemove] = useState<string | null>(null);
-  const [addingNode, setAddingNode] = useState(false);
-  const [newNodeName, setNewNodeName] = useState("manager-prod-04");
+  const reset = useReset();
+  useAlertsStore();
+  const [confirmReset, setConfirmReset] = useState(false);
 
-  function save() {
-    toasts.push({ variant: "success", title: "Settings saved", description: "All sections persisted to user profile" });
-  }
-
-  function rotateToken() {
-    setRotated(true);
-    toasts.push({ variant: "warn", title: "Token rotated", description: "All API clients must re-authenticate within 60s" });
-  }
-
-  function copyToken() {
-    navigator.clipboard?.writeText("waz_api_***-REDACTED-***");
-    toasts.push({ variant: "success", title: "Token copied to clipboard", duration: 1500 });
+  function doExport() {
+    try {
+      const data = { alerts, exportedAt: new Date().toISOString() };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url; a.download = `sentinel-stack-alerts-${Date.now()}.json`;
+      document.body.appendChild(a); a.click(); a.remove();
+      URL.revokeObjectURL(url);
+      toasts.push({ variant: "success", title: "Export complete", description: `${alerts.length} alerts downloaded` });
+    } catch (e) {
+      toasts.push({ variant: "error", title: "Export failed" });
+    }
   }
 
   return (
-    <div className="space-y-5">
-      <header>
-        <div className="flex items-center gap-2 text-[11px] text-muted font-mono uppercase tracking-wider">
-          <span className="text-signal-400">Configure</span><span>·</span><span>Settings</span>
+    <Page
+      breadcrumb={[{ label: "Configure" }, { label: "Settings" }]}
+      icon={Settings}
+      title="Settings"
+      description="Cluster, integrations, profile, and data"
+    >
+      <Card padded={false}>
+        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+          <CardTitle>Cluster</CardTitle>
         </div>
-        <h1 className="mt-1 text-[22px] font-semibold tracking-tight">Settings</h1>
-        <p className="text-[12.5px] text-muted">Manage cluster, integrations, and personal preferences.</p>
-      </header>
+        <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+          <div className="flex items-center justify-between"><span className="text-slate-500">Manager</span><span className="font-mono text-slate-900">prod-01</span></div>
+          <div className="flex items-center justify-between"><span className="text-slate-500">Workers</span><span className="font-mono text-slate-900">3 / 3</span></div>
+          <div className="flex items-center justify-between"><span className="text-slate-500">Indexer</span><span className="font-mono text-slate-900">opensearch 2.15</span></div>
+          <div className="flex items-center justify-between"><span className="text-slate-500">API latency p95</span><span className="font-mono text-slate-900">38 ms</span></div>
+        </div>
+      </Card>
 
-      <div className="grid grid-cols-12 gap-5">
-        <aside className="col-span-12 lg:col-span-3">
-          <Card>
-            <nav className="p-1.5">
-              {sections.map(s => {
-                const Icon = s.icon;
-                return (
-                  <button type="button" key={s.id} onClick={() => setActive(s.id)}
-                    className={cn(
-                      "w-full flex items-center gap-2.5 h-8 px-2.5 rounded-md text-[12.5px] transition-colors",
-                      active === s.id ? "surface-3 text-primary" : "text-secondary hover:text-primary hover:surface-2"
-                    )}>
-                    <Icon size={14} className={active === s.id ? "text-signal-400" : "text-muted"} />
-                    {s.label}
-                  </button>
-                );
-              })}
-            </nav>
-          </Card>
-        </aside>
-
-        <div className="col-span-12 lg:col-span-9 space-y-5">
-          {active === "general" && (
-            <Card header={
-              <>
-                <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-primary truncate">General</div>
-                  <div className="text-[11px] text-muted truncate">Defaults for new sessions and dashboards</div>
-                </div>
-                <div />
-              </>
-            }>
-              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <Field label="Default time range">
-                  <select className="input input-noicon"><option>Last 1 hour</option><option>Last 24 hours</option><option>Last 7 days</option><option>Last 30 days</option></select>
-                </Field>
-                <Field label="Default environment">
-                  <select className="input input-noicon" value={env} onChange={e => setEnv(e.target.value)}>
-                    <option>us-east-1</option><option>us-west-2</option><option>eu-west-1</option><option>ap-southeast-1</option>
-                  </select>
-                </Field>
-                <Field label="Timezone">
-                  <select className="input input-noicon" value={tz} onChange={e => setTz(e.target.value)}>
-                    <option>UTC</option><option>Europe/Istanbul</option><option>America/New_York</option><option>Asia/Tokyo</option>
-                  </select>
-                </Field>
-                <Field label="Date format">
-                  <select className="input input-noicon" value={dateFmt} onChange={e => setDateFmt(e.target.value)}>
-                    <option>YYYY-MM-DD HH:mm:ss</option><option>MMM d, h:mm a</option><option>DD/MM/YYYY</option>
-                  </select>
-                </Field>
+      <Card padded={false}>
+        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+          <CardTitle>Integrations</CardTitle>
+        </div>
+        <ul className="divide-y divide-slate-100">
+          {integrations.map(i => (
+            <li key={i.name} className="px-4 py-3 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <div className="text-sm font-medium text-slate-900">{i.name}</div>
+                <div className="text-xs text-slate-500">{i.desc}</div>
               </div>
-            </Card>
-          )}
+              <Badge tone={i.status === "connected" ? "low" : "neutral"} dot>{i.status}</Badge>
+              <Button size="sm" variant="secondary" onClick={() => toasts.push({ variant: "info", title: `Configuring ${i.name} (coming soon)` })}>Configure</Button>
+            </li>
+          ))}
+        </ul>
+      </Card>
 
-          {active === "cluster" && (
-            <Card padded={false} header={
-              <>
-                <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-primary truncate">Cluster nodes</div>
-                  <div className="text-[11px] text-muted truncate">3 nodes · 1 master / 2 workers</div>
-                </div>
-                <button onClick={() => setAddingNode(true)} className="btn btn-sm"><Plus size={11} />Add node</button>
-              </>
-            }
-            >
-              <ul className="divide-y divide-[var(--border-soft)]">
-                {[
-                  { name: "manager-prod-01", role: "master",  status: "ok", uptime: "41d 06h" },
-                  { name: "manager-prod-02", role: "worker",  status: "ok", uptime: "12d 19h" },
-                  { name: "manager-prod-03", role: "worker",  status: "warn", uptime: "03h 22m" }
-                ].map(n => (
-                  <li key={n.name} className="px-4 py-3 flex items-center gap-3">
-                    <span className={n.status === "ok" ? "live-dot" : "live-dot-warn"} />
-                    <div className="flex-1">
-                      <div className="text-[12.5px] text-primary font-mono">{n.name}</div>
-                      <div className="text-[10.5px] text-muted">role: {n.role} · uptime {n.uptime}</div>
-                    </div>
-                    <button onClick={() => toasts.push({ variant: "info", title: `Restarting ${n.name}…` })} className="btn btn-sm">Restart</button>
-                    <button onClick={() => setConfirmRemove(n.name)} className="btn btn-sm btn-danger"><Trash2 size={11} />Remove</button>
-                  </li>
-                ))}
-              </ul>
-              <ConfirmDialog
-                open={!!confirmRemove}
-                onClose={() => setConfirmRemove(null)}
-                title={`Remove ${confirmRemove}?`}
-                danger
-                body="The node will be decommissioned and removed from the cluster. This cannot be undone."
-                confirmLabel="Decommission"
-                onConfirm={() => toasts.push({ variant: "warn", title: `Node ${confirmRemove} removed` })}
-              />
-            </Card>
-          )}
-
-          {active === "api" && (
-            <Card header={
-              <>
-                <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-primary truncate">API &amp; Tokens</div>
-                  <div className="text-[11px] text-muted truncate">Use these tokens to integrate with external systems.</div>
-                </div>
-                <div />
-              </>
-            }>
-              <div className="p-4 space-y-3">
-                <div className="panel p-3">
-                  <div className="text-[10.5px] uppercase tracking-wider text-muted">Wazuh API token</div>
-                  <div className="font-mono text-[12px] text-primary mt-1 break-all flex items-center gap-2">
-                    {showToken
-                      ? "waz_api_•••live•••" + Math.random().toString(36).slice(2, 10)
-                      : "waz_api_••••••••••••••••••••••••••••••"}
-                    <button type="button" onClick={() => setShowToken(s => !s)} className="btn btn-sm btn-icon btn-ghost" aria-label="Toggle visibility">
-                      {showToken ? <EyeOff size={11} /> : <Eye size={11} />}
-                    </button>
-                  </div>
-                  <div className="mt-2 flex items-center gap-2">
-                    <button type="button" onClick={rotateToken} className="btn btn-sm"><RefreshCcw size={11} className={rotated ? "animate-spin" : ""} />Rotate</button>
-                    <button type="button" onClick={copyToken} className="btn btn-sm"><Copy size={11} />Copy</button>
-                    {rotated && <span className="text-[11px] text-low flex items-center gap-1"><Check size={11} />Rotated just now</span>}
-                  </div>
-                </div>
-                <Field label="Slack webhook">
-                  <div className="flex gap-2">
-                    <input className="input input-noicon" value={slackHook} onChange={e => setSlackHook(e.target.value)} />
-                    <button onClick={() => toasts.push({ variant: "success", title: "Test ping sent", description: "Slack channel: #soc-alerts" })} className="btn">Test</button>
-                  </div>
-                </Field>
-                <Field label="PagerDuty key">
-                  <div className="flex gap-2">
-                    <input className="input input-noicon" value={pdKey} onChange={e => setPdKey(e.target.value)} />
-                    <button onClick={() => toasts.push({ variant: "success", title: "Test page sent", description: "PagerDuty: on-call L2" })} className="btn">Test</button>
-                  </div>
-                </Field>
-              </div>
-            </Card>
-          )}
-
-          {active === "notif" && (
-            <Card header={
-              <>
-                <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-primary truncate">Notifications</div>
-                  <div className="text-[11px] text-muted truncate">Channels and rules</div>
-                </div>
-                <div />
-              </>
-            }>
-              <div className="p-4 space-y-2">
-                {notifToggles.map((n, i) => (
-                  <div key={n.name} className="panel p-3 flex items-center gap-3">
-                    <Bell size={14} className="text-muted" />
-                    <div className="flex-1">
-                      <div className="text-[12.5px] text-primary">{n.name}</div>
-                      <div className="text-[10.5px] text-muted">{n.channel}</div>
-                    </div>
-                    <Toggle on={n.enabled} onChange={() => {
-                      const next = notifToggles.slice();
-                      next[i] = { ...n, enabled: !n.enabled };
-                      setNotifToggles(next);
-                      toasts.push({ variant: "info", title: `${n.name} ${!n.enabled ? "enabled" : "disabled"}` });
-                    }} />
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          {active === "appearance" && (
-            <Card header={
-              <>
-                <div className="min-w-0">
-                  <div className="text-[12.5px] font-semibold text-primary truncate">Appearance</div>
-                  <div className="text-[11px] text-muted truncate">Personal preferences</div>
-                </div>
-                <div />
-              </>
-            }>
-              <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div className="panel p-3">
-                  <div className="text-[10.5px] uppercase tracking-wider text-muted mb-2">Theme</div>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button type="button" onClick={() => { toggle(); toasts.push({ variant: "info", title: "Theme: dark", duration: 1500 }); }} className="panel p-3 text-left transition-colors">
-                      <div className="h-12 rounded-md grid-bg surface-3 mb-2 border border-soft" />
-                      <div className="text-[12px] text-primary">Dark</div>
-                    </button>
-                    <button type="button" onClick={() => { toasts.push({ variant: "info", title: "Theme: light", duration: 1500 }); }} className={cn("panel p-3 text-left transition-colors", theme === "light" && "border-signal-500/50")}>
-                      <div className="h-12 rounded-md border border-soft bg-white mb-2" />
-                      <div className="text-[12px] text-primary">Light</div>
-                    </button>
-                  </div>
-                </div>
-                <div className="panel p-3">
-                  <div className="text-[10.5px] uppercase tracking-wider text-muted mb-2">Density</div>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(["Compact","Comfortable","Spacious"] as const).map(d => (
-                      <button type="button" key={d} onClick={() => { setDensity(d); toasts.push({ variant: "info", title: `Density: ${d}`, duration: 1200 }); }}
-                        className={cn("panel p-2.5 text-center hover:border-base text-[11.5px] text-secondary", density === d && "border-signal-500/50 text-primary")}>
-                        {d}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </Card>
-          )}
-
-          <div className="flex items-center justify-end gap-2">
-            <button onClick={() => toasts.push({ variant: "info", title: "Reverted local changes" })} className="btn">Cancel</button>
-            <button onClick={save} className="btn btn-primary"><Save size={12} />Save changes</button>
+      <Card padded={false}>
+        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+          <CardTitle>Profile</CardTitle>
+        </div>
+        <div className="p-4 space-y-3 text-sm">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-slate-900">Theme</div>
+              <div className="text-xs text-slate-500">Light is the only supported theme this release.</div>
+            </div>
+            <Tooltip content="Dark mode coming soon"><span><Badge tone="neutral">Light (locked)</Badge></span></Tooltip>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-slate-900">Default time range</div>
+              <div className="text-xs text-slate-500">Used when you open a page.</div>
+            </div>
+            <span className="text-slate-700">Last 24 hours</span>
+          </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-slate-900">Default environment</div>
+              <div className="text-xs text-slate-500">Selected at sign-in.</div>
+            </div>
+            <span className="text-slate-700">production - us-east-1</span>
           </div>
         </div>
-      </div>
+      </Card>
 
-      <Modal open={addingNode} onClose={() => setAddingNode(false)} title="Add cluster node" size="sm"
-        footer={
-          <>
-            <button className="btn" onClick={() => setAddingNode(false)}>Cancel</button>
-            <button onClick={() => { toasts.push({ variant: "success", title: `Node ${newNodeName} registered`, description: "Bootstrap script generated" }); setAddingNode(false); }} className="btn btn-primary">Generate bootstrap</button>
-          </>
-        }
-      >
-        <div className="space-y-3">
-          <Field label="Node name"><input className="input input-noicon font-mono" value={newNodeName} onChange={e => setNewNodeName(e.target.value)} /></Field>
-          <pre className="surface-2 border border-soft rounded p-2 text-[11px] font-mono text-secondary overflow-x-auto">
-{`curl -so bootstrap.sh https://manager.sentinelstack.io/cluster/bootstrap?token=•••
-sudo bash bootstrap.sh --role worker --name ${newNodeName}`}
-          </pre>
+      <Card padded={false}>
+        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+          <CardTitle>Data</CardTitle>
         </div>
-      </Modal>
-    </div>
-  );
-}
+        <div className="p-4 flex flex-wrap items-center gap-2">
+          <Button variant="secondary" icon={<Download size={14} />} onClick={doExport}>Export alerts as JSON</Button>
+          <Button variant="danger" icon={<RotateCcw size={14} />} onClick={() => setConfirmReset(true)}>Reset to defaults</Button>
+        </div>
+      </Card>
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div>
-      <div className="text-[10.5px] uppercase tracking-wider text-muted mb-1.5">{label}</div>
-      {children}
-    </div>
-  );
-}
-
-function Toggle({ on, onChange }: { on: boolean; onChange: () => void }) {
-  return (
-    <button type="button"
-      onClick={onChange}
-      className={cn("w-9 h-5 rounded-full p-0.5 transition-colors", on ? "bg-signal-500" : "surface-3 border border-soft")}
-      role="switch"
-      aria-checked={on}
-    >
-      <span className={cn("block w-4 h-4 rounded-full bg-white transition-transform", on && "translate-x-4")} />
-    </button>
+      {confirmReset && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-slate-900/40" onClick={() => setConfirmReset(false)} />
+          <div className="relative bg-white border border-slate-200 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
+            <div className="text-base font-semibold text-slate-900">Reset to defaults?</div>
+            <div className="text-sm text-slate-600 mt-2">This clears all your acknowledgements, archived alerts, rule toggles, and CVE status changes. The page will reload.</div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button variant="ghost" onClick={() => setConfirmReset(false)}>Cancel</Button>
+              <Button variant="primary" onClick={() => { reset(); toasts.push({ variant: "success", title: "Reset complete" }); setConfirmReset(false); }}>Reset</Button>
+            </div>
+          </div>
+        </div>
+      )}
+    </Page>
   );
 }
