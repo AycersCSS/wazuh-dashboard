@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Oswald } from "next/font/google";
 import "../styles/globals.css";
 import { Sidebar } from "@/components/Sidebar";
 import { Topbar } from "@/components/Topbar";
@@ -6,26 +7,33 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { ToastProvider } from "@/hooks/useToasts";
 import { TimeRangeProvider } from "@/hooks/useTimeRange";
 
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: ["300", "400", "500"],
+  variable: "--font-oswald",
+  display: "swap"
+});
+
 export const metadata: Metadata = {
-  title: { default: "Sentinel Stack — Wazuh Dashboard", template: "%s · Sentinel Stack" },
-  description: "A clean, custom Wazuh dashboard for security operations teams.",
+  title: { default: "MergeIT SOC", template: "%s · MergeIT SOC" },
+  description: "MergeIT SOC — managed security operations for Microsoft 365, NinjaOne, Bitdefender, Cyber Essentials, and the customer portal.",
   icons: { icon: "/favicon.svg" }
 };
 
 export const viewport = {
   width: "device-width",
   initialScale: 1,
-  themeColor: "#06080C"
+  themeColor: "#0A2947"
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="light" suppressHydrationWarning>
-      <body>
-        <a href="#main" className="sr-only focus:not-sr-only fixed top-2 left-2 z-50 inline-flex items-center h-9 px-3 rounded-lg text-sm font-medium bg-indigo-600 text-white">Skip to main content</a>
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className={oswald.variable}>
+        <a href="#main" className="sr-only focus:not-sr-only fixed top-2 left-2 z-50 inline-flex items-center h-9 px-3 rounded-lg text-sm font-medium bg-emerald-500 text-[#0A2947]">Skip to main content</a>
         <ToastProvider>
           <TimeRangeProvider>
-            <div className="flex min-h-screen bg-slate-50">
+            <div className="flex min-h-screen bg-navy text-cream">
               <Sidebar />
               <div className="flex-1 min-w-0 flex flex-col">
                 <Topbar />

@@ -10,7 +10,7 @@ export function Tabs({ tabs, defaultId }: Props) {
   const current = tabs.find(t => t.id === active) ?? tabs[0];
   return (
     <div>
-      <div role="tablist" aria-orientation="horizontal" className="flex gap-1 border-b border-slate-200">
+      <div role="tablist" aria-orientation="horizontal" className="flex gap-1 border-b border-navy-400">
         {tabs.map(t => (
           <button
             key={t.id}
@@ -20,7 +20,9 @@ export function Tabs({ tabs, defaultId }: Props) {
             onClick={() => setActive(t.id)}
             className={cn(
               "px-3 h-9 text-sm font-medium border-b-2 -mb-px transition-colors",
-              t.id === active ? "border-indigo-600 text-indigo-700" : "border-transparent text-slate-500 hover:text-slate-900"
+              t.id === active
+                ? "border-emerald-400 text-cream"
+                : "border-transparent text-navy-600 hover:text-sage"
             )}
           >
             {t.label}

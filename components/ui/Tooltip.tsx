@@ -13,7 +13,7 @@ export function Tooltip({ content, children, side = "top" }: { content: ReactNod
       {children}
       {open && (
         <span role="tooltip" className={cn(
-          "absolute z-50 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-slate-900 text-white text-[11px] whitespace-nowrap pointer-events-none",
+          "absolute z-50 left-1/2 -translate-x-1/2 px-2 py-1 rounded-md bg-navy text-cream text-[11px] whitespace-nowrap pointer-events-none border border-navy-500",
           side === "top" ? "bottom-full mb-1.5" : "top-full mt-1.5"
         )}>
           {content}

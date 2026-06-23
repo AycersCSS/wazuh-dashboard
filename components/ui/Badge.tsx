@@ -4,17 +4,17 @@ import { cn } from "@/lib/cn";
 type Tone = "neutral" | "info" | "low" | "medium" | "high" | "critical";
 
 const toneClass: Record<Tone, string> = {
-  neutral:  "bg-slate-100 text-slate-700 border-slate-200",
-  info:     "bg-sky-50 text-sky-700 border-sky-200",
-  low:      "bg-emerald-50 text-emerald-700 border-emerald-200",
-  medium:   "bg-amber-50 text-amber-700 border-amber-200",
-  high:     "bg-orange-50 text-orange-700 border-orange-200",
-  critical: "bg-rose-50 text-rose-700 border-rose-200"
+  neutral:  "bg-navy-200 text-sage border-navy-500",
+  info:     "bg-severity-info/15 text-severity-info border-severity-info/40",
+  low:      "bg-severity-low/15 text-severity-low border-severity-low/40",
+  medium:   "bg-severity-medium/15 text-severity-medium border-severity-medium/40",
+  high:     "bg-severity-high/15 text-severity-high border-severity-high/40",
+  critical: "bg-severity-critical/15 text-severity-critical border-severity-critical/40"
 };
 
 const dotClass: Record<Tone, string> = {
-  neutral: "bg-slate-400", info: "bg-sky-500", low: "bg-emerald-500",
-  medium: "bg-amber-500", high: "bg-orange-500", critical: "bg-rose-500"
+  neutral: "bg-navy-600", info: "bg-severity-info", low: "bg-severity-low",
+  medium: "bg-severity-medium", high: "bg-severity-high", critical: "bg-severity-critical"
 };
 
 export function Badge({ tone = "neutral", dot, children, className }: { tone?: Tone; dot?: boolean; children: ReactNode; className?: string }) {

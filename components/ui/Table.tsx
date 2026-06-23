@@ -29,10 +29,10 @@ export function Table<T>({
   const allSelected = selectable && all > 0 && rows.every(r => sel.has(rowKey(r)));
   const someSelected = selectable && sel.size > 0 && !allSelected;
   return (
-    <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+    <div className="bg-navy-100 border border-navy-400 rounded-xl overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-navy-100 border-b border-navy-400">
             <tr>
               {selectable && (
                 <th className="w-10 px-3 py-2.5">
@@ -51,7 +51,7 @@ export function Table<T>({
                 </th>
               )}
               {columns.map(c => (
-                <th key={c.key} style={c.width ? { width: c.width } : undefined} className={cn("text-left text-[11px] uppercase tracking-wider font-semibold text-slate-500 px-3 py-2.5", c.className)}>
+                <th key={c.key} style={c.width ? { width: c.width } : undefined} className={cn("text-left text-[11px] uppercase tracking-wider font-semibold text-sage px-3 py-2.5", c.className)}>
                   {c.header}
                 </th>
               ))}
@@ -67,7 +67,7 @@ export function Table<T>({
                 <tr
                   key={id}
                   onClick={() => onRowClick?.(r)}
-                  className={cn("border-b border-slate-100 last:border-0 transition-colors", onRowClick && "cursor-pointer hover:bg-slate-50", isSel && "bg-indigo-50/60")}
+                  className={cn("border-b border-navy-400/60 last:border-0 transition-colors", onRowClick && "cursor-pointer hover:bg-navy-200", isSel && "bg-emerald-400/10")}
                 >
                   {selectable && (
                     <td className="px-3 py-2.5" onClick={e => e.stopPropagation()}>
@@ -84,7 +84,7 @@ export function Table<T>({
                     </td>
                   )}
                   {columns.map(c => (
-                    <td key={c.key} className={cn("px-3 py-2.5 text-slate-700", c.className)}>{c.cell(r)}</td>
+                    <td key={c.key} className={cn("px-3 py-2.5 text-sage", c.className)}>{c.cell(r)}</td>
                   ))}
                 </tr>
               );

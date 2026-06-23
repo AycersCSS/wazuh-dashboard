@@ -37,7 +37,7 @@ export function Drawer({ open, onClose, title, actions, width = "lg", children }
 
   return (
     <div className="fixed inset-0 z-50">
-      <button type="button" data-testid="backdrop" aria-label="Close drawer" onClick={onClose} className="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" />
+      <button type="button" data-testid="backdrop" aria-label="Close drawer" onClick={onClose} className="absolute inset-0 bg-black/55 backdrop-blur-sm" />
       <div
         ref={ref}
         role="dialog"
@@ -45,16 +45,16 @@ export function Drawer({ open, onClose, title, actions, width = "lg", children }
         aria-label={typeof title === "string" ? title : undefined}
         tabIndex={-1}
         className={cn(
-          "absolute right-0 top-0 bottom-0 w-full bg-white shadow-drawer flex flex-col animate-slide-in-right focus:outline-none",
+          "absolute right-0 top-0 bottom-0 w-full bg-navy-100 shadow-drawer flex flex-col animate-slide-in-right focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400",
           widthClass[width]
         )}
       >
         {(title || actions) && (
-          <header className="flex items-center justify-between gap-3 px-5 h-14 border-b border-slate-200">
-            <div className="text-sm font-semibold text-slate-900 truncate">{title}</div>
+          <header className="flex items-center justify-between gap-3 px-5 h-14 border-b border-navy-400">
+            <div className="text-sm font-semibold text-cream truncate">{title}</div>
             <div className="flex items-center gap-2">
               {actions}
-              <button type="button" onClick={onClose} aria-label="Close" className="p-1.5 rounded-md text-slate-400 hover:text-slate-700 hover:bg-slate-100">
+              <button type="button" onClick={onClose} aria-label="Close" className="p-1.5 rounded-md text-navy-600 hover:text-cream hover:bg-navy-200">
                 <X size={16} />
               </button>
             </div>
