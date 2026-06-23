@@ -34,13 +34,13 @@ export default function CompliancePage() {
           return (
             <Card key={fw}>
               <div className="flex items-center justify-between">
-                <div className="text-sm font-semibold text-slate-900">{fw}</div>
+                <div className="text-sm font-semibold text-cream">{fw}</div>
                 <Badge tone={p >= 90 ? "low" : p >= 75 ? "medium" : "high"} dot>{p}%</Badge>
               </div>
-              <div className="mt-3 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div className={`h-full ${p >= 90 ? "bg-emerald-500" : p >= 75 ? "bg-amber-500" : "bg-orange-500"}`} style={{ width: `${p}%` }} />
+              <div className="mt-3 h-1.5 bg-navy-200 rounded-full overflow-hidden">
+                <div className={`h-full ${p >= 90 ? "bg-emerald-400" : p >= 75 ? "bg-severity-medium" : "bg-severity-high"}`} style={{ width: `${p}%` }} />
               </div>
-              <div className="mt-2 text-xs text-slate-500">{ctrls.length} controls - {pass}/{total} checks pass</div>
+              <div className="mt-2 text-xs text-navy-600">{ctrls.length} controls - {pass}/{total} checks pass</div>
             </Card>
           );
         })}
@@ -54,30 +54,30 @@ export default function CompliancePage() {
               <button
                 type="button"
                 onClick={() => setOpen(o => ({ ...o, [fw]: !o[fw] }))}
-                className="w-full flex items-center justify-between gap-3 px-4 h-12 border-b border-slate-200 hover:bg-slate-50">
-                <div className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                className="w-full flex items-center justify-between gap-3 px-4 h-12 border-b border-navy-400 hover:bg-navy-100">
+                <div className="flex items-center gap-2 text-sm font-semibold text-cream">
                   {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />} {fw}
                 </div>
-                <div className="text-xs text-slate-500">{ctrls.length} controls</div>
+                <div className="text-xs text-navy-600">{ctrls.length} controls</div>
               </button>
               {isOpen && (
-                <ul className="divide-y divide-slate-100">
+                <ul className="divide-y divide-navy-400/60">
                   {ctrls.map(c => {
                     const p = pct(c.pass, c.total);
                     return (
                       <li key={c.control} className="px-4 py-3">
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
-                            <div className="text-sm font-mono text-slate-900">{c.control}</div>
-                            <div className="text-xs text-slate-600 mt-0.5">{c.title}</div>
+                            <div className="text-sm font-mono text-cream">{c.control}</div>
+                            <div className="text-xs text-sage mt-0.5">{c.title}</div>
                           </div>
                           <div className="text-right shrink-0">
-                            <div className="text-sm font-mono text-slate-900">{p}%</div>
-                            <div className="text-[11px] text-slate-500">{c.pass}/{c.total} pass</div>
+                            <div className="text-sm font-mono text-cream">{p}%</div>
+                            <div className="text-[11px] text-navy-600">{c.pass}/{c.total} pass</div>
                           </div>
                         </div>
-                        <div className="mt-2 h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                          <div className="h-full bg-emerald-500" style={{ width: `${p}%` }} />
+                        <div className="mt-2 h-1.5 bg-navy-200 rounded-full overflow-hidden">
+                          <div className="h-full bg-emerald-400" style={{ width: `${p}%` }} />
                         </div>
                       </li>
                     );

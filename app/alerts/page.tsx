@@ -42,7 +42,7 @@ export default function AlertsPage() {
     {
       key: "time", header: "Time", width: "140px", sortable: true,
       sortValue: a => new Date(a.timestamp).getTime(),
-      cell: a => <span className="text-slate-600" title={a.timestamp}>{formatRelativeTime(a.timestamp)}</span>
+      cell: a => <span className="text-sage" title={a.timestamp}>{formatRelativeTime(a.timestamp)}</span>
     },
     {
       key: "sev", header: "Severity", width: "150px",
@@ -50,26 +50,26 @@ export default function AlertsPage() {
     },
     {
       key: "rule", header: "Rule", width: "120px",
-      cell: a => <span className="font-mono text-slate-600">{a.rule.id}</span>
+      cell: a => <span className="font-mono text-sage">{a.rule.id}</span>
     },
     {
       key: "desc", header: "Description", sortable: true,
       sortValue: a => a.rule.description,
-      cell: a => <span className="text-slate-900 truncate block max-w-[420px]">{a.rule.description}</span>
+      cell: a => <span className="text-cream truncate block max-w-[420px]">{a.rule.description}</span>
     },
     {
       key: "agent", header: "Agent", width: "180px",
-      cell: a => <span className="font-mono text-slate-600">{a.agent.name}</span>
+      cell: a => <span className="font-mono text-sage">{a.agent.name}</span>
     },
     {
       key: "mitre", header: "MITRE", width: "180px",
-      cell: a => a.rule.mitre ? <Badge tone="info">{a.rule.mitre.id} - {a.rule.mitre.tactic}</Badge> : <span className="text-slate-300">-</span>
+      cell: a => a.rule.mitre ? <Badge tone="info">{a.rule.mitre.id} - {a.rule.mitre.tactic}</Badge> : <span className="text-navy-600/70">-</span>
     },
     {
       key: "ack", header: "", width: "40px",
       cell: a => store.alertMap[a.id]?.acknowledged
         ? <span title="Acknowledged" className="inline-flex items-center text-emerald-600"><ShieldCheck size={14} /></span>
-        : <span className="text-slate-300">-</span>
+        : <span className="text-navy-600/70">-</span>
     }
   ];
 
@@ -90,8 +90,8 @@ export default function AlertsPage() {
 
       {selected.size > 0 && (
         <Card padded={false}>
-          <div className="px-4 py-2 flex items-center justify-between border-b border-slate-200">
-            <span className="text-xs text-slate-600">{selected.size} selected</span>
+          <div className="px-4 py-2 flex items-center justify-between border-b border-navy-400">
+            <span className="text-xs text-sage">{selected.size} selected</span>
             <div className="flex items-center gap-2">
               <Button size="sm" variant="primary" onClick={() => { ack([...selected]); toasts.push({ variant: "success", title: `Acknowledged ${selected.size}` }); setSelected(new Set()); }}>Acknowledge</Button>
               <Button size="sm" variant="secondary" onClick={() => toasts.push({ variant: "warn", title: `Escalated ${selected.size}`, description: "PagerDuty incident created" })}>Escalate to L2</Button>

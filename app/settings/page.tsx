@@ -42,27 +42,27 @@ export default function SettingsPage() {
       description="Cluster, integrations, profile, and data"
     >
       <Card padded={false}>
-        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+        <div className="px-4 h-11 flex items-center border-b border-navy-400">
           <CardTitle>Cluster</CardTitle>
         </div>
         <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center justify-between"><span className="text-slate-500">Manager</span><span className="font-mono text-slate-900">prod-01</span></div>
-          <div className="flex items-center justify-between"><span className="text-slate-500">Workers</span><span className="font-mono text-slate-900">3 / 3</span></div>
-          <div className="flex items-center justify-between"><span className="text-slate-500">Indexer</span><span className="font-mono text-slate-900">opensearch 2.15</span></div>
-          <div className="flex items-center justify-between"><span className="text-slate-500">API latency p95</span><span className="font-mono text-slate-900">38 ms</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">Manager</span><span className="font-mono text-cream">prod-01</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">Workers</span><span className="font-mono text-cream">3 / 3</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">Indexer</span><span className="font-mono text-cream">opensearch 2.15</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">API latency p95</span><span className="font-mono text-cream">38 ms</span></div>
         </div>
       </Card>
 
       <Card padded={false}>
-        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+        <div className="px-4 h-11 flex items-center border-b border-navy-400">
           <CardTitle>Integrations</CardTitle>
         </div>
-        <ul className="divide-y divide-slate-100">
+        <ul className="divide-y divide-navy-400/60">
           {integrations.map(i => (
             <li key={i.name} className="px-4 py-3 flex items-center gap-3">
               <div className="flex-1 min-w-0">
-                <div className="text-sm font-medium text-slate-900">{i.name}</div>
-                <div className="text-xs text-slate-500">{i.desc}</div>
+                <div className="text-sm font-medium text-cream">{i.name}</div>
+                <div className="text-xs text-navy-600">{i.desc}</div>
               </div>
               <Badge tone={i.status === "connected" ? "low" : "neutral"} dot>{i.status}</Badge>
               <Button size="sm" variant="secondary" onClick={() => toasts.push({ variant: "info", title: `Configuring ${i.name} (coming soon)` })}>Configure</Button>
@@ -72,36 +72,36 @@ export default function SettingsPage() {
       </Card>
 
       <Card padded={false}>
-        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+        <div className="px-4 h-11 flex items-center border-b border-navy-400">
           <CardTitle>Profile</CardTitle>
         </div>
         <div className="p-4 space-y-3 text-sm">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-slate-900">Theme</div>
-              <div className="text-xs text-slate-500">Light is the only supported theme this release.</div>
+              <div className="text-cream">Theme</div>
+              <div className="text-xs text-navy-600">Light is the only supported theme this release.</div>
             </div>
             <Tooltip content="Dark mode coming soon"><span><Badge tone="neutral">Light (locked)</Badge></span></Tooltip>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-slate-900">Default time range</div>
-              <div className="text-xs text-slate-500">Used when you open a page.</div>
+              <div className="text-cream">Default time range</div>
+              <div className="text-xs text-navy-600">Used when you open a page.</div>
             </div>
-            <span className="text-slate-700">Last 24 hours</span>
+            <span className="text-sage">Last 24 hours</span>
           </div>
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-slate-900">Default environment</div>
-              <div className="text-xs text-slate-500">Selected at sign-in.</div>
+              <div className="text-cream">Default environment</div>
+              <div className="text-xs text-navy-600">Selected at sign-in.</div>
             </div>
-            <span className="text-slate-700">production - us-east-1</span>
+            <span className="text-sage">production - us-east-1</span>
           </div>
         </div>
       </Card>
 
       <Card padded={false}>
-        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+        <div className="px-4 h-11 flex items-center border-b border-navy-400">
           <CardTitle>Data</CardTitle>
         </div>
         <div className="p-4 flex flex-wrap items-center gap-2">
@@ -112,10 +112,10 @@ export default function SettingsPage() {
 
       {confirmReset && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <button type="button" aria-label="Close dialog" onClick={() => setConfirmReset(false)} className="absolute inset-0 bg-slate-900/40" />
-          <div className="relative bg-white border border-slate-200 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
-            <div className="text-base font-semibold text-slate-900">Reset to defaults?</div>
-            <div className="text-sm text-slate-600 mt-2">This clears all your acknowledgements, archived alerts, rule toggles, and CVE status changes. The page will reload.</div>
+          <button type="button" aria-label="Close dialog" onClick={() => setConfirmReset(false)} className="absolute inset-0 bg-black/55" />
+          <div className="relative bg-navy-100 border border-navy-400 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
+            <div className="text-base font-semibold text-cream">Reset to defaults?</div>
+            <div className="text-sm text-sage mt-2">This clears all your acknowledgements, archived alerts, rule toggles, and CVE status changes. The page will reload.</div>
             <div className="flex justify-end gap-2 mt-4">
               <Button variant="ghost" onClick={() => setConfirmReset(false)}>Cancel</Button>
               <Button variant="primary" onClick={() => { reset(); toasts.push({ variant: "success", title: "Reset complete" }); setConfirmReset(false); }}>Reset</Button>

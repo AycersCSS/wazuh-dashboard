@@ -81,7 +81,7 @@ export default function LogsPage() {
       </Card>
 
       <Card padded={false}>
-        <div className="grid grid-cols-12 px-3 h-9 items-center text-[10.5px] uppercase tracking-wider text-slate-500 font-semibold border-b border-slate-200">
+        <div className="grid grid-cols-12 px-3 h-9 items-center text-[10.5px] uppercase tracking-wider text-navy-600 font-semibold border-b border-navy-400">
           <div className="col-span-2">Time</div>
           <div className="col-span-2">Source</div>
           <div className="col-span-2">Severity</div>
@@ -96,13 +96,13 @@ export default function LogsPage() {
                 <button key={r.id}
                   type="button"
                   onClick={() => setActive(r)}
-                  className={cn("grid grid-cols-12 px-3 h-9 items-center text-xs border-b border-slate-100 hover:bg-slate-50 cursor-pointer absolute top-0 left-0 right-0 text-left")}
+                  className={cn("grid grid-cols-12 px-3 h-9 items-center text-xs border-b border-navy-400/60 hover:bg-navy-100 cursor-pointer absolute top-0 left-0 right-0 text-left")}
                   style={{ transform: `translateY(${vi.start}px)` }}>
-                  <div className="col-span-2 text-slate-500 font-mono">{formatRelativeTime(r.ts)}</div>
-                  <div className="col-span-2 text-slate-700 font-mono">{r.source}</div>
+                  <div className="col-span-2 text-navy-600 font-mono">{formatRelativeTime(r.ts)}</div>
+                  <div className="col-span-2 text-sage font-mono">{r.source}</div>
                   <div className="col-span-2"><Badge tone={r.severity} dot>{r.severity}</Badge></div>
-                  <div className="col-span-2 text-slate-600 font-mono truncate">{r.agent}</div>
-                  <div className="col-span-4 text-slate-700 truncate font-mono">{r.message}</div>
+                  <div className="col-span-2 text-sage font-mono truncate">{r.agent}</div>
+                  <div className="col-span-4 text-sage truncate font-mono">{r.message}</div>
                 </button>
               );
             })}
@@ -112,13 +112,13 @@ export default function LogsPage() {
 
       {active && (
         <div className="fixed inset-0 z-50">
-          <button type="button" aria-label="Close event detail" onClick={() => setActive(null)} className="absolute inset-0 bg-slate-900/40" />
-          <div onClick={e => e.stopPropagation()} className="absolute right-0 top-0 bottom-0 w-full max-w-2xl bg-white shadow-drawer p-5 overflow-y-auto">
+          <button type="button" aria-label="Close event detail" onClick={() => setActive(null)} className="absolute inset-0 bg-black/55" />
+          <div onClick={e => e.stopPropagation()} className="absolute right-0 top-0 bottom-0 w-full max-w-2xl bg-navy-100 shadow-drawer p-5 overflow-y-auto">
             <div className="flex items-center justify-between mb-3">
-              <div className="text-sm font-semibold text-slate-900">Event {active.id}</div>
-              <button type="button" onClick={() => setActive(null)} className="text-xs text-slate-500 hover:text-slate-900">Close</button>
+              <div className="text-sm font-semibold text-cream">Event {active.id}</div>
+              <button type="button" onClick={() => setActive(null)} className="text-xs text-navy-600 hover:text-cream">Close</button>
             </div>
-            <pre className="text-xs bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto text-slate-700">
+            <pre className="text-xs bg-navy-100 border border-navy-400 rounded-lg p-3 overflow-x-auto text-sage">
 {JSON.stringify(active, null, 2)}
             </pre>
           </div>

@@ -18,7 +18,7 @@ export interface AgentFilters {
 
 export function AgentFiltersBar({ value, onChange, osOptions }: { value: AgentFilters; onChange: (v: AgentFilters) => void; osOptions: { value: string; label: string }[] }) {
   return (
-    <div className="flex flex-wrap items-center gap-2 p-3 bg-white border border-slate-200 rounded-xl">
+    <div className="flex flex-wrap items-center gap-2 p-3 bg-navy-100 border border-navy-400 rounded-xl">
       <div className="flex-1 min-w-[200px] max-w-md">
         <SearchInput value={value.search} onChange={v => onChange({ ...value, search: v })} placeholder="Search by name, IP, OS..." />
       </div>

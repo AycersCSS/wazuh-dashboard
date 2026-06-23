@@ -31,7 +31,7 @@ export function VulnDrawer({ cve, open, onClose }: { cve: string | null; open: b
       title={
         <div className="flex items-center gap-2 min-w-0">
           <Badge tone={v.severity} dot>{v.severity}</Badge>
-          <span className="font-mono text-slate-900 truncate">{v.cve}</span>
+          <span className="font-mono text-cream truncate">{v.cve}</span>
         </div>
       }
       actions={
@@ -46,40 +46,40 @@ export function VulnDrawer({ cve, open, onClose }: { cve: string | null; open: b
           { id: "detail", label: "Detail", content: (
             <div className="space-y-3 text-sm">
               <div>
-                <div className="text-xs text-slate-500">Title</div>
-                <div className="text-slate-900">{v.title}</div>
+                <div className="text-xs text-navy-600">Title</div>
+                <div className="text-cream">{v.title}</div>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <div><div className="text-xs text-slate-500">CVSS</div><div className="font-mono text-slate-900">{v.cvss.toFixed(1)}</div></div>
-                <div><div className="text-xs text-slate-500">Status</div><Badge tone={status === "patched" ? "low" : status === "in_progress" ? "medium" : status === "wont_fix" ? "neutral" : "high"} dot>{status.replace("_", " ")}</Badge></div>
-                <div><div className="text-xs text-slate-500">Package</div><div className="font-mono text-slate-900">{v.package}</div></div>
-                <div><div className="text-xs text-slate-500">Version</div><div className="font-mono text-slate-900">{v.version}</div></div>
-                <div><div className="text-xs text-slate-500">Fix</div><div className="font-mono text-slate-900">{v.fixedVersion ?? "-"}</div></div>
-                <div><div className="text-xs text-slate-500">Affected agents</div><div className="font-mono text-slate-900">{v.agentCount}</div></div>
+                <div><div className="text-xs text-navy-600">CVSS</div><div className="font-mono text-cream">{v.cvss.toFixed(1)}</div></div>
+                <div><div className="text-xs text-navy-600">Status</div><Badge tone={status === "patched" ? "low" : status === "in_progress" ? "medium" : status === "wont_fix" ? "neutral" : "high"} dot>{status.replace("_", " ")}</Badge></div>
+                <div><div className="text-xs text-navy-600">Package</div><div className="font-mono text-cream">{v.package}</div></div>
+                <div><div className="text-xs text-navy-600">Version</div><div className="font-mono text-cream">{v.version}</div></div>
+                <div><div className="text-xs text-navy-600">Fix</div><div className="font-mono text-cream">{v.fixedVersion ?? "-"}</div></div>
+                <div><div className="text-xs text-navy-600">Affected agents</div><div className="font-mono text-cream">{v.agentCount}</div></div>
               </div>
             </div>
           )},
           { id: "remediation", label: "Remediation", content: (
-            <div className="text-sm text-slate-700 space-y-2">
+            <div className="text-sm text-sage space-y-2">
               <p>Upgrade <span className="font-mono">{v.package}</span> to <span className="font-mono">{v.fixedVersion ?? "the latest version"}</span> across all affected agents.</p>
-              <ol className="list-decimal pl-5 text-slate-600 space-y-1 text-xs">
+              <ol className="list-decimal pl-5 text-sage space-y-1 text-xs">
                 <li>Open the agent's package manager (apt, yum, or docker exec).</li>
-                <li>Update the package: <code className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono">install {v.package}={v.fixedVersion ?? "latest"}</code></li>
+                <li>Update the package: <code className="px-1 py-0.5 rounded bg-navy-200 border border-navy-400 font-mono">install {v.package}={v.fixedVersion ?? "latest"}</code></li>
                 <li>Restart the affected service if required.</li>
-                <li>Confirm with: <code className="px-1 py-0.5 rounded bg-slate-100 border border-slate-200 font-mono">wazuh-modulesd -t</code></li>
+                <li>Confirm with: <code className="px-1 py-0.5 rounded bg-navy-200 border border-navy-400 font-mono">wazuh-modulesd -t</code></li>
               </ol>
             </div>
           )},
           { id: "agents", label: `Affected agents (${v.agentCount})`, content: (
-            <ul className="divide-y divide-slate-100 -mx-1 text-xs">
+            <ul className="divide-y divide-navy-400/60 -mx-1 text-xs">
               {agents.slice(0, Math.min(v.agentCount, 12)).map(a => (
                 <li key={a.id} className="px-1 py-2 flex items-center gap-2">
-                  <span className="font-mono text-slate-700">{a.name}</span>
-                  <span className="text-slate-500">{a.ip}</span>
-                  <Link href="/agents" className="ml-auto text-indigo-600 hover:text-indigo-700">view</Link>
+                  <span className="font-mono text-sage">{a.name}</span>
+                  <span className="text-navy-600">{a.ip}</span>
+                  <Link href="/agents" className="ml-auto text-emerald-400 hover:text-severity-info">view</Link>
                 </li>
               ))}
-              {v.agentCount > 12 && <li className="px-1 py-2 text-slate-500">+ {v.agentCount - 12} more</li>}
+              {v.agentCount > 12 && <li className="px-1 py-2 text-navy-600">+ {v.agentCount - 12} more</li>}
             </ul>
           )}
         ]}

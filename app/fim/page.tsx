@@ -21,12 +21,12 @@ export default function FimPage() {
   }, [action, search]);
 
   const columns: Column<FimEvent>[] = [
-    { key: "time", header: "Time", width: "140px", sortable: true, sortValue: f => new Date(f.timestamp).getTime(), cell: f => <span className="text-slate-500">{formatRelativeTime(f.timestamp)}</span> },
+    { key: "time", header: "Time", width: "140px", sortable: true, sortValue: f => new Date(f.timestamp).getTime(), cell: f => <span className="text-navy-600">{formatRelativeTime(f.timestamp)}</span> },
     { key: "action", header: "Action", width: "120px", cell: f => <Badge tone={f.action === "deleted" ? "critical" : f.action === "modified" ? "medium" : "info"} dot>{f.action}</Badge> },
-    { key: "path", header: "Path", cell: f => <span className="font-mono text-slate-700 truncate block max-w-[420px]">{f.path}</span> },
-    { key: "agent", header: "Agent", cell: f => <span className="font-mono text-slate-600">{f.agent}</span> },
-    { key: "user", header: "User", cell: f => <span className="font-mono text-slate-600">{f.user}</span> },
-    { key: "size", header: "Size", cell: f => <span className="font-mono text-slate-600">{f.size.toLocaleString()} B</span> }
+    { key: "path", header: "Path", cell: f => <span className="font-mono text-sage truncate block max-w-[420px]">{f.path}</span> },
+    { key: "agent", header: "Agent", cell: f => <span className="font-mono text-sage">{f.agent}</span> },
+    { key: "user", header: "User", cell: f => <span className="font-mono text-sage">{f.user}</span> },
+    { key: "size", header: "Size", cell: f => <span className="font-mono text-sage">{f.size.toLocaleString()} B</span> }
   ];
 
   return (
@@ -36,11 +36,11 @@ export default function FimPage() {
       title="File Integrity"
       description={`${fimEvents.length} events in last 24h`}
       actions={
-        <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
-          <button type="button" onClick={() => setView("timeline")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "timeline" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}>
+        <div className="flex items-center bg-navy-200 rounded-lg p-0.5">
+          <button type="button" onClick={() => setView("timeline")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "timeline" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
             <Clock size={12} /> Timeline
           </button>
-          <button type="button" onClick={() => setView("table")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "table" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}>
+          <button type="button" onClick={() => setView("table")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "table" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
             <List size={12} /> Table
           </button>
         </div>
@@ -51,7 +51,7 @@ export default function FimPage() {
           <div className="flex items-center gap-1.5">
             {(["all","modified","added","deleted"] as const).map(a => (
               <button key={a} type="button" onClick={() => setAction(a)}
-                className={`h-7 px-2.5 rounded-md border text-xs font-medium ${action === a ? "bg-indigo-50 border-indigo-200 text-indigo-700" : "bg-white border-slate-200 text-slate-600 hover:bg-slate-50"}`}>
+                className={`h-7 px-2.5 rounded-md border text-xs font-medium ${action === a ? "bg-severity-info/15 border-severity-info/40 text-severity-info" : "bg-navy-100 border-navy-400 text-sage hover:bg-navy-100"}`}>
                 {a === "all" ? "All actions" : a}
               </button>
             ))}
@@ -68,19 +68,19 @@ export default function FimPage() {
           {filtered.length === 0 ? (
             <EmptyState icon={FileCheck2} title="No FIM events" description="Try adjusting filters." />
           ) : (
-            <ul className="divide-y divide-slate-100">
+            <ul className="divide-y divide-navy-400/60">
               {filtered.map(f => (
                 <li key={f.id} className="px-4 py-3 flex items-start gap-3">
-                  <div className={`w-2 h-2 rounded-full mt-2 ${f.action === "deleted" ? "bg-rose-500" : f.action === "modified" ? "bg-amber-500" : "bg-sky-500"}`} />
+                  <div className={`w-2 h-2 rounded-full mt-2 ${f.action === "deleted" ? "bg-severity-critical" : f.action === "modified" ? "bg-severity-medium" : "bg-severity-info"}`} />
                   <div className="flex-1 min-w-0">
-                    <div className="text-sm font-mono text-slate-900 truncate">{f.path}</div>
-                    <div className="text-[11px] text-slate-500 mt-0.5">
+                    <div className="text-sm font-mono text-cream truncate">{f.path}</div>
+                    <div className="text-[11px] text-navy-600 mt-0.5">
                       <span className="font-mono">{f.agent}</span> - <span className="font-mono">{f.user}</span> - {f.size.toLocaleString()} B
                     </div>
                   </div>
                   <div className="text-right shrink-0">
                     <Badge tone={f.action === "deleted" ? "critical" : f.action === "modified" ? "medium" : "info"} dot>{f.action}</Badge>
-                    <div className="text-[11px] text-slate-500 mt-1">{formatRelativeTime(f.timestamp)}</div>
+                    <div className="text-[11px] text-navy-600 mt-1">{formatRelativeTime(f.timestamp)}</div>
                   </div>
                 </li>
               ))}

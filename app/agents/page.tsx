@@ -35,13 +35,13 @@ export default function AgentsPage() {
   const disconnCount = agents.filter(a => a.status === "disconnected").length;
 
   const columns: Column<Agent>[] = [
-    { key: "name", header: "Name", sortable: true, sortValue: a => a.name, cell: a => <span className="font-mono text-slate-900">{a.name}</span> },
-    { key: "ip", header: "IP", cell: a => <span className="font-mono text-slate-600">{a.ip}</span> },
-    { key: "os", header: "OS", cell: a => <span className="text-slate-700">{a.os.name} {a.os.version}</span> },
+    { key: "name", header: "Name", sortable: true, sortValue: a => a.name, cell: a => <span className="font-mono text-cream">{a.name}</span> },
+    { key: "ip", header: "IP", cell: a => <span className="font-mono text-sage">{a.ip}</span> },
+    { key: "os", header: "OS", cell: a => <span className="text-sage">{a.os.name} {a.os.version}</span> },
     { key: "status", header: "Status", cell: a => <Badge tone={a.status === "active" ? "low" : a.status === "disconnected" ? "neutral" : a.status === "pending" ? "medium" : "critical"} dot>{a.status.replace("_", " ")}</Badge> },
-    { key: "group", header: "Group", cell: a => <span className="text-slate-600">{a.group.join(", ")}</span> },
-    { key: "last", header: "Last seen", sortable: true, sortValue: a => new Date(a.lastKeepAlive).getTime(), cell: a => <span className="text-slate-500">{formatRelativeTime(a.lastKeepAlive)}</span> },
-    { key: "alerts", header: "Alerts", cell: a => <span className="font-mono text-slate-900">{alerts.filter(x => x.agent.id === a.id).length}</span> }
+    { key: "group", header: "Group", cell: a => <span className="text-sage">{a.group.join(", ")}</span> },
+    { key: "last", header: "Last seen", sortable: true, sortValue: a => new Date(a.lastKeepAlive).getTime(), cell: a => <span className="text-navy-600">{formatRelativeTime(a.lastKeepAlive)}</span> },
+    { key: "alerts", header: "Alerts", cell: a => <span className="font-mono text-cream">{alerts.filter(x => x.agent.id === a.id).length}</span> }
   ];
 
   return (
@@ -51,11 +51,11 @@ export default function AgentsPage() {
       title="Agents"
       description={`${agents.length} endpoints - ${activeCount} active - ${disconnCount} disconnected`}
       actions={
-        <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
-          <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "grid" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}>
+        <div className="flex items-center bg-navy-200 rounded-lg p-0.5">
+          <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "grid" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
             <LayoutGrid size={12} /> Grid
           </button>
-          <button type="button" onClick={() => setView("table")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "table" ? "bg-white text-slate-900 shadow-sm" : "text-slate-500 hover:text-slate-900"}`}>
+          <button type="button" onClick={() => setView("table")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "table" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
             <List size={12} /> Table
           </button>
         </div>

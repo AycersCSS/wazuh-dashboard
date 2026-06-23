@@ -17,22 +17,22 @@ export default function ThreatIntelPage() {
     >
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {threatActors.map(a => (
-          <Card key={a.id} className="hover:border-slate-300 transition-colors">
+          <Card key={a.id} className="hover:border-navy-500 transition-colors">
             <div className="flex items-start justify-between gap-2">
               <div>
-                <div className="text-sm font-semibold text-slate-900">{a.name}</div>
-                <div className="text-xs text-slate-500">{a.id} - {a.origin}</div>
+                <div className="text-sm font-semibold text-cream">{a.name}</div>
+                <div className="text-xs text-navy-600">{a.id} - {a.origin}</div>
               </div>
               {a.observed24h > 0 && <Badge tone={a.observed24h > 8 ? "high" : "medium"} dot>{a.observed24h} sightings</Badge>}
             </div>
             <div className="mt-3 flex flex-wrap gap-1">
-              {a.targetSectors.map(s => <span key={s} className="inline-flex items-center h-5 px-1.5 rounded text-[10.5px] bg-slate-100 text-slate-600 border border-slate-200">{s}</span>)}
+              {a.targetSectors.map(s => <span key={s} className="inline-flex items-center h-5 px-1.5 rounded text-[10.5px] bg-navy-200 text-sage border border-navy-400">{s}</span>)}
             </div>
             <div className="mt-3">
-              <div className="text-[10.5px] uppercase tracking-wider text-slate-500 font-semibold mb-1.5">TTPs</div>
+              <div className="text-[10.5px] uppercase tracking-wider text-navy-600 font-semibold mb-1.5">TTPs</div>
               <div className="flex flex-wrap gap-1">
                 {a.ttps.map(t => (
-                  <span key={t} className="inline-flex items-center gap-1 h-5 px-1.5 rounded text-[10.5px] bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  <span key={t} className="inline-flex items-center gap-1 h-5 px-1.5 rounded text-[10.5px] bg-severity-info/15 text-severity-info border border-severity-info/40">
                     <Shield size={10} /> {t}
                   </span>
                 ))}
@@ -43,7 +43,7 @@ export default function ThreatIntelPage() {
       </section>
 
       <Card padded={false}>
-        <div className="px-4 h-11 flex items-center border-b border-slate-200">
+        <div className="px-4 h-11 flex items-center border-b border-navy-400">
           <div>
             <CardTitle>All tracked techniques</CardTitle>
             <CardSubtitle>Click a chip to filter the coverage map</CardSubtitle>
@@ -51,8 +51,8 @@ export default function ThreatIntelPage() {
         </div>
         <div className="p-4 flex flex-wrap gap-1.5">
           {Array.from(new Set(threatActors.flatMap(a => a.ttps))).map(t => (
-            <span key={t} className="inline-flex items-center gap-1 h-6 px-2 rounded text-xs bg-slate-100 text-slate-700 border border-slate-200">
-              {t} <span className="text-slate-500">- {techToTactic.get(t) ?? "?"}</span>
+            <span key={t} className="inline-flex items-center gap-1 h-6 px-2 rounded text-xs bg-navy-200 text-sage border border-navy-400">
+              {t} <span className="text-navy-600">- {techToTactic.get(t) ?? "?"}</span>
             </span>
           ))}
         </div>

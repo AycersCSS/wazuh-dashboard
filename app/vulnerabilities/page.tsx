@@ -24,14 +24,14 @@ export default function VulnerabilitiesPage() {
   }, [search, patchable]);
 
   const columns: Column<Vulnerability>[] = [
-    { key: "cve", header: "CVE", width: "180px", cell: v => <span className="font-mono text-slate-900">{v.cve}</span> },
-    { key: "title", header: "Title", sortable: true, sortValue: v => v.title, cell: v => <span className="text-slate-700 truncate block max-w-[300px]">{v.title}</span> },
+    { key: "cve", header: "CVE", width: "180px", cell: v => <span className="font-mono text-cream">{v.cve}</span> },
+    { key: "title", header: "Title", sortable: true, sortValue: v => v.title, cell: v => <span className="text-sage truncate block max-w-[300px]">{v.title}</span> },
     { key: "sev", header: "Severity", width: "120px", cell: v => <Badge tone={v.severity} dot>{v.severity}</Badge> },
-    { key: "pkg", header: "Package", cell: v => <span className="font-mono text-slate-700">{v.package}</span> },
-    { key: "ver", header: "Version", cell: v => <span className="font-mono text-slate-600">{v.version}</span> },
-    { key: "fix", header: "Fix", cell: v => v.fixedVersion ? <span className="font-mono text-slate-900">{v.fixedVersion}</span> : <span className="text-slate-300">-</span> },
-    { key: "cvss", header: "CVSS", width: "90px", sortable: true, sortValue: v => v.cvss, cell: v => <span className="font-mono text-slate-900">{v.cvss.toFixed(1)}</span> },
-    { key: "agents", header: "Agents", width: "90px", sortable: true, sortValue: v => v.agentCount, cell: v => <span className="font-mono text-slate-900">{v.agentCount}</span> },
+    { key: "pkg", header: "Package", cell: v => <span className="font-mono text-sage">{v.package}</span> },
+    { key: "ver", header: "Version", cell: v => <span className="font-mono text-sage">{v.version}</span> },
+    { key: "fix", header: "Fix", cell: v => v.fixedVersion ? <span className="font-mono text-cream">{v.fixedVersion}</span> : <span className="text-navy-600/70">-</span> },
+    { key: "cvss", header: "CVSS", width: "90px", sortable: true, sortValue: v => v.cvss, cell: v => <span className="font-mono text-cream">{v.cvss.toFixed(1)}</span> },
+    { key: "agents", header: "Agents", width: "90px", sortable: true, sortValue: v => v.agentCount, cell: v => <span className="font-mono text-cream">{v.agentCount}</span> },
     { key: "status", header: "Status", width: "140px", cell: v => {
       const s = vulnStatus(v.cve);
       return <Badge tone={s === "patched" ? "low" : s === "in_progress" ? "medium" : s === "wont_fix" ? "neutral" : "high"} dot>{s.replace("_", " ")}</Badge>;
@@ -51,8 +51,8 @@ export default function VulnerabilitiesPage() {
       <Card padded={false}>
         <div className="p-3 flex flex-wrap items-center gap-2">
           <div className="flex-1 min-w-[240px] max-w-md"><SearchInput value={search} onChange={setSearch} placeholder="Search CVE, package, title..." /></div>
-          <label className="inline-flex items-center gap-2 text-xs text-slate-600">
-            <input type="checkbox" checked={patchable} onChange={e => setPatchable(e.target.checked)} className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" />
+          <label className="inline-flex items-center gap-2 text-xs text-sage">
+            <input type="checkbox" checked={patchable} onChange={e => setPatchable(e.target.checked)} className="rounded border-navy-500 text-emerald-400 focus:ring-indigo-500" />
             Patchable only
           </label>
         </div>

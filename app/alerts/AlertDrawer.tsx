@@ -43,7 +43,7 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
       title={
         <div className="flex items-center gap-2 min-w-0">
           <Badge tone={tone} dot>{severityLabel(alert.rule.level)} - {alert.rule.level}</Badge>
-          <span className="font-mono text-xs text-slate-500 truncate">{alert.id}</span>
+          <span className="font-mono text-xs text-navy-600 truncate">{alert.id}</span>
         </div>
       }
       actions={
@@ -61,12 +61,12 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
             content: (
               <div className="space-y-3">
                 <div>
-                  <div className="text-xs text-slate-500 mb-1">Description</div>
-                  <div className="text-sm text-slate-900">{alert.rule.description}</div>
+                  <div className="text-xs text-navy-600 mb-1">Description</div>
+                  <div className="text-sm text-cream">{alert.rule.description}</div>
                 </div>
                 <div>
-                  <div className="text-xs text-slate-500 mb-1">Raw event</div>
-                  <pre className="text-xs bg-slate-50 border border-slate-200 rounded-lg p-3 overflow-x-auto text-slate-700">
+                  <div className="text-xs text-navy-600 mb-1">Raw event</div>
+                  <pre className="text-xs bg-navy-100 border border-navy-400 rounded-lg p-3 overflow-x-auto text-sage">
 {JSON.stringify({
   id: alert.id,
   timestamp: alert.timestamp,
@@ -87,10 +87,10 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
             content: (
               <Card padded={false}>
                 <div className="p-4 space-y-2">
-                  <div className="text-sm font-semibold text-slate-900 font-mono">{alert.agent.name}</div>
-                  <div className="text-xs text-slate-500 font-mono">{alert.agent.ip}</div>
-                  <div className="text-xs text-slate-500">Reported {formatRelativeTime(alert.timestamp)}</div>
-                  <div className="pt-2"><Link href="/agents" className="text-xs text-indigo-600 hover:text-indigo-700">View agent profile</Link></div>
+                  <div className="text-sm font-semibold text-cream font-mono">{alert.agent.name}</div>
+                  <div className="text-xs text-navy-600 font-mono">{alert.agent.ip}</div>
+                  <div className="text-xs text-navy-600">Reported {formatRelativeTime(alert.timestamp)}</div>
+                  <div className="pt-2"><Link href="/agents" className="text-xs text-emerald-400 hover:text-severity-info">View agent profile</Link></div>
                 </div>
               </Card>
             )
@@ -102,18 +102,18 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
                 <div className="p-4 space-y-2">
                   <div className="flex items-center gap-2">
                     <Badge tone="info" dot>{alert.rule.mitre.id}</Badge>
-                    <span className="text-sm font-semibold text-slate-900">{alert.rule.mitre.tactic}</span>
+                    <span className="text-sm font-semibold text-cream">{alert.rule.mitre.tactic}</span>
                   </div>
-                  <div className="text-xs text-slate-500 font-mono">{alert.rule.mitre.technique}</div>
-                  <div className="pt-2"><Link href="/mitre" className="text-xs text-indigo-600 hover:text-indigo-700">View on coverage map</Link></div>
+                  <div className="text-xs text-navy-600 font-mono">{alert.rule.mitre.technique}</div>
+                  <div className="pt-2"><Link href="/mitre" className="text-xs text-emerald-400 hover:text-severity-info">View on coverage map</Link></div>
                 </div>
               </Card>
-            ) : <div className="text-sm text-slate-500">No MITRE mapping for this rule.</div>
+            ) : <div className="text-sm text-navy-600">No MITRE mapping for this rule.</div>
           },
           {
             id: "related", label: "Related",
             content: (
-              <div className="text-sm text-slate-600">Other alerts with rule {alert.rule.id} in the last 24h would appear here.</div>
+              <div className="text-sm text-sage">Other alerts with rule {alert.rule.id} in the last 24h would appear here.</div>
             )
           }
         ]}
@@ -121,10 +121,10 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
 
       {escalate && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <button type="button" aria-label="Close dialog" onClick={() => setEscalate(false)} className="absolute inset-0 bg-slate-900/40" />
-          <div className="relative bg-white border border-slate-200 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
-            <div className="text-base font-semibold text-slate-900">Escalate to L2</div>
-            <div className="text-sm text-slate-600 mt-2">
+          <button type="button" aria-label="Close dialog" onClick={() => setEscalate(false)} className="absolute inset-0 bg-black/55" />
+          <div className="relative bg-navy-100 border border-navy-400 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
+            <div className="text-base font-semibold text-cream">Escalate to L2</div>
+            <div className="text-sm text-sage mt-2">
               {alert.id} ({severityLabel(alert.rule.level)} - {alert.rule.level}) will be sent to the on-call L2 analyst via PagerDuty. Continue?
             </div>
             <div className="flex justify-end gap-2 mt-4">
