@@ -1,150 +1,132 @@
 "use client";
-import { useState } from "react";
-import { ShieldCheck, ExternalLink, ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui";
-import { alerts } from "@/data/seed";
+import { useMemo, useState } from "react";
+import { Boxes } from "lucide-react";
+import { Page, Card, CardTitle, CardSubtitle, Badge, Button } from "@/components/ui";
+import { alerts, mitreTactics } from "@/data/seed";
 import { cn } from "@/lib/cn";
-import { useToasts } from "@/hooks/useToasts";
-import { useRouter } from "next/navigation";
-
-const matrix: { id: string; tactic: string; techniques: { id: string; name: string }[] }[] = [
-  { id: "TA0001", tactic: "Initial Access",     techniques: [{ id: "T1190", name: "Exploit Public-Facing App" }, { id: "T1566.001", name: "Spearphishing Attachment" }, { id: "T1078", name: "Valid Accounts" }] },
-  { id: "TA0002", tactic: "Execution",          techniques: [{ id: "T1059.004", name: "Unix Shell" }, { id: "T1204.002", name: "Malicious File" }, { id: "T1047", name: "Windows Mgmt Instrumentation" }] },
-  { id: "TA0003", tactic: "Persistence",        techniques: [{ id: "T1543", name: "Service" }, { id: "T1547", name: "Boot/Logon Autostart" }, { id: "T1098", name: "Account Manipulation" }] },
-  { id: "TA0004", tactic: "Privilege Escalation", techniques: [{ id: "T1068", name: "Exploitation for Priv Esc" }, { id: "T1548.002", name: "Bypass UAC" }] },
-  { id: "TA0005", tactic: "Defense Evasion",    techniques: [{ id: "T1070.004", name: "File Deletion" }, { id: "T1027", name: "Obfuscated Files" }, { id: "T1562.001", name: "Disable/Modify Tools" }] },
-  { id: "TA0006", tactic: "Credential Access",  techniques: [{ id: "T1110.003", name: "Password Spraying" }, { id: "T1003.001", name: "LSASS Memory" }, { id: "T1555", name: "Credentials from Stores" }] },
-  { id: "TA0007", tactic: "Discovery",          techniques: [{ id: "T1083", name: "File/Directory Discovery" }, { id: "T1057", name: "Process Discovery" }, { id: "T1087.002", name: "Domain Account" }] },
-  { id: "TA0008", tactic: "Lateral Movement",   techniques: [{ id: "T1021.001", name: "RDP" }, { id: "T1021.002", name: "SMB/Windows Admin Shares" }, { id: "T1570", name: "Lateral Tool Transfer" }] },
-  { id: "TA0009", tactic: "Collection",         techniques: [{ id: "T1005", name: "Data from Local System" }, { id: "T1114", name: "Email Collection" }] },
-  { id: "TA0010", tactic: "Exfiltration",       techniques: [{ id: "T1041", name: "Exfil over C2" }, { id: "T1567.002", name: "Exfil to Cloud" }, { id: "T1052.001", name: "Exfil over USB" }] },
-  { id: "TA0011", tactic: "Command & Control",  techniques: [{ id: "T1071.001", name: "Web Protocols" }, { id: "T1090.003", name: "Multi-hop Proxy" }, { id: "T1572", name: "Protocol Tunneling" }] },
-  { id: "TA0040", tactic: "Impact",             techniques: [{ id: "T1486", name: "Data Encrypted for Impact" }, { id: "T1490", name: "Inhibit System Recovery" }] }
-];
-
-function heatFor(techId: string) {
-  return alerts.filter(a => a.rule.mitre?.technique === techId).length;
-}
 
 export default function MitrePage() {
-  const toasts = useToasts();
-  const router = useRouter();
-  const [open, setOpen] = useState<string | null>("TA0001");
+  const [active, setActive] = useState<string | null>(null);
+
+  // Compute count per (tactic, technique) from alerts
+  const matrix = useMemo(() => {
+    const m = new Map<string, Map<string, number>>();
+    mitreTactics.forEach(t => m.set(t.id, new Map()));
+    alerts.forEach(a => {
+      const mi = a.rule.mitre;
+      if (!mi) return;
+      const cell = m.get(mi.id);
+      if (cell) cell.set(mi.technique, (cell.get(mi.technique) ?? 0) + 1);
+    });
+    return m;
+  }, []);
+
+  const observedTactics = useMemo(() => {
+    return mitreTactics
+      .map(t => {
+        const cell = matrix.get(t.id)!;
+        const total = [...cell.values()].reduce((s, n) => s + n, 0);
+        return { id: t.id, tactic: t.tactic, techniques: t.techniques, total };
+      })
+      .sort((a, b) => a.total - b.total);
+  }, [matrix]);
+
+  const max = Math.max(1, ...[...matrix.values()].flatMap(m => [...m.values()]));
+  const activeTactic = active ? observedTactics.find(t => t.id === active) : null;
 
   return (
-    <div className="space-y-5">
-      <header className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-        <div>
-          <div className="flex items-center gap-2 text-[11px] text-muted font-mono uppercase tracking-wider">
-            <span className="text-signal-400">Analyze</span><span>·</span><span>MITRE ATT&CK</span>
+    <Page
+      breadcrumb={[{ href: "/", label: "Analyze" }, { label: "MITRE ATT&CK" }]}
+      icon={Boxes}
+      title="MITRE ATT&CK"
+      description="12 tactics - alert volume by technique - click a cell to filter"
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
+        <Card className="lg:col-span-2" padded={false}>
+          <div className="px-4 h-11 flex items-center justify-between border-b border-slate-200">
+            <div>
+              <CardTitle>Coverage heatmap</CardTitle>
+              <CardSubtitle>Cell intensity = alert count in last 24h</CardSubtitle>
+            </div>
+            <div className="text-[10.5px] text-slate-500 flex items-center gap-1.5">
+              <span>low</span>
+              <span className="w-12 h-1.5 rounded-full bg-gradient-to-r from-indigo-100 to-indigo-700" />
+              <span>high</span>
+            </div>
           </div>
-          <h1 className="mt-1 text-[22px] font-semibold tracking-tight">ATT&CK coverage</h1>
-          <p className="text-[12.5px] text-muted">Heatmap of techniques observed in the last 30 days.</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <button onClick={() => toasts.push({ variant: "info", title: "Refreshing ATT&CK data" })} className="btn">Refresh</button>
-          <button onClick={() => toasts.push({ variant: "success", title: "Coverage report exported" })} className="btn btn-primary">Export coverage</button>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 text-[10.5px] text-muted">
-            <span>less</span>
-            <span className="w-3 h-3 rounded-sm" style={{ background: "rgba(122,162,255,0.08)" }} />
-            <span className="w-3 h-3 rounded-sm" style={{ background: "rgba(122,162,255,0.25)" }} />
-            <span className="w-3 h-3 rounded-sm" style={{ background: "rgba(245,192,74,0.55)" }} />
-            <span className="w-3 h-3 rounded-sm" style={{ background: "rgba(255,61,90,0.7)" }} />
-            <span>more</span>
+          <div className="p-4 space-y-1.5">
+            {observedTactics.map(t => {
+              const cell = matrix.get(t.id)!;
+              const isActive = active === t.id;
+              return (
+                <div key={t.id} className={cn("grid items-center gap-2 py-1 px-2 rounded-md", isActive ? "bg-indigo-50" : "hover:bg-slate-50")} style={{ gridTemplateColumns: "200px 1fr 60px" }}>
+                  <div className="flex items-center gap-2 min-w-0">
+                    <span className="text-[10.5px] font-mono text-slate-500">{t.id}</span>
+                    <span className="text-sm text-slate-900 truncate">{t.tactic}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {t.techniques.map(tech => {
+                      const count = cell.get(tech) ?? 0;
+                      const intensity = count / max;
+                      return (
+                        <button
+                          key={tech}
+                          type="button"
+                          onClick={() => setActive(t.id)}
+                          title={`${tech} - ${count} alerts`}
+                          className="h-6 flex-1 rounded border border-slate-200"
+                          style={{ background: `rgba(79, 70, 229, ${0.05 + intensity * 0.95})` }}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className="text-right text-xs font-mono text-slate-700">{t.total}</div>
+                </div>
+              );
+            })}
           </div>
-        </div>
-      </header>
+        </Card>
 
-      <Card padded={false} header={
-        <>
-          <div className="min-w-0">
-            <div className="text-[12.5px] font-semibold text-primary truncate">Tactics matrix</div>
-            <div className="text-[11px] text-muted truncate">Click a tactic to expand techniques</div>
-          </div>
-          <div />
-        </>
-      }>
-        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-2 p-3">
-          {matrix.map(t => {
-            const total = t.techniques.reduce((s, tech) => s + heatFor(tech.id), 0);
-            const intensity = Math.min(1, total / 30);
-            const bg = `rgba(255, ${61 + (1-intensity)*100}, ${90 + (1-intensity)*30}, ${0.15 + intensity*0.55})`;
-            return (
-              <button type="button"
-                key={t.id}
-                onClick={() => setOpen(open === t.id ? null : t.id)}
-                className={cn("text-left p-3 rounded-md border border-soft transition-colors", open === t.id ? "surface-3" : "surface-2 hover:border-base")}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10.5px] font-mono text-muted">{t.id}</span>
-                  <ChevronRight size={12} className={cn("text-muted transition-transform", open === t.id && "rotate-90 text-signal-400")} />
-                </div>
-                <div className="text-[12.5px] text-primary mt-0.5">{t.tactic}</div>
-                <div className="mt-2 h-1.5 rounded-full overflow-hidden surface-3">
-                  <div className="h-full" style={{ width: `${(intensity * 100).toFixed(0)}%`, background: bg }} />
-                </div>
-                <div className="mt-1.5 text-[10.5px] text-muted flex items-center justify-between">
-                  <span>{t.techniques.length} techniques</span>
-                  <span className="font-mono text-primary">{total} hits</span>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </Card>
-
-      {open && (() => {
-        const t = matrix.find(m => m.id === open)!;
-        return (
-          <Card padded={false} header={
+        <Card padded={false}>
+          {activeTactic ? (
             <>
-              <div className="min-w-0">
-                <div className="text-[12.5px] font-semibold text-primary truncate">{t.tactic}</div>
-                <div className="text-[11px] text-muted truncate">{`${t.id} · ${t.techniques.length} techniques`}</div>
+              <div className="px-4 h-11 flex items-center justify-between border-b border-slate-200">
+                <div>
+                  <CardTitle>{activeTactic.tactic}</CardTitle>
+                  <CardSubtitle>{activeTactic.id}</CardSubtitle>
+                </div>
+                <Button size="sm" variant="secondary" onClick={() => setActive(null)}>Clear</Button>
               </div>
-              <button onClick={() => toasts.push({ variant: "info", title: `Opening ${t.id} on attack.mitre.org` })} className="btn btn-sm">Open in ATT&CK<ExternalLink size={11} /></button>
-            </>
-          }>
-            <table className="w-full text-left text-[12px]">
-              <thead className="surface-2 text-[10.5px] uppercase tracking-wider text-muted">
-                <tr>
-                  <th className="px-3 py-2">Technique</th>
-                  <th className="px-3 py-2">ID</th>
-                  <th className="px-3 py-2">Hits 30d</th>
-                  <th className="px-3 py-2">Detection rule</th>
-                  <th className="px-3 py-2"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {t.techniques.map(tech => {
-                  const h = heatFor(tech.id);
+              <ul className="p-3 space-y-2">
+                {activeTactic.techniques.map(tech => {
+                  const count = matrix.get(activeTactic.id)?.get(tech) ?? 0;
                   return (
-                    <tr key={tech.id} className="border-t border-soft hover:surface-2 cursor-pointer"
-                        onClick={() => router.push(`/alerts?q=${encodeURIComponent(tech.id)}`)}>
-                      <td className="px-3 py-2.5 text-primary">{tech.name}</td>
-                      <td className="px-3 py-2.5 font-mono text-muted">{tech.id}</td>
-                      <td className="px-3 py-2.5">
-                        <div className="flex items-center gap-2">
-                          <div className="font-mono">{h}</div>
-                          <div className="flex-1 max-w-[160px] h-1.5 surface-3 rounded-full overflow-hidden">
-                            <div className="h-full bg-signal-500" style={{ width: `${Math.min(100, h * 4)}%` }} />
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-3 py-2.5 font-mono text-muted">5{tech.id.slice(1, 5).replace(/\D/g, "").padEnd(4, "0")}</td>
-                      <td className="px-3 py-2.5 text-right">
-                        <button onClick={e => { e.stopPropagation(); toasts.push({ variant: "info", title: `Loading alerts for ${tech.id}` }); router.push(`/alerts?q=${encodeURIComponent(tech.id)}`); }} className="btn btn-sm">View<ChevronRight size={11} /></button>
-                      </td>
-                    </tr>
+                    <li key={tech} className="flex items-center gap-2 text-xs">
+                      <span className="font-mono text-slate-700">{tech}</span>
+                      <span className="ml-auto font-mono text-slate-900">{count}</span>
+                    </li>
                   );
                 })}
-              </tbody>
-            </table>
-          </Card>
-        );
-      })()}
-    </div>
+              </ul>
+            </>
+          ) : (
+            <div className="p-4">
+              <div className="text-sm font-semibold text-slate-900">Click any row</div>
+              <p className="text-xs text-slate-500 mt-1">Select a tactic to see its observed techniques and counts.</p>
+              <div className="mt-4 text-xs text-slate-500">Weakest 3 tactics:</div>
+              <ul className="mt-2 space-y-1">
+                {observedTactics.slice(0, 3).map(t => (
+                  <li key={t.id} className="flex items-center gap-2 text-xs">
+                    <Badge tone="medium" dot>{t.id}</Badge>
+                    <span className="text-slate-700">{t.tactic}</span>
+                    <span className="ml-auto font-mono text-slate-500">{t.total}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </Card>
+      </div>
+    </Page>
   );
 }

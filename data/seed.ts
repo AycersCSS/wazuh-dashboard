@@ -28,7 +28,7 @@ const osTemplates = [
   { name: "macOS", versions: ["13.6", "14.5"] }
 ];
 const groups = ["default", "web-servers", "db-servers", "workstations", "kubernetes", "dmz", "compliance-pci", "cloud-aws"];
-const mitreTactics = [
+export const mitreTactics = [
   { id: "TA0001", tactic: "Initial Access",     techniques: ["T1190", "T1566.001", "T1078"] },
   { id: "TA0002", tactic: "Execution",          techniques: ["T1059.004", "T1204.002", "T1047"] },
   { id: "TA0003", tactic: "Persistence",        techniques: ["T1543", "T1547", "T1098"] },
