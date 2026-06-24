@@ -22,14 +22,6 @@ export function severityLabel(sev: Severity | number): string {
   return "Informational";
 }
 
-export function severityShort(sev: Severity | number): string {
-  if (sev >= 13) return "C";
-  if (sev >= 10) return "H";
-  if (sev >= 7)  return "M";
-  if (sev >= 4)  return "L";
-  return "I";
-}
-
 export type AgentStatus = "active" | "disconnected" | "never_connected" | "pending";
 
 export interface Agent {

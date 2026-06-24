@@ -6,13 +6,11 @@ export function useLocalStorage<T>(
   key: string,
   fallback: T
 ): [T, (value: T | ((prev: T) => T)) => void] {
-  const [value, setValue] = useState<T>(fallback);
-
-  // Hydrate from storage on mount
-  useEffect(() => {
-    setValue(storage.get<T>(key, fallback));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+  // Lazy initializer: read storage once on mount, fall back on the server.
+  const [value, setValue] = useState<T>(() => {
+    if (typeof window === "undefined") return fallback;
+    return storage.get<T>(key, fallback);
+  });
 
   // Cross-tab sync
   useEffect(() => {

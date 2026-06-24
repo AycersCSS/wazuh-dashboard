@@ -1,17 +1,14 @@
 "use client";
-import { Bug, Shield } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, Badge } from "@/components/ui";
 import { threatActors, mitreTactics } from "@/data/seed";
 
 export default function ThreatIntelPage() {
-  // Build a map of technique ID -> tactic
   const techToTactic = new Map<string, string>();
   mitreTactics.forEach(t => t.techniques.forEach(tech => techToTactic.set(tech, t.tactic)));
 
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Operate" }, { label: "Threat Intel" }]}
-      icon={Bug}
       title="Threat Intel"
       description={`${threatActors.length} actors tracked - ${threatActors.reduce((s, a) => s + a.observed24h, 0)} sightings in last 24h`}
     >
@@ -32,8 +29,8 @@ export default function ThreatIntelPage() {
               <div className="text-[10.5px] uppercase tracking-wider text-navy-600 font-semibold mb-1.5">TTPs</div>
               <div className="flex flex-wrap gap-1">
                 {a.ttps.map(t => (
-                  <span key={t} className="inline-flex items-center gap-1 h-5 px-1.5 rounded text-[10.5px] bg-severity-info/15 text-severity-info border border-severity-info/40">
-                    <Shield size={10} /> {t}
+                  <span key={t} className="inline-flex items-center h-5 px-1.5 rounded text-[10.5px] bg-severity-info/15 text-severity-info border border-severity-info/40">
+                    {t}
                   </span>
                 ))}
               </div>

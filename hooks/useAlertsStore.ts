@@ -128,14 +128,6 @@ export function useToggleRule() {
   }, []);
 }
 
-export function useMarkFimReviewed() {
-  return useCallback((id: string) => {
-    fimMap[id] = { state: "reviewed" };
-    storage.set(KEY_FIM, fimMap);
-    notify();
-  }, []);
-}
-
 export function useIsolateAgent() {
   return useCallback((id: string, isolation: AgentIsolation) => {
     agentMap[id] = { isolation };
@@ -154,8 +146,6 @@ export function useReset() {
 }
 
 export function isAcked(id: string)   { return !!alertMap[id]?.acknowledged; }
-export function isArchived(id: string){ return !!alertMap[id]?.archived; }
 export function vulnStatus(cve: string): VulnState       { return vulnMap[cve]?.status ?? "open"; }
 export function ruleStatus(id: string): "enabled" | "disabled" { return ruleMap[id]?.status ?? "enabled"; }
-export function fimReviewState(id: string): FimReviewState { return fimMap[id]?.state ?? "unreviewed"; }
 export function agentIsolation(id: string): AgentIsolation  { return agentMap[id]?.isolation ?? "normal"; }

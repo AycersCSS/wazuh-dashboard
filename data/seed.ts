@@ -1,5 +1,5 @@
 import type {
-  Agent, Alert, ComplianceControl, FimEvent, KpiSummary, Rule, Vulnerability
+  Agent, Alert, ComplianceControl, FimEvent, Rule, Vulnerability
 } from "@/types";
 
 // Deterministic pseudo-random so server/client renders match.
@@ -196,33 +196,8 @@ export const fimEvents: FimEvent[] = Array.from({ length: 60 }, (_, i) => {
   };
 });
 
-// ----- KPI summary -----
-export const kpi: KpiSummary = (() => {
-  const active = agents.filter(a => a.status === "active").length;
-  const disconnected = agents.filter(a => a.status === "disconnected").length;
-  return {
-    agentsTotal: agents.length,
-    agentsActive: active,
-    agentsDisconnected: disconnected,
-    alerts24h: alerts.length,
-    alertsCritical: alerts.filter(a => a.rule.level >= 13).length,
-    vulnsOpen: vulnerabilities.reduce((s, v) => s + v.agentCount, 0),
-    complianceScore:
-      compliance.reduce((s, c) => s + c.pass, 0) /
-      compliance.reduce((s, c) => s + c.total, 0),
-    mitreTechniquesObserved: (() => {
-      const s = new Set<string>();
-      for (const a of alerts) {
-        if (a.rule.mitre) s.add(a.rule.mitre.technique);
-      }
-      return s.size;
-    })(),
-    eventsPerSecond: 1284
-  };
-})();
-
 // ----- 24h alert timeline (per hour) -----
-export const alertTimeline = Array.from({ length: 24 }, (_, h) => {
+const _alertTimeline = Array.from({ length: 24 }, (_, h) => {
   const total = between(35, 220);
   const critical = Math.round(total * (0.04 + rand() * 0.07));
   const high     = Math.round(total * (0.10 + rand() * 0.08));
@@ -251,18 +226,4 @@ export const threatActors: ThreatActor[] = [
   { id: "TA-007", name: "Magecart",           origin: "Unknown",       targetSectors: ["Retail", "E-commerce"],      ttps: ["T1059.007", "T1557"],             observed24h: 7  },
   { id: "TA-008", name: "TA505",              origin: "Unknown",       targetSectors: ["Finance"],                   ttps: ["T1486", "T1489"],                 observed24h: 2  },
   { id: "TA-009", name: "Kimsuky",            origin: "North Korea",   targetSectors: ["Government", "Think tanks"], ttps: ["T1566.001", "T1071.001"],          observed24h: 5  }
-];
-
-// ----- Top countries (geolocation) -----
-export const geoTop = [
-  { country: "United States", code: "US", events: 2410, lat: 38,  lng: -97  },
-  { country: "Germany",       code: "DE", events: 1180, lat: 51,  lng: 9    },
-  { country: "Brazil",        code: "BR", events:  742, lat: -14, lng: -51  },
-  { country: "China",         code: "CN", events:  691, lat: 35,  lng: 105  },
-  { country: "United Kingdom",code: "GB", events:  512, lat: 55,  lng: -3   },
-  { country: "India",         code: "IN", events:  488, lat: 20,  lng: 78   },
-  { country: "Russia",        code: "RU", events:  401, lat: 60,  lng: 100  },
-  { country: "Japan",         code: "JP", events:  338, lat: 36,  lng: 138  },
-  { country: "Australia",     code: "AU", events:  291, lat: -25, lng: 134  },
-  { country: "South Africa",  code: "ZA", events:  198, lat: -29, lng: 25   }
 ];

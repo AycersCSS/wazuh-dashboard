@@ -1,6 +1,5 @@
 "use client";
 import { useState, useMemo } from "react";
-import { FileCheck2, Clock, List } from "lucide-react";
 import { Page, DataGrid, type Column, Card, EmptyState, SearchInput, Button, Badge } from "@/components/ui";
 import { fimEvents } from "@/data/seed";
 import { formatRelativeTime } from "@/lib/format";
@@ -32,16 +31,15 @@ export default function FimPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Analyze" }, { label: "File Integrity" }]}
-      icon={FileCheck2}
       title="File Integrity"
       description={`${fimEvents.length} events in last 24h`}
       actions={
         <div className="flex items-center bg-navy-200 rounded-lg p-0.5">
           <button type="button" onClick={() => setView("timeline")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "timeline" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
-            <Clock size={12} /> Timeline
+            Timeline
           </button>
           <button type="button" onClick={() => setView("table")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "table" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
-            <List size={12} /> Table
+            Table
           </button>
         </div>
       }
@@ -62,11 +60,11 @@ export default function FimPage() {
 
       {view === "table" ? (
         <DataGrid columns={columns} rows={filtered} rowKey={f => f.id}
-          emptyState={<EmptyState icon={FileCheck2} title="No FIM events" description="Try adjusting filters." />} />
+          emptyState={<EmptyState title="No FIM events" description="Try adjusting filters." />} />
       ) : (
         <Card padded={false}>
           {filtered.length === 0 ? (
-            <EmptyState icon={FileCheck2} title="No FIM events" description="Try adjusting filters." />
+            <EmptyState title="No FIM events" description="Try adjusting filters." />
           ) : (
             <ul className="divide-y divide-navy-400/60">
               {filtered.map(f => (

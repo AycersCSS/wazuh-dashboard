@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Drawer, Button, Badge, Tabs, Card } from "@/components/ui";
-import { ShieldCheck, AlertTriangle, Copy, Archive } from "lucide-react";
+import { Drawer, Button, Badge, Tabs, Card, ConfirmDialog } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useAcknowledge, useArchive, isAcked } from "@/hooks/useAlertsStore";
 import { severityBucket, severityLabel } from "@/types";
@@ -48,9 +47,9 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
       }
       actions={
         <>
-          {!acked && <Button size="sm" variant="primary" onClick={onAck} icon={<ShieldCheck size={12} />}>Acknowledge</Button>}
-          <Button size="sm" variant="secondary" onClick={() => setEscalate(true)} icon={<AlertTriangle size={12} />}>Escalate</Button>
-          <Button size="sm" variant="ghost" onClick={onArchive} icon={<Archive size={12} />}>Archive</Button>
+          {!acked && <Button size="sm" variant="primary" onClick={onAck}>Acknowledge</Button>}
+          <Button size="sm" variant="secondary" onClick={() => setEscalate(true)}>Escalate</Button>
+          <Button size="sm" variant="ghost" onClick={onArchive}>Archive</Button>
         </>
       }
     >
@@ -78,7 +77,7 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
 }, null, 2)}
                   </pre>
                 </div>
-                <Button size="sm" variant="secondary" onClick={copyId} icon={<Copy size={12} />}>Copy ID</Button>
+                <Button size="sm" variant="secondary" onClick={copyId}>Copy ID</Button>
               </div>
             )
           },
@@ -119,21 +118,14 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
         ]}
       />
 
-      {escalate && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <button type="button" aria-label="Close dialog" onClick={() => setEscalate(false)} className="absolute inset-0 bg-black/55" />
-          <div className="relative bg-navy-100 border border-navy-400 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
-            <div className="text-base font-semibold text-cream">Escalate to L2</div>
-            <div className="text-sm text-sage mt-2">
-              {alert.id} ({severityLabel(alert.rule.level)} - {alert.rule.level}) will be sent to the on-call L2 analyst via PagerDuty. Continue?
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="ghost" onClick={() => setEscalate(false)}>Cancel</Button>
-              <Button variant="primary" onClick={onEscalateConfirm}>Send to L2</Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={escalate}
+        onClose={() => setEscalate(false)}
+        onConfirm={onEscalateConfirm}
+        title="Escalate to L2"
+        body={`${alert.id} (${severityLabel(alert.rule.level)} - ${alert.rule.level}) will be sent to the on-call L2 analyst via PagerDuty. Continue?`}
+        confirmLabel="Send to L2"
+      />
     </Drawer>
   );
 }

@@ -5,14 +5,13 @@ import { vulnerabilities } from "@/data/seed";
 import { VulnDrawer } from "./VulnDrawer";
 import { vulnStatus } from "@/hooks/useAlertsStore";
 import { useAlertsStore } from "@/hooks/useAlertsStore";
-import { ShieldAlert, ShieldCheck } from "lucide-react";
 import type { Vulnerability } from "@/types";
 
 export default function VulnerabilitiesPage() {
   const [search, setSearch] = useState("");
   const [patchable, setPatchable] = useState(false);
   const [active, setActive] = useState<string | null>(null);
-  useAlertsStore(); // subscribe
+  useAlertsStore();
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -43,10 +42,9 @@ export default function VulnerabilitiesPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Analyze" }, { label: "Vulnerabilities" }]}
-      icon={ShieldCheck}
       title="Vulnerabilities"
       description={`${vulnerabilities.length} open CVEs - ${totalOcc} occurrences across the fleet`}
-      actions={<Button variant="secondary" onClick={() => { setPatchable(p => !p); }} icon={<ShieldAlert size={14} />}>{patchable ? "Showing patchable only" : "Show patchable only"}</Button>}
+      actions={<Button variant="secondary" onClick={() => { setPatchable(p => !p); }}>{patchable ? "Showing patchable only" : "Show patchable only"}</Button>}
     >
       <Card padded={false}>
         <div className="p-3 flex flex-wrap items-center gap-2">
@@ -63,7 +61,7 @@ export default function VulnerabilitiesPage() {
         rows={filtered}
         rowKey={v => v.cve}
         onRowClick={v => setActive(v.cve)}
-        emptyState={<EmptyState icon={ShieldCheck} title="No CVEs match" description="Try clearing search or filters." />}
+        emptyState={<EmptyState title="No CVEs match" description="Try clearing search or filters." />}
       />
 
       <VulnDrawer cve={active} open={!!active} onClose={() => setActive(null)} />

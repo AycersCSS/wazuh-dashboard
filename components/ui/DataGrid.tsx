@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp } from "lucide-react";
 import { Table, type Column } from "./Table";
 import { cn } from "@/lib/cn";
 
@@ -46,10 +45,10 @@ export function DataGrid<T>({
           if (prev.dir === "asc") return { key: c.key, dir: "desc" };
           return null;
         })}
-        className={cn("inline-flex items-center gap-1 hover:text-slate-900")}
+        className={cn("inline-flex items-center gap-1 hover:text-cream")}
       >
         {c.header}
-        {sort?.key === c.key && (sort.dir === "asc" ? <ArrowUp size={11} /> : <ArrowDown size={11} />)}
+        {sort?.key === c.key && <span className="text-[10px] text-navy-600">{sort.dir === "asc" ? "(asc)" : "(desc)"}</span>}
       </button>
     ) : c.header
   })), [columns, sort]);

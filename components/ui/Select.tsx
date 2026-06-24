@@ -1,5 +1,4 @@
 "use client";
-import { ChevronDown } from "lucide-react";
 import { forwardRef, type SelectHTMLAttributes } from "react";
 import { cn } from "@/lib/cn";
 
@@ -21,7 +20,6 @@ export const Select = forwardRef<HTMLSelectElement, Props>(function Select(
       >
         {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
-      <ChevronDown size={14} className="absolute right-2 top-1/2 -translate-y-1/2 text-navy-600 pointer-events-none" />
     </div>
   );
 });

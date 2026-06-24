@@ -1,9 +1,5 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
-import {
-  Bell, Search, ChevronDown, HelpCircle, LogOut, User2,
-  Server, Check, AlertTriangle, Keyboard, Sparkles, ExternalLink, Building2
-} from "lucide-react";
 import { cn } from "@/lib/cn";
 import { formatCompact } from "@/lib/format";
 import { useTimeRange, type TimeRangeKey } from "@/hooks/useTimeRange";
@@ -75,9 +71,8 @@ export function Topbar() {
             onClick={() => { setTenantOpen(o => !o); setRangeOpen(false); setNotifOpen(false); setUserOpen(false); setHelpOpen(false); }}
             className="flex items-center gap-2 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             aria-haspopup="menu" aria-expanded={tenantOpen}>
-            <Building2 size={13} className="text-emerald-400" />
             <span className="text-[12px] font-medium text-cream">{tenantLabel}</span>
-            <ChevronDown size={12} className={cn("text-navy-600 transition-transform", tenantOpen && "rotate-180")} />
+            <span className={cn("text-navy-600 transition-transform text-[10px]", tenantOpen && "rotate-180")}>v</span>
           </button>
           {tenantOpen && (
             <div className="absolute left-0 top-10 w-[280px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
@@ -90,22 +85,12 @@ export function Topbar() {
                     <span className="font-medium text-cream">{t.label}</span>
                     <span className="text-[10.5px] text-navy-600">{t.sub}</span>
                   </span>
-                  {tenant === t.key && <Check size={12} className="text-emerald-400" />}
+                  {tenant === t.key && <span className="text-emerald-400">*</span>}
                 </button>
               ))}
             </div>
           )}
         </div>
-
-        <button type="button" onClick={() => cmd.setOpen(true)}
-          className="hidden lg:flex flex-1 max-w-[520px] items-center gap-2 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md text-[12px] text-navy-600 hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-          aria-label="Open search">
-          <Search size={13} />
-          <span className="flex-1 text-left">Search alerts, agents, CVEs, tenants...</span>
-          <span className="flex items-center gap-1">
-            <span className="kbd">Cmd</span><span className="kbd">K</span>
-          </span>
-        </button>
 
         <div ref={rangeRef} className="relative">
           <button type="button"
@@ -113,7 +98,7 @@ export function Topbar() {
             className="hidden md:flex items-center gap-1.5 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             aria-haspopup="menu" aria-expanded={rangeOpen}>
             <span className="text-[12px] text-cream">{range.label}</span>
-            <ChevronDown size={12} className={cn("text-navy-600 transition-transform", rangeOpen && "rotate-180")} />
+            <span className={cn("text-navy-600 transition-transform text-[10px]", rangeOpen && "rotate-180")}>v</span>
           </button>
           {rangeOpen && (
             <div className="absolute right-0 top-10 w-[200px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
@@ -123,18 +108,17 @@ export function Topbar() {
                   className={cn("w-full flex items-center justify-between px-3 h-8 text-xs hover:bg-navy-200",
                     range.key === r.key ? "text-emerald-400 bg-navy-200" : "text-sage")}>
                   <span>{r.label}</span>
-                  {range.key === r.key && <Check size={12} className="text-emerald-400" />}
+                  {range.key === r.key && <span className="text-emerald-400">*</span>}
                 </button>
               ))}
             </div>
           )}
         </div>
 
-        <div className="flex-1 md:hidden" />
+        <div className="flex-1" />
 
-        <div className="hidden md:flex items-center gap-3 text-[11.5px]">
+        <div className="hidden md:flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5 text-navy-600">
-            <Server size={12} />
             <span><span className="text-cream font-mono">{formatCompact(64)}</span> agents</span>
           </div>
           <span className="w-px h-4 bg-navy-400" />
@@ -155,12 +139,12 @@ export function Topbar() {
             onClick={() => { setHelpOpen(o => !o); setTenantOpen(false); setNotifOpen(false); setUserOpen(false); }}
             className="inline-flex items-center justify-center w-8 h-8 rounded-md text-navy-600 hover:text-cream hover:bg-navy-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             aria-label="Help" aria-haspopup="menu" aria-expanded={helpOpen}>
-            <HelpCircle size={14} />
+            <span className="text-[12px]">?</span>
           </button>
           {helpOpen && (
             <div className="absolute right-0 top-10 w-[320px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="px-3 h-10 flex items-center border-b border-navy-400 text-xs font-semibold text-cream">
-                <Sparkles size={12} className="text-emerald-400 mr-2" /> Keyboard shortcuts
+                Keyboard shortcuts
               </div>
               <ul className="py-1.5 text-xs">
                 {[
@@ -182,10 +166,10 @@ export function Topbar() {
               </ul>
               <div className="border-t border-navy-400 p-2 flex justify-between">
                 <button type="button" onClick={() => { setHelpOpen(false); cmd.setOpen(true); }} className="inline-flex items-center gap-1.5 h-7 px-2.5 text-xs font-medium bg-navy border border-navy-500 rounded-md hover:bg-navy-200 text-cream">
-                  <Search size={11} />Open palette
+                  Open palette
                 </button>
                 <button type="button" onClick={() => toasts.push({ variant: "info", title: "Opening documentation" })} className="inline-flex items-center gap-1.5 h-7 px-2.5 text-xs font-medium bg-navy border border-navy-500 rounded-md hover:bg-navy-200 text-cream">
-                  <ExternalLink size={11} />Docs
+                  Docs
                 </button>
               </div>
             </div>
@@ -197,7 +181,7 @@ export function Topbar() {
             onClick={() => { setNotifOpen(o => !o); setTenantOpen(false); setRangeOpen(false); setUserOpen(false); setHelpOpen(false); }}
             className="relative inline-flex items-center justify-center w-8 h-8 rounded-md text-navy-600 hover:text-cream hover:bg-navy-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             aria-label="Notifications" aria-haspopup="menu" aria-expanded={notifOpen}>
-            <Bell size={14} />
+            <span className="text-[12px]">bell</span>
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-severity-critical" />
           </button>
           {notifOpen && (
@@ -249,7 +233,7 @@ export function Topbar() {
               <span className="text-xs font-medium text-cream">Alex Chen</span>
               <span className="text-[10px] text-navy-600">MergeIT SOC Analyst - L2</span>
             </span>
-            <ChevronDown size={12} className={cn("text-navy-600 transition-transform", userOpen && "rotate-180")} />
+            <span className={cn("text-navy-600 transition-transform text-[10px]", userOpen && "rotate-180")}>v</span>
           </button>
           {userOpen && (
             <div className="absolute right-0 top-10 w-[260px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
@@ -265,14 +249,13 @@ export function Topbar() {
               </div>
               <ul className="py-1.5">
                 {[
-                  { icon: User2,    label: "Profile",     action: () => toasts.push({ title: "Profile (coming soon)" }) },
-                  { icon: Server,   label: "My shifts",   action: () => toasts.push({ title: "Shifts view (coming soon)" }) },
-                  { icon: Check,    label: "On-call",     action: () => toasts.push({ title: "On-call roster (coming soon)" }) },
-                  { icon: Keyboard, label: "Shortcuts",   action: () => { setUserOpen(false); setHelpOpen(true); } }
-                ].map(({ icon: Icon, label, action }) => (
+                  { label: "Profile",     action: () => toasts.push({ title: "Profile (coming soon)" }) },
+                  { label: "My shifts",   action: () => toasts.push({ title: "Shifts view (coming soon)" }) },
+                  { label: "On-call",     action: () => toasts.push({ title: "On-call roster (coming soon)" }) },
+                  { label: "Shortcuts",   action: () => { setUserOpen(false); setHelpOpen(true); } }
+                ].map(({ label, action }) => (
                   <li key={label}>
                     <button type="button" onClick={action} className="w-full flex items-center gap-2.5 px-3 h-8 text-xs text-sage hover:text-cream hover:bg-navy-200 transition-colors">
-                      <Icon size={13} className="text-navy-600" />
                       {label}
                     </button>
                   </li>
@@ -283,20 +266,28 @@ export function Topbar() {
                   type="button"
                   onClick={() => toasts.push({ variant: "warn", title: "Signed out", description: "Redirecting to login..." })}
                   className="w-full flex items-center gap-2.5 px-3 h-8 text-xs text-severity-critical hover:bg-severity-critical/15 transition-colors">
-                  <LogOut size={13} />
                   Sign out
                 </button>
               </div>
             </div>
           )}
         </div>
+
+        <button type="button" onClick={() => cmd.setOpen(true)}
+          className="hidden lg:flex w-[360px] xl:w-[440px] items-center gap-2 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md text-[13px] text-navy-600 hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+          aria-label="Open search">
+          <span className="flex-1 text-left">Search alerts, agents, CVEs, tenants...</span>
+          <span className="flex items-center gap-1">
+            <span className="kbd">Cmd</span><span className="kbd">K</span>
+          </span>
+        </button>
       </div>
 
       <div className="hidden lg:flex h-7 items-center gap-3 px-4 border-t border-navy-400 text-[11px] text-navy-600">
         <button type="button"
           onClick={() => toasts.push({ variant: "warn", title: "3 Cyber Essentials reviews pending", description: "Opening review queue..." })}
           className="flex items-center gap-1.5 hover:text-cream">
-          <AlertTriangle size={11} className="text-severity-medium" />
+          <span className="text-[10px] text-severity-medium">!</span>
           <span><span className="text-cream">3 reviews</span> pending across tenants</span>
         </button>
         <span className="w-px h-3 bg-navy-400" />

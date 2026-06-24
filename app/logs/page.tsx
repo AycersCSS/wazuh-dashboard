@@ -1,7 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { FileText, Pause, Play } from "lucide-react";
 import { Page, Card, Badge, SearchInput, Select, Button } from "@/components/ui";
 import { fimEvents } from "@/data/seed";
 import { formatRelativeTime } from "@/lib/format";
@@ -29,7 +28,6 @@ export default function LogsPage() {
   const [severity, setSeverity] = useState("all");
   const [active, setActive] = useState<Row | null>(null);
 
-  // live tail
   useEffect(() => {
     if (paused) return;
     const t = window.setInterval(() => {
@@ -63,10 +61,9 @@ export default function LogsPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Configure" }, { label: "Logs" }]}
-      icon={FileText}
       title="Logs"
       description={`${rows.length} events - ${paused ? "paused" : "live"}`}
-      actions={<Button variant="secondary" onClick={() => setPaused(p => !p)} icon={paused ? <Play size={14} /> : <Pause size={14} />}>{paused ? "Resume" : "Pause"}</Button>}
+      actions={<Button variant="secondary" onClick={() => setPaused(p => !p)}>{paused ? "Resume" : "Pause"}</Button>}
     >
       <Card padded={false}>
         <div className="p-3 flex flex-wrap items-center gap-2">

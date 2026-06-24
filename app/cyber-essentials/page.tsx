@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { FileCheck2, ArrowUpRight, ShieldAlert, RefreshCcw, ScrollText, ListChecks } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, StatCard, Badge, Button, Table, type Column } from "@/components/ui";
 import { getIntegration } from "@/data/integrations";
 import { useToasts } from "@/hooks/useToasts";
@@ -39,7 +38,7 @@ const columns: Column<Rec>[] = [
   { key: "tenant", header: "Tenant", width: "140px", cell: r => <span className="text-cream">{r.tenant}</span> },
   { key: "control", header: "Control", width: "160px", cell: r => <span className="font-mono text-sage">{r.control}</span> },
   { key: "desc", header: "Event", cell: r => <span className="text-cream">{r.desc}</span> },
-  { key: "wazuh", header: "Wazuh", width: "120px", cell: r => <Link href="/alerts" className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[12px]"><ArrowUpRight size={12} /> {r.wazuh}</Link> }
+  { key: "wazuh", header: "Wazuh", width: "120px", cell: r => <Link href="/alerts" className="text-emerald-400 hover:brightness-110 text-[12px]">{r.wazuh}</Link> }
 ];
 
 export default function CyberEssentialsPage() {
@@ -50,21 +49,20 @@ export default function CyberEssentialsPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "MergeIT" }, { label: "Report" }, { label: "Cyber Essentials" }]}
-      icon={FileCheck2}
       title="Cyber Essentials"
       description="One evidence pack per tenant, auto-built from Wazuh. CE Plus ready."
       actions={
         <>
-          <Button variant="secondary" icon={<RefreshCcw size={14} />} onClick={refresh}>Refresh</Button>
-          <Link href="/compliance"><Button variant="primary" icon={<ArrowUpRight size={14} />}>Open compliance</Button></Link>
+          <Button variant="secondary" onClick={refresh}>Refresh</Button>
+          <Link href="/compliance"><Button variant="primary">Open compliance</Button></Link>
         </>
       }
     >
       <section>
         <Card>
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0">
-              <ListChecks size={18} className="text-emerald-400" />
+            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0 text-[10px] font-mono text-emerald-400">
+              CE
             </div>
             <div>
               <div className="text-[15px] text-sage font-normal font-oswald">Audit-ready evidence, collected nightly</div>
@@ -146,16 +144,16 @@ export default function CyberEssentialsPage() {
           <ul className="col-span-12 lg:col-span-8 space-y-1.5">
             {integration.wazuhMapping.map(m => (
               <li key={m.label} className="flex items-center gap-2 text-[12px]">
-                <ShieldAlert size={12} className="text-emerald-400 shrink-0" />
+                <span className="text-emerald-400 shrink-0 text-[10px] font-mono">WAZ</span>
                 <span className="text-sage flex-1">{m.label}</span>
-                <Link href={m.href} className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[11px]">
-                  Open <ArrowUpRight size={11} />
+                <Link href={m.href} className="text-emerald-400 hover:brightness-110 text-[11px]">
+                  Open
                 </Link>
               </li>
             ))}
           </ul>
           <div className="col-span-12 lg:col-span-4 text-[11px] text-navy-600 flex items-start gap-2 lg:border-l lg:border-navy-400 lg:pl-5">
-            <ScrollText size={11} className="mt-0.5" /> Custom rule family <span className="font-mono text-sage">93000-93099</span> - managed by MergeIT.
+            Custom rule family <span className="font-mono text-sage">93000-93099</span> - managed by MergeIT.
           </div>
         </div>
       </Card>
@@ -167,7 +165,7 @@ export default function CyberEssentialsPage() {
               <CardTitle>Recent activity</CardTitle>
               <CardSubtitle>Last 24h - Cyber Essentials evidence - click an event to investigate in Wazuh</CardSubtitle>
             </div>
-            <Link href="/compliance"><Button size="sm" variant="secondary" icon={<ArrowUpRight size={12} />}>All controls</Button></Link>
+            <Link href="/compliance"><Button size="sm" variant="secondary">All controls</Button></Link>
           </>
         }>
         <Table columns={columns} rows={recent} rowKey={r => r.id} />

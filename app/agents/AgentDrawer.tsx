@@ -1,7 +1,6 @@
 "use client";
 import { useState } from "react";
-import { Drawer, Button, Card, Badge, Tabs } from "@/components/ui";
-import { Server, PowerOff, Lock, FileText } from "lucide-react";
+import { Drawer, Button, Badge, Tabs, ConfirmDialog } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsolateAgent, agentIsolation } from "@/hooks/useAlertsStore";
 import { formatRelativeTime } from "@/lib/format";
@@ -36,7 +35,9 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
       onClose={onClose}
       title={
         <div className="flex items-center gap-2 min-w-0">
-          <div className="w-8 h-8 rounded-lg bg-navy-200 border border-navy-400 grid place-items-center"><Server size={16} className="text-navy-600" /></div>
+          <div className="w-8 h-8 rounded-lg bg-navy-200 border border-navy-400 grid place-items-center text-[10px] font-mono text-navy-600">
+            {agent.os.name.slice(0, 2).toUpperCase()}
+          </div>
           <div className="min-w-0">
             <div className="text-sm font-mono text-cream truncate">{agent.name}</div>
             <div className="text-[11px] font-mono text-navy-600 truncate">{agent.ip} - {agent.os.name} {agent.os.version}</div>
@@ -45,10 +46,10 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
       }
       actions={
         <>
-          <Button size="sm" variant={iso === "isolated" ? "primary" : "secondary"} onClick={() => setConfirm("isolate")} icon={<Lock size={12} />}>
+          <Button size="sm" variant={iso === "isolated" ? "primary" : "secondary"} onClick={() => setConfirm("isolate")}>
             {iso === "isolated" ? "Unisolate" : "Isolate"}
           </Button>
-          <Button size="sm" variant="secondary" onClick={() => setConfirm("restart")} icon={<PowerOff size={12} />}>Restart</Button>
+          <Button size="sm" variant="secondary" onClick={() => setConfirm("restart")}>Restart</Button>
         </>
       }
     >
@@ -91,7 +92,7 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
               <ul className="divide-y divide-navy-400/60 -mx-1">
                 {myFim.map(f => (
                   <li key={f.id} className="px-1 py-2 text-xs flex items-center gap-2">
-                    <FileText size={12} className="text-navy-600" />
+                    <span className="text-[10px] font-mono text-navy-600 uppercase">FIM</span>
                     <span className="font-mono text-sage">{f.path}</span>
                     <span className="text-navy-600 ml-auto">{f.action}</span>
                     <span className="text-navy-600">{formatRelativeTime(f.timestamp)}</span>
@@ -114,25 +115,22 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
         ]}
       />
 
-      {confirm && (
-        <div className="fixed inset-0 z-[60] flex items-center justify-center">
-          <button type="button" aria-label="Close dialog" onClick={() => setConfirm(null)} className="absolute inset-0 bg-black/55" />
-          <div className="relative bg-navy-100 border border-navy-400 rounded-xl shadow-drawer max-w-md w-full mx-4 p-5">
-            <div className="text-base font-semibold text-cream">{confirm === "isolate" ? "Isolate agent" : "Restart agent"}</div>
-            <div className="text-sm text-sage mt-2">
-              {confirm === "isolate"
-                ? `${agent.name} will be cut off from the network. Investigate before isolating.`
-                : `${agent.name} will be restarted. Active sessions will be dropped.`}
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button variant="ghost" onClick={() => setConfirm(null)}>Cancel</Button>
-              <Button variant="primary" onClick={confirm === "isolate" ? doIsolate : doRestart}>
-                {confirm === "isolate" ? "Isolate" : "Restart"}
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={confirm === "isolate"}
+        onClose={() => setConfirm(null)}
+        onConfirm={doIsolate}
+        title="Isolate agent"
+        body={`${agent.name} will be cut off from the network. Investigate before isolating.`}
+        confirmLabel="Isolate"
+      />
+      <ConfirmDialog
+        open={confirm === "restart"}
+        onClose={() => setConfirm(null)}
+        onConfirm={doRestart}
+        title="Restart agent"
+        body={`${agent.name} will be restarted. Active sessions will be dropped.`}
+        confirmLabel="Restart"
+      />
     </Drawer>
   );
 }

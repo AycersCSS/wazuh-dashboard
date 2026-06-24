@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useReducer, useRef, useMemo } from "react";
-import { Search, ArrowRight, Hash, Server, Bug, ShieldAlert, ScrollText } from "lucide-react";
 import { useCommandPalette } from "@/hooks/useCommandPalette";
 import { useRouter } from "next/navigation";
 import { alerts, agents, vulnerabilities, rules } from "@/data/seed";
@@ -30,7 +29,7 @@ const pages: Hit[] = [
 ];
 
 const recent: Hit[] = [
-  { id: "r1", type: "alert", label: "EVT-3F7A — SSH brute force",     hint: "agent 0104 · 1m ago",    href: "/alerts",         group: "Jump to" },
+  { id: "r1", type: "alert", label: "EVT-3F7A - SSH brute force",     hint: "agent 0104 · 1m ago",    href: "/alerts",         group: "Jump to" },
   { id: "r2", type: "agent", label: "ubuntu-018",                     hint: "10.4.12.7 · active",     href: "/agents",         group: "Jump to" },
   { id: "r3", type: "cve",   label: "CVE-2024-3094",                  hint: "liblzma5 · 5 critical",   href: "/vulnerabilities",group: "Jump to" }
 ];
@@ -72,7 +71,7 @@ export function CommandPalette() {
       .slice(0, 6)
       .map(a => ({
         id: a.id, type: "alert", group: "Investigate",
-        label: `${a.id} — ${a.rule.description}`,
+        label: `${a.id} - ${a.rule.description}`,
         hint: `${a.agent.name} · ${severityBucket(a.rule.level)}`,
         href: `/alerts`
       }));
@@ -92,7 +91,7 @@ export function CommandPalette() {
       .slice(0, 6)
       .map(v => ({
         id: v.cve, type: "cve", group: "Investigate",
-        label: `${v.cve} — ${v.title}`,
+        label: `${v.cve} - ${v.title}`,
         hint: `${v.package} ${v.version} · ${v.severity}`,
         href: `/vulnerabilities`
       }));
@@ -102,7 +101,7 @@ export function CommandPalette() {
       .slice(0, 4)
       .map(r => ({
         id: r.id, type: "rule", group: "Investigate",
-        label: `Rule ${r.id} — ${r.description}`,
+        label: `Rule ${r.id} - ${r.description}`,
         hint: `level ${r.level} · ${r.hits24h.toLocaleString()} hits/24h`,
         href: `/rules`
       }));
@@ -111,8 +110,6 @@ export function CommandPalette() {
 
     return [...alertHits, ...agentHits, ...cveHits, ...ruleHits, ...pageHits];
   }, [q]);
-
-  useEffect(() => { return; }, []);
 
   if (!open) return null;
 
@@ -136,38 +133,33 @@ export function CommandPalette() {
 
   return (
     <div className="fixed inset-0 z-50 animate-slide-up" role="dialog" aria-modal="true" aria-label="Command palette">
-      <button type="button" aria-label="Close command palette" onClick={() => setOpen(false)} className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm" />
-      <div className="relative mx-auto mt-[10vh] w-[min(640px,92vw)] bg-white border border-slate-200 rounded-xl shadow-pop overflow-hidden">
-        <div className="flex items-center gap-2.5 h-12 px-3 border-b border-slate-200">
-          <Search size={14} className="text-slate-500" />
+      <button type="button" aria-label="Close command palette" onClick={() => setOpen(false)} className="absolute inset-0 bg-black/55 backdrop-blur-sm" />
+      <div className="relative mx-auto mt-[10vh] w-[min(640px,92vw)] bg-navy-100 border border-navy-400 rounded-xl shadow-pop overflow-hidden">
+        <div className="flex items-center gap-2.5 h-12 px-3 border-b border-navy-400">
+          <span className="text-navy-600 text-[12px]">/</span>
           <input
             ref={ref}
             value={q}
             onChange={e => setQ(e.target.value)}
             onKeyDown={onKey}
-            placeholder="Search alerts, agents, CVEs, rules, or pages…"
+            placeholder="Search alerts, agents, CVEs, rules, or pages"
             aria-label="Search alerts, agents, CVEs, rules, or pages"
-            className="flex-1 bg-transparent outline-none text-[13px] text-slate-900 placeholder:text-slate-500"
+            className="flex-1 bg-transparent outline-none text-[13px] text-cream placeholder:text-navy-600"
           />
           <span className="kbd">esc</span>
         </div>
 
         <div className="max-h-[60vh] overflow-y-auto py-1.5">
           {results.length === 0 ? (
-            <div className="px-4 py-10 text-center text-slate-500 text-[12.5px]">
-              No matches for <span className="font-mono text-slate-900">“{q}”</span>
+            <div className="px-4 py-10 text-center text-navy-600 text-[12.5px]">
+              No matches for <span className="font-mono text-cream">"{q}"</span>
             </div>
           ) : groups.map(g => g.items.length ? (
             <div key={g.name} className="py-1">
-              <div className="px-3 py-1 text-[10.5px] uppercase tracking-wider text-slate-500 font-semibold">{g.name}</div>
+              <div className="px-3 py-1 text-[10.5px] uppercase tracking-wider text-navy-600 font-semibold">{g.name}</div>
               {g.items.map(h => {
                 running++;
                 const active = running === idx;
-                const Icon = h.type === "alert" ? ShieldAlert
-                  : h.type === "agent" ? Server
-                  : h.type === "cve" ? Bug
-                  : h.type === "rule" ? ScrollText
-                  : Hash;
                 return (
                   <button type="button"
                     key={`${g.name}-${h.id}`}
@@ -175,13 +167,13 @@ export function CommandPalette() {
                     onClick={() => choose(h)}
                     className={cn(
                       "w-full flex items-center gap-3 px-3 h-9 text-left",
-                      active ? "bg-slate-50" : ""
+                      active ? "bg-navy-100" : ""
                     )}
                   >
-                    <Icon size={13} className={cn("flex-none", active ? "text-indigo-600" : "text-slate-500")} />
-                    <span className="flex-1 text-[12.5px] text-slate-900 truncate">{h.label}</span>
-                    <span className="hidden md:block text-[11px] text-slate-500 truncate max-w-[40%]">{h.hint}</span>
-                    {active && <ArrowRight size={12} className="text-indigo-600" />}
+                    <span className={cn("flex-none text-[10px] uppercase", active ? "text-emerald-400" : "text-navy-600")}>{h.type}</span>
+                    <span className="flex-1 text-[12.5px] text-cream truncate">{h.label}</span>
+                    <span className="hidden md:block text-[11px] text-navy-600 truncate max-w-[40%]">{h.hint}</span>
+                    {active && <span className="text-emerald-400">&gt;</span>}
                   </button>
                 );
               })}
@@ -189,10 +181,10 @@ export function CommandPalette() {
           ) : null)}
         </div>
 
-        <div className="flex items-center justify-between h-9 px-3 border-t border-slate-200 text-[10.5px] text-slate-500">
+        <div className="flex items-center justify-between h-9 px-3 border-t border-navy-400 text-[10.5px] text-navy-600">
           <div className="flex items-center gap-3">
-            <span className="flex items-center gap-1"><span className="kbd">↑</span><span className="kbd">↓</span> navigate</span>
-            <span className="flex items-center gap-1"><span className="kbd">↵</span> open</span>
+            <span className="flex items-center gap-1"><span className="kbd">^</span><span className="kbd">v</span> navigate</span>
+            <span className="flex items-center gap-1"><span className="kbd">ret</span> open</span>
             <span className="flex items-center gap-1"><span className="kbd">esc</span> close</span>
           </div>
           <span>Sentinel Stack · v0.1.0</span>

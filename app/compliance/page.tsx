@@ -1,6 +1,5 @@
 "use client";
 import { useState, useMemo } from "react";
-import { GitBranch, ChevronDown, ChevronRight } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, Badge, EmptyState } from "@/components/ui";
 import { compliance } from "@/data/seed";
 import type { ComplianceControl } from "@/types";
@@ -22,7 +21,6 @@ export default function CompliancePage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Analyze" }, { label: "Compliance" }]}
-      icon={GitBranch}
       title="Compliance"
       description="Weighted across PCI DSS, HIPAA, GDPR, NIST 800-53, and ISO 27001"
     >
@@ -56,7 +54,7 @@ export default function CompliancePage() {
                 onClick={() => setOpen(o => ({ ...o, [fw]: !o[fw] }))}
                 className="w-full flex items-center justify-between gap-3 px-4 h-12 border-b border-navy-400 hover:bg-navy-100">
                 <div className="flex items-center gap-2 text-sm font-semibold text-cream">
-                  {isOpen ? <ChevronDown size={14} /> : <ChevronRight size={14} />} {fw}
+                  <span className="text-navy-600 text-[10px]">{isOpen ? "v" : ">"}</span> {fw}
                 </div>
                 <div className="text-xs text-navy-600">{ctrls.length} controls</div>
               </button>

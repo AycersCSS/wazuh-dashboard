@@ -1,5 +1,4 @@
 "use client";
-import { X } from "lucide-react";
 import { Input } from "./Input";
 
 interface Props {
@@ -17,9 +16,9 @@ export function SearchInput({ value, onChange, placeholder = "Search..." }: Prop
           type="button"
           aria-label="Clear search"
           onClick={() => onChange("")}
-          className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-navy-600 hover:text-cream"
+          className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 h-6 rounded text-[10px] text-navy-600 hover:text-cream hover:bg-navy-200"
         >
-          <X size={12} />
+          clear
         </button>
       )}
     </div>

@@ -2,39 +2,33 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
-import {
-  LayoutDashboard, Cloud, Monitor, Bug, FileCheck2, Users, Boxes,
-  ShieldAlert, Server, ScrollText, FileText, Settings, Search, ChevronDown,
-  ChevronRight, GitBranch, Activity, ListChecks, BookOpen
-} from "lucide-react";
-import { BrandMark } from "./BrandMark";
 import { useState } from "react";
 
-type Item = { href: string; label: string; icon: any; count?: number; tag?: "new" | "beta" };
+type Item = { href: string; label: string; count?: number; tag?: "new" | "beta" };
 type Group = { title: string; items: Item[] };
 
 const operate: Item[] = [
-  { href: "/microsoft-365", label: "Microsoft 365", icon: Cloud },
-  { href: "/ninjaone",       label: "NinjaOne",       icon: Monitor },
-  { href: "/bitdefender",    label: "Bitdefender",    icon: Bug }
+  { href: "/microsoft-365", label: "Microsoft 365" },
+  { href: "/ninjaone",       label: "NinjaOne" },
+  { href: "/bitdefender",    label: "Bitdefender" }
 ];
 
 const report: Item[] = [
-  { href: "/cyber-essentials", label: "Cyber Essentials", icon: FileCheck2 },
-  { href: "/customer-portal",  label: "Customer Portal",  icon: Users, tag: "beta" }
+  { href: "/cyber-essentials", label: "Cyber Essentials" },
+  { href: "/customer-portal",  label: "Customer Portal", tag: "beta" }
 ];
 
 const rawWazuh: Item[] = [
-  { href: "/alerts",         label: "Alerts",          icon: ShieldAlert },
-  { href: "/agents",         label: "Agents",          icon: Server },
-  { href: "/vulnerabilities",label: "Vulnerabilities", icon: ListChecks },
-  { href: "/fim",            label: "File Integrity",  icon: FileCheck2 },
-  { href: "/compliance",     label: "Compliance",      icon: GitBranch },
-  { href: "/mitre",          label: "MITRE ATT&CK",    icon: Boxes },
-  { href: "/rules",          label: "Rules",           icon: ScrollText },
-  { href: "/logs",           label: "Logs",            icon: FileText },
-  { href: "/threat-intel",   label: "Threat Intel",    icon: BookOpen },
-  { href: "/settings",       label: "Settings",        icon: Settings }
+  { href: "/alerts",         label: "Alerts" },
+  { href: "/agents",         label: "Agents" },
+  { href: "/vulnerabilities",label: "Vulnerabilities" },
+  { href: "/fim",            label: "File Integrity" },
+  { href: "/compliance",     label: "Compliance" },
+  { href: "/mitre",          label: "MITRE ATT&CK" },
+  { href: "/rules",          label: "Rules" },
+  { href: "/logs",           label: "Logs" },
+  { href: "/threat-intel",   label: "Threat Intel" },
+  { href: "/settings",       label: "Settings" }
 ];
 
 export function Sidebar() {
@@ -50,13 +44,17 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-[260px] shrink-0 h-screen sticky top-0 bg-navy border-r border-navy-400" aria-label="Primary">
       <div className="flex items-center h-14 px-4 border-b border-navy-400">
-        <BrandMark size="md" />
+        <Link href="/" aria-label="MergeIT SOC home" className="flex items-center min-w-0">
+          <div className="leading-tight min-w-0">
+            <div className="font-oswald font-medium tracking-wide text-sage text-sm truncate">MERGEIT</div>
+            <div className="text-[9.5px] uppercase tracking-[0.18em] text-navy-600 font-mono">SOC</div>
+          </div>
+        </Link>
       </div>
 
       <button type="button"
         className="mx-3 mt-3 flex items-center gap-2 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md text-xs text-navy-600 hover:border-navy-500 transition-colors"
         aria-label="Open command palette">
-        <Search size={13} />
         <span>Search anything...</span>
         <span className="ml-auto flex items-center gap-1">
           <span className="kbd">Cmd</span><span className="kbd">K</span>
@@ -65,18 +63,18 @@ export function Sidebar() {
 
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-5">
         <NavSection title="Overview">
-          <NavLink href="/" label="Overview" icon={LayoutDashboard} active={isActive("/")} />
+          <NavLink href="/" label="Overview" active={isActive("/")} />
         </NavSection>
 
         <NavSection title="Operate">
           {operate.map(it => (
-            <NavLink key={it.href} href={it.href} label={it.label} icon={it.icon} active={isActive(it.href)} />
+            <NavLink key={it.href} href={it.href} label={it.label} active={isActive(it.href)} />
           ))}
         </NavSection>
 
         <NavSection title="Report">
           {report.map(it => (
-            <NavLink key={it.href} href={it.href} label={it.label} icon={it.icon} active={isActive(it.href)} tag={it.tag} />
+            <NavLink key={it.href} href={it.href} label={it.label} active={isActive(it.href)} tag={it.tag} />
           ))}
         </NavSection>
 
@@ -92,14 +90,14 @@ export function Sidebar() {
           >
             <summary className="list-none cursor-pointer flex items-center justify-between gap-2 px-2 h-7 rounded-md text-[11.5px] text-sage hover:text-cream hover:bg-navy-100 transition-colors">
               <span className="flex items-center gap-1.5">
-                <ChevronRight size={11} className="text-navy-600 transition-transform group-open:rotate-90" />
+                <span className="text-navy-600 text-[10px] transition-transform group-open:rotate-90">&gt;</span>
                 Show all 10 sections
               </span>
               <span className="text-[10px] text-navy-600 font-mono">10</span>
             </summary>
             <ul className="mt-1 space-y-0.5">
               {rawWazuh.map(it => (
-                <NavLink key={it.href} href={it.href} label={it.label} icon={it.icon} active={isActive(it.href)} size="sm" />
+                <NavLink key={it.href} href={it.href} label={it.label} active={isActive(it.href)} size="sm" />
               ))}
             </ul>
           </details>
@@ -128,7 +126,7 @@ export function Sidebar() {
           </div>
         </div>
         <Link href="/customer-portal" className="mt-2.5 w-full h-7 text-[11px] bg-navy border border-navy-500 rounded-md text-sage hover:text-cream hover:bg-navy-200 transition-colors flex items-center justify-center gap-1.5">
-          <Activity size={12} /> Open tenant portal
+          Open tenant portal
         </Link>
       </div>
     </aside>
@@ -140,15 +138,15 @@ function NavSection({ title, children }: { title: string; children: React.ReactN
     <div>
       <div className="flex items-center justify-between px-2 mb-1.5">
         <div className="text-[10px] uppercase tracking-[0.18em] text-navy-600 font-semibold">{title}</div>
-        <ChevronDown size={11} className="text-navy-600/60" />
+        <span className="text-navy-600/60 text-[10px]">v</span>
       </div>
       <ul className="space-y-0.5">{children}</ul>
     </div>
   );
 }
 
-function NavLink({ href, label, icon: Icon, active, count, tag, size = "md" }: {
-  href: string; label: string; icon: any; active: boolean; count?: number; tag?: "new" | "beta"; size?: "sm" | "md";
+function NavLink({ href, label, active, count, tag, size = "md" }: {
+  href: string; label: string; icon?: unknown; active: boolean; count?: number; tag?: "new" | "beta"; size?: "sm" | "md";
 }) {
   const sz = size === "sm" ? "h-7 text-[12.5px]" : "h-8 text-[13px]";
   return (
@@ -164,7 +162,6 @@ function NavLink({ href, label, icon: Icon, active, count, tag, size = "md" }: {
         )}
       >
         {active && <span className="absolute left-0 top-1.5 bottom-1.5 w-[2px] rounded-full bg-emerald-400" />}
-        <Icon size={size === "sm" ? 13 : 15} className={cn(active ? "text-emerald-400" : "text-navy-600 group-hover:text-sage")} />
         <span className="flex-1 truncate">{label}</span>
         {typeof count === "number" && (
           <span className={cn(

@@ -1,6 +1,5 @@
 "use client";
 import { useMemo, useState } from "react";
-import { Boxes } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, Badge, Button } from "@/components/ui";
 import { alerts, mitreTactics } from "@/data/seed";
 import { cn } from "@/lib/cn";
@@ -8,7 +7,6 @@ import { cn } from "@/lib/cn";
 export default function MitrePage() {
   const [active, setActive] = useState<string | null>(null);
 
-  // Compute count per (tactic, technique) from alerts
   const matrix = useMemo(() => {
     const m = new Map<string, Map<string, number>>();
     mitreTactics.forEach(t => m.set(t.id, new Map()));
@@ -37,7 +35,6 @@ export default function MitrePage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Analyze" }, { label: "MITRE ATT&CK" }]}
-      icon={Boxes}
       title="MITRE ATT&CK"
       description="12 tactics - alert volume by technique - click a cell to filter"
     >

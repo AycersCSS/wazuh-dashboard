@@ -1,7 +1,6 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import { Users, ArrowUpRight, RefreshCcw, ScrollText, ExternalLink, Code2 } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, StatCard, Badge, Button, DataGrid, type Column } from "@/components/ui";
 import { getIntegration } from "@/data/integrations";
 import { useToasts } from "@/hooks/useToasts";
@@ -60,7 +59,6 @@ function PreviewButton({ tenantName }: { tenantName: string }) {
     <Button
       size="sm"
       variant="secondary"
-      icon={<ExternalLink size={12} />}
       onClick={(e) => {
         e.stopPropagation();
         toasts.push({
@@ -99,21 +97,20 @@ export default function CustomerPortalPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "MergeIT" }, { label: "Report" }, { label: "Customer Portal" }]}
-      icon={Users}
       title="Customer Portal"
       description="Per-tenant security snapshot - feeds the future MergeIT customer portal (Q3)."
       actions={
         <>
-          <Button variant="secondary" icon={<RefreshCcw size={14} />} onClick={refresh}>Refresh</Button>
-          <Link href="/alerts"><Button variant="primary" icon={<ArrowUpRight size={14} />}>Open alert queue</Button></Link>
+          <Button variant="secondary" onClick={refresh}>Refresh</Button>
+          <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
         </>
       }
     >
       <section>
         <Card>
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0">
-              <Users size={18} className="text-emerald-400" />
+            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0 text-[10px] font-mono text-emerald-400">
+              CP
             </div>
             <div>
               <div className="text-[15px] text-sage font-normal font-oswald">Proof-of-concept for the future customer portal</div>
@@ -166,10 +163,10 @@ export default function CustomerPortalPage() {
           <ul className="px-4 py-2 space-y-1.5">
             {integration.wazuhMapping.map(m => (
               <li key={m.label} className="flex items-center gap-2 text-[12px]">
-                <ScrollText size={12} className="text-emerald-400 shrink-0" />
+                <span className="text-emerald-400 shrink-0 text-[10px] font-mono">WAZ</span>
                 <span className="text-sage flex-1">{m.label}</span>
-                <Link href={m.href} className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[11px]">
-                  Open <ArrowUpRight size={11} />
+                <Link href={m.href} className="text-emerald-400 hover:brightness-110 text-[11px]">
+                  Open
                 </Link>
               </li>
             ))}
@@ -202,7 +199,7 @@ export default function CustomerPortalPage() {
         }>
         <div className="p-4">
           <div className="flex items-center gap-2 mb-2 text-[11px] text-navy-600">
-            <Code2 size={12} /> <span className="font-mono">GET /api/v1/tenants/:id/snapshot</span>
+            <span className="font-mono">GET /api/v1/tenants/:id/snapshot</span>
           </div>
           <pre className="bg-navy border border-navy-500 rounded-lg p-4 text-[12px] leading-relaxed overflow-x-auto">
             <code className="text-cream font-mono whitespace-pre">{apiContract}</code>

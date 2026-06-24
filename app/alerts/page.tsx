@@ -1,21 +1,18 @@
 "use client";
 import { useState, useMemo } from "react";
-import { Page, DataGrid, type Column, Button, Card, EmptyState } from "@/components/ui";
-import { ShieldCheck, Download, ShieldAlert } from "lucide-react";
+import { Page, DataGrid, type Column, Button, Card, EmptyState, Badge } from "@/components/ui";
 import { alerts } from "@/data/seed";
 import { useTimeRange } from "@/hooks/useTimeRange";
 import { useToasts } from "@/hooks/useToasts";
 import { useAcknowledge, useAlertsStore } from "@/hooks/useAlertsStore";
 import { severityBucket, severityLabel } from "@/types";
 import { formatRelativeTime } from "@/lib/format";
-import { Badge } from "@/components/ui";
 import { AlertDrawer } from "./AlertDrawer";
 import { AlertFiltersBar, type AlertFilters } from "./AlertFilters";
 import type { Alert } from "@/types";
 
-const TONE: Record<string, "critical" | "high" | "medium" | "low" | "info"> = {
-  critical: "critical", high: "high", medium: "medium", low: "low", info: "info"
-};
+// Hoisted: alerts is a module constant, so this count never changes at runtime.
+const criticalAlertCount = alerts.reduce((n, a) => a.rule.level >= 13 ? n + 1 : n, 0);
 
 export default function AlertsPage() {
   const toasts = useToasts();
@@ -46,7 +43,7 @@ export default function AlertsPage() {
     },
     {
       key: "sev", header: "Severity", width: "150px",
-      cell: a => <Badge tone={TONE[severityBucket(a.rule.level)]} dot>{severityLabel(a.rule.level)} - {a.rule.level}</Badge>
+      cell: a => <Badge tone={severityBucket(a.rule.level)} dot>{severityLabel(a.rule.level)} - {a.rule.level}</Badge>
     },
     {
       key: "rule", header: "Rule", width: "120px",
@@ -68,7 +65,7 @@ export default function AlertsPage() {
     {
       key: "ack", header: "", width: "40px",
       cell: a => store.alertMap[a.id]?.acknowledged
-        ? <span title="Acknowledged" className="inline-flex items-center text-emerald-600"><ShieldCheck size={14} /></span>
+        ? <span title="Acknowledged" className="text-emerald-600 font-mono text-[10px]">ACK</span>
         : <span className="text-navy-600/70">-</span>
     }
   ];
@@ -76,12 +73,11 @@ export default function AlertsPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Operate" }, { label: "Alerts" }]}
-      icon={ShieldAlert}
       title="Alerts"
-      description={`${alerts.length} events - ${alerts.filter(a => a.rule.level >= 13).length} critical - ${range.label}`}
+      description={`${alerts.length} events - ${criticalAlertCount} critical - ${range.label}`}
       actions={
         <>
-          <Button variant="secondary" icon={<Download size={14} />} onClick={() => toasts.push({ variant: "info", title: "Export started", description: "JSON download queued" })}>Export</Button>
+          <Button variant="secondary" onClick={() => toasts.push({ variant: "info", title: "Export started", description: "JSON download queued" })}>Export</Button>
           <Button variant="primary" onClick={() => { ack(visibleIds); toasts.push({ variant: "success", title: `Acknowledged ${visibleIds.length} alerts` }); }}>Acknowledge all visible</Button>
         </>
       }
@@ -111,7 +107,6 @@ export default function AlertsPage() {
         onSelectionChange={setSelected}
         emptyState={
           <EmptyState
-            icon={ShieldAlert}
             title="No alerts match"
             description="Try removing severity filters or clearing the search."
             action={<Button variant="secondary" onClick={() => setFilters({ severities: new Set(), search: "", showAcked: true })}>Clear filters</Button>}

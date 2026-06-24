@@ -1,6 +1,5 @@
 "use client";
 import { useState, useMemo } from "react";
-import { ScrollText } from "lucide-react";
 import { Page, DataGrid, type Column, Card, EmptyState, SearchInput, Badge } from "@/components/ui";
 import { rules } from "@/data/seed";
 import { ruleStatus, useToggleRule, useAlertsStore } from "@/hooks/useAlertsStore";
@@ -46,7 +45,6 @@ export default function RulesPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Configure" }, { label: "Rules" }]}
-      icon={ScrollText}
       title="Rules"
       description={`${rules.length} rules in library - click status to toggle`}
     >
@@ -59,7 +57,7 @@ export default function RulesPage() {
         columns={columns}
         rows={filtered}
         rowKey={r => r.id}
-        emptyState={<EmptyState icon={ScrollText} title="No rules match" description="Try clearing the search." />}
+        emptyState={<EmptyState title="No rules match" description="Try clearing the search." />}
       />
     </Page>
   );

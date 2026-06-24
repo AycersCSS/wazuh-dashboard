@@ -16,8 +16,7 @@ const oswald = Oswald({
 
 export const metadata: Metadata = {
   title: { default: "MergeIT SOC", template: "%s · MergeIT SOC" },
-  description: "MergeIT SOC — managed security operations for Microsoft 365, NinjaOne, Bitdefender, Cyber Essentials, and the customer portal.",
-  icons: { icon: "/favicon.svg" }
+  description: "MergeIT SOC — managed security operations for Microsoft 365, NinjaOne, Bitdefender, Cyber Essentials, and the customer portal."
 };
 
 export const viewport = {
@@ -30,7 +29,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={oswald.variable}>
-        <a href="#main" className="sr-only focus:not-sr-only fixed top-2 left-2 z-50 inline-flex items-center h-9 px-3 rounded-lg text-sm font-medium bg-emerald-500 text-[#0A2947]">Skip to main content</a>
+        <a href="#main" className="sr-only focus:not-sr-only fixed top-2 left-2 z-50 inline-flex items-center h-9 px-3 rounded-lg text-sm font-medium bg-emerald-400 text-[#0A2947]">Skip to main content</a>
         <ToastProvider>
           <TimeRangeProvider>
             <div className="flex min-h-screen bg-navy text-cream">

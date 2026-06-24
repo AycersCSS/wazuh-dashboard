@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { Monitor, ArrowUpRight, ShieldAlert, Server, Wrench, RefreshCcw, ScrollText } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, StatCard, Badge, Button, Table, type Column } from "@/components/ui";
 import { getIntegration } from "@/data/integrations";
 import { useToasts } from "@/hooks/useToasts";
@@ -32,7 +31,7 @@ const columns: Column<Rec>[] = [
   { key: "tenant", header: "Tenant", width: "140px", cell: r => <span className="text-cream">{r.tenant}</span> },
   { key: "device", header: "Device", cell: r => <span className="font-mono text-sage">{r.device}</span> },
   { key: "desc", header: "Event", cell: r => <span className="text-cream">{r.desc}</span> },
-  { key: "wazuh", header: "Wazuh", width: "120px", cell: r => <Link href="/alerts" className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[12px]"><ArrowUpRight size={12} /> {r.wazuh}</Link> }
+  { key: "wazuh", header: "Wazuh", width: "120px", cell: r => <Link href="/agents" className="text-emerald-400 hover:brightness-110 text-[12px]">{r.wazuh}</Link> }
 ];
 
 export default function NinjaOnePage() {
@@ -43,21 +42,20 @@ export default function NinjaOnePage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "MergeIT" }, { label: "Operate" }, { label: "NinjaOne" }]}
-      icon={Monitor}
       title="NinjaOne"
       description="Reconcile RMM device inventory with Wazuh agent coverage. Catch shadow endpoints."
       actions={
         <>
-          <Button variant="secondary" icon={<RefreshCcw size={14} />} onClick={refresh}>Refresh</Button>
-          <Link href="/agents"><Button variant="primary" icon={<ArrowUpRight size={14} />}>Open agent inventory</Button></Link>
+          <Button variant="secondary" onClick={refresh}>Refresh</Button>
+          <Link href="/agents"><Button variant="primary">Open agent inventory</Button></Link>
         </>
       }
     >
       <section>
         <Card>
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0">
-              <Monitor size={18} className="text-emerald-400" />
+            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0 text-[10px] font-mono text-emerald-400">
+              NJ
             </div>
             <div>
               <div className="text-[15px] text-sage font-normal font-oswald">One inventory, two systems of record</div>
@@ -110,16 +108,16 @@ export default function NinjaOnePage() {
           <ul className="px-4 py-2 space-y-1.5">
             {integration.wazuhMapping.map(m => (
               <li key={m.label} className="flex items-center gap-2 text-[12px]">
-                <ShieldAlert size={12} className="text-emerald-400 shrink-0" />
+                <span className="text-emerald-400 shrink-0 text-[10px] font-mono">WAZ</span>
                 <span className="text-sage flex-1">{m.label}</span>
-                <Link href={m.href} className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[11px]">
-                  Open <ArrowUpRight size={11} />
+                <Link href={m.href} className="text-emerald-400 hover:brightness-110 text-[11px]">
+                  Open
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="px-4 py-3 border-t border-navy-400/60 text-[11px] text-navy-600 flex items-center gap-2">
-            <ScrollText size={11} /> Custom rule family <span className="font-mono text-sage">92100-92199</span> - managed by MergeIT.
+          <div className="px-4 py-3 border-t border-navy-400/60 text-[11px] text-navy-600">
+            Custom rule family <span className="font-mono text-sage">92100-92199</span> - managed by MergeIT.
           </div>
         </Card>
       </section>
@@ -131,7 +129,7 @@ export default function NinjaOnePage() {
               <CardTitle>Recent activity</CardTitle>
               <CardSubtitle>Last 24h - NinjaOne sync - click an event to investigate in Wazuh</CardSubtitle>
             </div>
-            <Link href="/agents"><Button size="sm" variant="secondary" icon={<ArrowUpRight size={12} />}>All devices</Button></Link>
+            <Link href="/agents"><Button size="sm" variant="secondary">All devices</Button></Link>
           </>
         }>
         <Table columns={columns} rows={recent} rowKey={r => r.id} />

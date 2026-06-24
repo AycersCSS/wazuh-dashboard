@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Settings, Download, RotateCcw } from "lucide-react";
 import { Page, Card, CardTitle, Button, Badge, Tooltip } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useReset, useAlertsStore } from "@/hooks/useAlertsStore";
@@ -37,7 +36,6 @@ export default function SettingsPage() {
   return (
     <Page
       breadcrumb={[{ label: "Configure" }, { label: "Settings" }]}
-      icon={Settings}
       title="Settings"
       description="Cluster, integrations, profile, and data"
     >
@@ -105,8 +103,8 @@ export default function SettingsPage() {
           <CardTitle>Data</CardTitle>
         </div>
         <div className="p-4 flex flex-wrap items-center gap-2">
-          <Button variant="secondary" icon={<Download size={14} />} onClick={doExport}>Export alerts as JSON</Button>
-          <Button variant="danger" icon={<RotateCcw size={14} />} onClick={() => setConfirmReset(true)}>Reset to defaults</Button>
+          <Button variant="secondary" onClick={doExport}>Export alerts as JSON</Button>
+          <Button variant="danger" onClick={() => setConfirmReset(true)}>Reset to defaults</Button>
         </div>
       </Card>
 

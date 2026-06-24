@@ -1,6 +1,5 @@
 "use client";
 import Link from "next/link";
-import { Bug, ArrowUpRight, ShieldAlert, RefreshCcw, ScrollText, AlertOctagon } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, StatCard, Badge, Button, Table, type Column } from "@/components/ui";
 import { getIntegration } from "@/data/integrations";
 import { useToasts } from "@/hooks/useToasts";
@@ -32,7 +31,7 @@ const columns: Column<Rec>[] = [
   { key: "tenant", header: "Tenant", width: "140px", cell: r => <span className="text-cream">{r.tenant}</span> },
   { key: "endpoint", header: "Endpoint", cell: r => <span className="font-mono text-sage">{r.endpoint}</span> },
   { key: "desc", header: "Detection", cell: r => <span className="text-cream">{r.desc}</span> },
-  { key: "wazuh", header: "Wazuh", width: "120px", cell: r => <Link href="/alerts" className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[12px]"><ArrowUpRight size={12} /> {r.wazuh}</Link> }
+  { key: "wazuh", header: "Wazuh", width: "120px", cell: r => <Link href="/alerts" className="text-emerald-400 hover:brightness-110 text-[12px]">{r.wazuh}</Link> }
 ];
 
 export default function BitdefenderPage() {
@@ -43,21 +42,20 @@ export default function BitdefenderPage() {
   return (
     <Page
       breadcrumb={[{ href: "/", label: "MergeIT" }, { label: "Operate" }, { label: "Bitdefender" }]}
-      icon={Bug}
       title="Bitdefender"
       description="Correlate GravityZone endpoint detections with Wazuh. One timeline per incident."
       actions={
         <>
-          <Button variant="secondary" icon={<RefreshCcw size={14} />} onClick={refresh}>Refresh</Button>
-          <Link href="/alerts"><Button variant="primary" icon={<ArrowUpRight size={14} />}>Open alert queue</Button></Link>
+          <Button variant="secondary" onClick={refresh}>Refresh</Button>
+          <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
         </>
       }
     >
       <section>
         <Card>
           <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-severity-critical/15 border border-severity-critical/40 grid place-items-center shrink-0">
-              <AlertOctagon size={18} className="text-severity-critical" />
+            <div className="w-10 h-10 rounded-lg bg-severity-critical/15 border border-severity-critical/40 grid place-items-center shrink-0 text-[10px] font-mono text-severity-critical">
+              BD
             </div>
             <div>
               <div className="text-[15px] text-sage font-normal font-oswald">EDR + SIEM, joined on the same incident</div>
@@ -110,16 +108,16 @@ export default function BitdefenderPage() {
           <ul className="px-4 py-2 space-y-1.5">
             {integration.wazuhMapping.map(m => (
               <li key={m.label} className="flex items-center gap-2 text-[12px]">
-                <ShieldAlert size={12} className="text-emerald-400 shrink-0" />
+                <span className="text-emerald-400 shrink-0 text-[10px] font-mono">WAZ</span>
                 <span className="text-sage flex-1">{m.label}</span>
-                <Link href={m.href} className="inline-flex items-center gap-1 text-emerald-400 hover:brightness-110 text-[11px]">
-                  Open <ArrowUpRight size={11} />
+                <Link href={m.href} className="text-emerald-400 hover:brightness-110 text-[11px]">
+                  Open
                 </Link>
               </li>
             ))}
           </ul>
-          <div className="px-4 py-3 border-t border-navy-400/60 text-[11px] text-navy-600 flex items-center gap-2">
-            <ScrollText size={11} /> Custom rule family <span className="font-mono text-sage">92500-92599</span> - managed by MergeIT.
+          <div className="px-4 py-3 border-t border-navy-400/60 text-[11px] text-navy-600">
+            Custom rule family <span className="font-mono text-sage">92500-92599</span> - managed by MergeIT.
           </div>
         </Card>
       </section>
@@ -131,7 +129,7 @@ export default function BitdefenderPage() {
               <CardTitle>Recent activity</CardTitle>
               <CardSubtitle>Last 24h - Bitdefender detections - click an event to investigate in Wazuh</CardSubtitle>
             </div>
-            <Link href="/alerts"><Button size="sm" variant="secondary" icon={<ArrowUpRight size={12} />}>All events</Button></Link>
+            <Link href="/alerts"><Button size="sm" variant="secondary">All events</Button></Link>
           </>
         }>
         <Table columns={columns} rows={recent} rowKey={r => r.id} />

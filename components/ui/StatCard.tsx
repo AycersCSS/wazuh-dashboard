@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import { ArrowUp, ArrowDown, Minus } from "lucide-react";
 import { Card } from "./Card";
 import { cn } from "@/lib/cn";
 
@@ -25,7 +24,6 @@ export function StatCard({
   hint?: ReactNode;
   accent?: Accent;
 }) {
-  const Icon = dir === "up" ? ArrowUp : dir === "down" ? ArrowDown : Minus;
   const deltaColor = dir === "up" ? "text-severity-low" : dir === "down" ? "text-severity-critical" : "text-navy-600";
   return (
     <Card className="relative overflow-hidden">
@@ -34,8 +32,8 @@ export function StatCard({
       <div className={cn("text-2xl font-medium tracking-tight num mt-1.5 font-oswald", accentText[accent])}>{value}</div>
       <div className="flex items-center justify-between mt-1.5">
         {delta ? (
-          <span className={cn("inline-flex items-center gap-0.5 text-xs font-mono", deltaColor)}>
-            <Icon size={11} /> {delta}
+          <span className={cn("text-xs font-mono", deltaColor)}>
+            {delta}
           </span>
         ) : <span />}
         {hint && <span className="text-[11px] text-navy-600">{hint}</span>}

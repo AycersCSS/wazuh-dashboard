@@ -1,5 +1,4 @@
 "use client";
-import { Server, ShieldAlert } from "lucide-react";
 import { Card, Badge } from "@/components/ui";
 import { cn } from "@/lib/cn";
 import { formatRelativeTime } from "@/lib/format";
@@ -21,8 +20,8 @@ export function AgentCard({ agent, alertCount, onClick }: { agent: Agent; alertC
       <Card className="hover:border-navy-500 transition-colors">
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-navy-200 border border-navy-400 grid place-items-center">
-              <Server size={16} className="text-navy-600" />
+            <div className="w-9 h-9 rounded-lg bg-navy-200 border border-navy-400 grid place-items-center text-[10px] font-mono text-navy-600">
+              {agent.os.name.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0">
               <div className="text-sm font-mono text-cream truncate">{agent.name}</div>
@@ -40,7 +39,7 @@ export function AgentCard({ agent, alertCount, onClick }: { agent: Agent; alertC
         </div>
         <div className="mt-3 flex items-center justify-between text-xs">
           <div className="inline-flex items-center gap-1.5 text-navy-600">
-            <ShieldAlert size={12} /> <span className="font-mono text-cream">{alertCount}</span> alerts
+            <span className="font-mono text-cream">{alertCount}</span> alerts
           </div>
           <div className="text-navy-600">{formatRelativeTime(agent.lastKeepAlive)}</div>
         </div>

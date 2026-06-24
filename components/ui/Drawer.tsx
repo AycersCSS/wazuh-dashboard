@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useRef, type ReactNode } from "react";
-import { X } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 interface Props {
@@ -54,8 +53,8 @@ export function Drawer({ open, onClose, title, actions, width = "lg", children }
             <div className="text-sm font-semibold text-cream truncate">{title}</div>
             <div className="flex items-center gap-2">
               {actions}
-              <button type="button" onClick={onClose} aria-label="Close" className="p-1.5 rounded-md text-navy-600 hover:text-cream hover:bg-navy-200">
-                <X size={16} />
+              <button type="button" onClick={onClose} aria-label="Close" className="px-2 h-7 rounded-md text-xs text-navy-600 hover:text-cream hover:bg-navy-200">
+                Close
               </button>
             </div>
           </header>

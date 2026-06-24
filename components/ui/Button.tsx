@@ -1,7 +1,6 @@
 "use client";
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cn } from "@/lib/cn";
-import { Loader2 } from "lucide-react";
 
 type Variant = "primary" | "secondary" | "ghost" | "danger";
 type Size = "sm" | "md" | "lg";
@@ -14,7 +13,7 @@ interface Props extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClass: Record<Variant, string> = {
-  primary:   "bg-emerald-500 text-[#0A2947] border-transparent hover:bg-emerald-600",
+  primary:   "bg-emerald-400 text-[#0A2947] border-transparent hover:bg-emerald-600",
   secondary: "bg-navy-100 text-cream border-navy-400 hover:bg-navy-200 hover:border-navy-500",
   ghost:     "bg-transparent text-sage border-transparent hover:bg-navy-200 hover:text-cream",
   danger:    "bg-severity-critical/15 text-severity-critical border-severity-critical/40 hover:bg-severity-critical/25"
@@ -45,7 +44,6 @@ export const Button = forwardRef<HTMLButtonElement, Props>(function Button(
       )}
       {...rest}
     >
-      {loading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : icon}
       {children}
     </button>
   );

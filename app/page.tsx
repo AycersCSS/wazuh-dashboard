@@ -1,17 +1,17 @@
 "use client";
 import Link from "next/link";
-import { LayoutDashboard, ArrowUpRight, Server, Activity, ChevronRight, Cloud, Monitor, Bug, FileCheck2, Users } from "lucide-react";
 import { Page, Card, CardTitle, CardSubtitle, Badge, Button } from "@/components/ui";
 import { integrations } from "@/data/integrations";
 import { tenants } from "@/data/tenants";
+import { agents } from "@/data/seed";
 import { cn } from "@/lib/cn";
 
-const useCaseRoutes: Record<string, { href: string; icon: any; tag?: "new" | "beta" }> = {
-  "microsoft-365":  { href: "/microsoft-365",  icon: Cloud },
-  "ninjaone":       { href: "/ninjaone",       icon: Monitor },
-  "bitdefender":    { href: "/bitdefender",    icon: Bug },
-  "cyber-essentials": { href: "/cyber-essentials", icon: FileCheck2 },
-  "customer-portal":  { href: "/customer-portal",  icon: Users, tag: "beta" }
+const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {
+  "microsoft-365":  { href: "/microsoft-365" },
+  "ninjaone":       { href: "/ninjaone" },
+  "bitdefender":    { href: "/bitdefender" },
+  "cyber-essentials": { href: "/cyber-essentials" },
+  "customer-portal":  { href: "/customer-portal", tag: "beta" }
 };
 
 const useCaseOneLiner: Record<string, string> = {
@@ -22,18 +22,21 @@ const useCaseOneLiner: Record<string, string> = {
   "customer-portal": "Per-tenant security snapshot for the future MergeIT portal."
 };
 
+// Hoisted: these depend only on module-level constants.
+const TOTAL_AGENTS = agents.length;
+const AVG_SECURITY_SCORE = Math.round(tenants.reduce((s, t) => s + t.securityScore, 0) / tenants.length);
+const TOTAL_OPEN_INCIDENTS = tenants.reduce((s, t) => s + t.openIncidents, 0);
+
 export default function OverviewPage() {
-  const totalAgents = tenants.reduce((s, _t) => s + 0, 64);
   return (
     <Page
       breadcrumb={[{ label: "SOC" }, { label: "Overview" }]}
-      icon={LayoutDashboard}
       title="Overview"
-      description={`${tenants.length} tenants - ${totalAgents} endpoints - fleet health nominal`}
+      description={`${tenants.length} tenants - ${TOTAL_AGENTS} endpoints - fleet health nominal`}
       actions={
         <>
-          <Button variant="secondary" size="md" icon={<Activity size={14} />}>Fleet health: nominal</Button>
-          <Link href="/alerts"><Button variant="primary" icon={<ArrowUpRight size={14} />}>Open alert queue</Button></Link>
+          <Button variant="secondary" size="md">Fleet health: nominal</Button>
+          <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
         </>
       }
     >
@@ -41,7 +44,6 @@ export default function OverviewPage() {
         {integrations.map(i => {
           const route = useCaseRoutes[i.id];
           const oneLiner = useCaseOneLiner[i.id];
-          const Icon = route?.icon ?? Activity;
           const tone = i.status === "Connected" ? "low" : i.status === "Degraded" ? "medium" : "critical";
           return (
             <Link
@@ -51,8 +53,8 @@ export default function OverviewPage() {
             >
               <Card className="h-full transition-colors group-hover:border-navy-500">
                 <div className="flex items-start justify-between gap-2 mb-3">
-                  <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center">
-                    <Icon size={18} className="text-emerald-400" />
+                  <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center text-[10px] font-mono text-emerald-400">
+                    {i.id.slice(0, 3).toUpperCase()}
                   </div>
                   <div className="flex items-center gap-1.5">
                     {route?.tag && (
@@ -68,7 +70,7 @@ export default function OverviewPage() {
                 <div className="mt-4 pt-3 border-t border-navy-400 flex items-center justify-between">
                   <span className="text-[10.5px] text-navy-600 font-mono">{i.vendor}</span>
                   <span className="inline-flex items-center gap-1 text-[11.5px] text-emerald-400 group-hover:brightness-110">
-                    View <ChevronRight size={12} />
+                    View &gt;
                   </span>
                 </div>
               </Card>
@@ -85,7 +87,7 @@ export default function OverviewPage() {
                 <CardTitle>MSP fleet</CardTitle>
                 <CardSubtitle>Tenants currently managed by MergeIT SOC</CardSubtitle>
               </div>
-              <Link href="/customer-portal"><Button size="sm" variant="secondary" icon={<ArrowUpRight size={12} />}>All tenants</Button></Link>
+              <Link href="/customer-portal"><Button size="sm" variant="secondary">All tenants</Button></Link>
             </>
           }>
           <ul className="divide-y divide-navy-400/60">
@@ -114,7 +116,6 @@ export default function OverviewPage() {
 
         <Card>
           <div className="flex items-center gap-2 mb-3">
-            <Server size={14} className="text-emerald-400" />
             <CardTitle>Fleet at a glance</CardTitle>
           </div>
           <ul className="space-y-3 text-[12px]">
@@ -124,7 +125,7 @@ export default function OverviewPage() {
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Total agents</span>
-              <span className="font-mono text-cream">64</span>
+              <span className="font-mono text-cream">{TOTAL_AGENTS}</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Endpoints (RMM)</span>
@@ -133,13 +134,13 @@ export default function OverviewPage() {
             <li className="flex items-center justify-between">
               <span className="text-sage">Avg security score</span>
               <span className="font-mono text-emerald-400">
-                {Math.round(tenants.reduce((s, t) => s + t.securityScore, 0) / tenants.length)}
+                {AVG_SECURITY_SCORE}
               </span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Open incidents</span>
               <span className="font-mono text-severity-medium">
-                {tenants.reduce((s, t) => s + t.openIncidents, 0)}
+                {TOTAL_OPEN_INCIDENTS}
               </span>
             </li>
             <li className="flex items-center justify-between">

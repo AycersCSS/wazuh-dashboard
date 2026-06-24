@@ -21,7 +21,3 @@ export const tenants: Tenant[] = [
   { id: "globex",  name: "Globex",           tier: "Gold",     securityScore: 74, openIncidents: 7, lastSyncAt: new Date(now - 12 * min).toISOString(), alerts24h: 612, cveCount: 41 },
   { id: "initech", name: "Initech",          tier: "Silver",   securityScore: 61, openIncidents: 12, lastSyncAt: new Date(now - 38 * min).toISOString(), alerts24h: 814, cveCount: 67 }
 ];
-
-export function getTenant(id: string): Tenant | undefined {
-  return tenants.find(t => t.id === id);
-}
