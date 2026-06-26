@@ -1,8 +1,24 @@
 # Live API Connector Integration — Design Spec
 
 **Date:** 2026-06-26
-**Status:** Approved
+**Status:** ⚠️ SUPERSEDED 2026-06-26 by `2026-06-26-live-api-integration-rest-design.md`
 **Author:** Brainstorming session with the user
+
+> **Do not implement against this spec.** The real MergeIT
+> Connector is a Python/Flask REST service with JWT auth, not the
+> WebSocket service this spec assumed. The new spec at the path
+> above supersedes this one. The content is kept here for the
+> decision trail (what we considered, why, and what changed).
+>
+> Key differences:
+> - Transport: REST, not WebSocket.
+> - Auth: JWT in httpOnly cookie via `/authenticate` admin login,
+>   server-side proxy. Not a public dashboard.
+> - Commands: **none** — connector is read-only. Restart/isolate
+>   affordances from this spec are removed.
+> - Refresh: 30s polling per endpoint, not push.
+> - Dev mocks: MSW (Mock Service Worker) intercepting the proxy
+>   routes, not an in-process WebSocket MockServer.
 
 ---
 

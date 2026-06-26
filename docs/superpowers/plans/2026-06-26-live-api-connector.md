@@ -1,5 +1,11 @@
 # Live API Connector Implementation Plan
 
+> ⚠️ **SUPERSEDED 2026-06-26 by `2026-06-26-live-api-connector-rest.md`.**
+> The real MergeIT Connector is a Python/Flask REST service with JWT
+> auth, not a WebSocket service. The new plan is being written
+> against the actual connector code. This file is kept for the
+> decision trail; do not implement from it.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace the static mock data feeding the Overview page (`app/page.tsx`) of the MergeIT SOC dashboard with live data from a WebSocket-backed API connector, and wire up bidirectional commands (sync now, with restart/isolate later).
