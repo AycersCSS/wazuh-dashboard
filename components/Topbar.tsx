@@ -1,5 +1,6 @@
 "use client";
 import { useReducer, useRef, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { formatCompact } from "@/lib/format";
 import { useTimeRange, type TimeRangeKey } from "@/hooks/useTimeRange";
@@ -7,6 +8,7 @@ import { useToasts } from "@/hooks/useToasts";
 import { useGoToShortcuts } from "@/hooks/useGoToShortcuts";
 import { useCommandPalette } from "@/hooks/useCommandPalette";
 import { useTheme } from "@/hooks/useTheme";
+import { useSession } from "@/lib/auth/useSession";
 
 type TenantKey = "all" | "acme" | "globex" | "initech" | "stark";
 const tenants: { key: TenantKey; label: string; sub: string }[] = [
@@ -42,9 +44,31 @@ function topbarReducer(s: TopbarState, a: TopbarAction): TopbarState {
 export function Topbar() {
   const cmd = useCommandPalette();
   const toasts = useToasts();
+  const router = useRouter();
+  const { signOut, user } = useSession();
   const { range, setKey } = useTimeRange();
   const { theme, toggleTheme } = useTheme();
   useGoToShortcuts();
+
+  // Identity comes from the signed-in session. While useSession is still
+  // resolving the health check, fall back to "ADMIN" so the chrome is never
+  // blank. The local-test login route sets user.username = "ADMIN" on success
+  // (lib/auth/useSession.ts:41), so this matches the dev backdoor.
+  const displayName = user?.username ?? "ADMIN";
+  const displayEmail = user?.username ? `${user.username.toLowerCase()}@mergeit.local` : "admin@mergeit.local";
+  const initials = displayName.slice(0, 2).toUpperCase();
+
+  async function onSignOut() {
+    // Clear the httpOnly connector_jwt cookie on the server, then bounce to /login.
+    // signOut() awaits the POST to /api/connector/auth/logout, which calls
+    // clearJwt() server-side. Without this, the cookie persists after the user
+    // clicks "Sign out" (security review finding #1).
+    try {
+      await signOut();
+    } finally {
+      router.push("/login");
+    }
+  }
 
   // The five header dropdowns are mutually exclusive — one open at a time — so
   // group them (plus the tenant selection) in a single useReducer instead of
@@ -260,9 +284,9 @@ export function Topbar() {
             onClick={() => toggle("user")}
             className="flex items-center gap-2 h-8 pl-1 pr-2 bg-navy-100 border border-navy-400 rounded-md hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
             aria-label="User menu" aria-haspopup="menu" aria-expanded={menu === "user"}>
-            <span className="w-6 h-6 rounded-md bg-emerald-400/20 border border-emerald-400/40 grid place-items-center text-[10px] font-semibold text-emerald-400">AC</span>
+            <span className="w-6 h-6 rounded-md bg-emerald-400/20 border border-emerald-400/40 grid place-items-center text-[10px] font-semibold text-emerald-400">{initials}</span>
             <span className="hidden md:flex flex-col text-left leading-tight">
-              <span className="text-xs font-medium text-cream">Alex Chen</span>
+              <span className="text-xs font-medium text-cream">{displayName}</span>
               <span className="text-[10px] text-navy-600">MergeIT SOC Analyst - L2</span>
             </span>
             <span className={cn("text-navy-600 transition-transform text-[10px]", menu === "user" && "rotate-180")}>v</span>
@@ -270,8 +294,8 @@ export function Topbar() {
           {menu === "user" && (
             <div className="absolute right-0 top-10 w-[260px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="px-3 py-3 border-b border-navy-400">
-                <div className="text-[13px] font-semibold text-cream">Alex Chen</div>
-                <div className="text-[11px] text-navy-600">alex.chen@mergeit.co.uk</div>
+                <div className="text-[13px] font-semibold text-cream">{displayName}</div>
+                <div className="text-[11px] text-navy-600">{displayEmail}</div>
                 <div className="mt-2 flex items-center gap-1.5">
                   <span className="inline-flex items-center gap-1 h-5 px-2 rounded-md bg-emerald-400/15 border border-emerald-400/40 text-emerald-400 text-[11px]">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-soft" />On shift
@@ -296,7 +320,7 @@ export function Topbar() {
               <div className="border-t border-navy-400 py-1.5">
                 <button
                   type="button"
-                  onClick={() => toasts.push({ variant: "warn", title: "Signed out", description: "Redirecting to login..." })}
+                  onClick={onSignOut}
                   className="w-full flex items-center gap-2.5 px-3 h-8 text-xs text-severity-critical hover:bg-severity-critical/15 transition-colors">
                   Sign out
                 </button>
