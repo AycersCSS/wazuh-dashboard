@@ -433,4 +433,21 @@ hand. The spec/plan will be rewritten — same goals (live data on
 Overview, then 5 use-case pages), different transport (REST + JWT +
 polling), smaller scope (no commands yet).
 
+### Connector updated (2026-06-26, mid-redesign)
+
+User said the connector was updated. Re-read it:
+
+**Change:** additive only. New endpoint `GET /agents/<agent_id>`
+returns `{ agent: {...}, alerts: {...} }` (per-agent detail +
+per-agent alerts). All other endpoints unchanged.
+
+**Impact on the v2 spec/plan:** none. The new endpoint is per-agent
+detail — that's a `/agents` use-case page concern, not the Overview
+page. The Overview only uses `/tenants`, `/stats/agents`, `/alerts`
+— all unchanged. v2 spec/plan still match.
+
+**Open follow-up to add to the v2 spec:** the new
+`GET /agents/<agent_id>` endpoint, for when the `/agents` use-case
+page gets rewired in a later round. Not blocking v2.
+
 ---
