@@ -9,15 +9,8 @@ import { useGoToShortcuts } from "@/hooks/useGoToShortcuts";
 import { useCommandPalette } from "@/hooks/useCommandPalette";
 import { useTheme } from "@/hooks/useTheme";
 import { useSession } from "@/lib/auth/useSession";
-
-type TenantKey = "all" | "acme" | "globex" | "initech" | "stark";
-const tenants: { key: TenantKey; label: string; sub: string }[] = [
-  { key: "all",     label: "All tenants",        sub: "Fleet-wide view" },
-  { key: "acme",    label: "Acme Corp",          sub: "Platinum · 64 agents" },
-  { key: "globex",  label: "Globex",             sub: "Gold · 28 agents" },
-  { key: "initech", label: "Initech",            sub: "Silver · 19 agents" },
-  { key: "stark",   label: "Stark Industries",   sub: "Platinum · 41 agents" }
-];
+import { useConnectorStats } from "@/lib/connector/useConnectorStats";
+import { buildTenantOptions, ALL_TENANTS_KEY } from "@/lib/tenantDisplay";
 
 const ranges: { key: TimeRangeKey; label: string }[] = [
   { key: "1h",  label: "Last 1 hour" },
@@ -27,11 +20,14 @@ const ranges: { key: TimeRangeKey; label: string }[] = [
 ];
 
 type MenuKey = "tenant" | "range" | "notif" | "user" | "help";
-type TopbarState = { tenant: TenantKey; menu: MenuKey | null };
+// tenant holds either the "all" sentinel or a live tenant ID from the
+// connector (via useConnectorStats). The dropdown is driven by live data,
+// not a closed union, so the state is widened to `string`.
+type TopbarState = { tenant: string; menu: MenuKey | null };
 type TopbarAction =
   | { type: "toggle"; menu: MenuKey }
   | { type: "closeMenu" }
-  | { type: "setTenant"; tenant: TenantKey };
+  | { type: "setTenant"; tenant: string };
 
 function topbarReducer(s: TopbarState, a: TopbarAction): TopbarState {
   switch (a.type) {
@@ -73,8 +69,26 @@ export function Topbar() {
   // The five header dropdowns are mutually exclusive — one open at a time — so
   // group them (plus the tenant selection) in a single useReducer instead of
   // six independent useState calls that each trigger their own render.
-  const [{ tenant, menu }, dispatch] = useReducer(topbarReducer, { tenant: "all", menu: null });
+  const [{ tenant, menu }, dispatch] = useReducer(topbarReducer, { tenant: ALL_TENANTS_KEY, menu: null });
   const toggle = (m: MenuKey) => dispatch({ type: "toggle", menu: m });
+
+  // Drive the tenant dropdown from the live agent-manager data plane
+  // (MergeIT-WazuhConnector -> /api/connector/tenants, polled every 30s).
+  // buildTenantOptions prepends an "All tenants" row and maps the connector's
+  // tenant IDs through the shared display-name/tier lookup. The
+  // `status` field surfaces a small inline pill when the connector is
+  // connecting, stale, unauthenticated, or errored.
+  const { tenants: liveTenantIds, totalAgents, status: statsStatus } = useConnectorStats();
+  const tenantOptions = buildTenantOptions(liveTenantIds, totalAgents);
+
+  // Defensive: if the previously selected tenant disappears from the live
+  // list (e.g. removed upstream), reset the selection to "all" so the trigger
+  // label always resolves to a row that exists.
+  useEffect(() => {
+    if (tenant !== ALL_TENANTS_KEY && !tenantOptions.some(o => o.key === tenant)) {
+      dispatch({ type: "setTenant", tenant: ALL_TENANTS_KEY });
+    }
+  }, [tenant, tenantOptions]);
 
   const refs = {
     tenant: useRef<HTMLDivElement>(null),
@@ -97,13 +111,13 @@ export function Topbar() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function selectTenant(k: TenantKey) {
+  function selectTenant(k: string) {
     dispatch({ type: "setTenant", tenant: k });
-    const t = tenants.find(x => x.key === k);
+    const t = tenantOptions.find(x => x.key === k);
     toasts.push({ variant: "success", title: "Tenant switched", description: `Now viewing ${t?.label}` });
   }
 
-  const tenantLabel = tenants.find(t => t.key === tenant)?.label ?? "All tenants";
+  const tenantLabel = tenantOptions.find(t => t.key === tenant)?.label ?? "All tenants";
 
   return (
     <header className="sticky top-0 z-30 bg-navy/95 backdrop-blur border-b border-navy-400">
@@ -119,7 +133,7 @@ export function Topbar() {
           {menu === "tenant" && (
             <div className="absolute left-0 top-10 w-[280px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-navy-600 font-semibold border-b border-navy-400">Select tenant</div>
-              {tenants.map(t => (
+              {tenantOptions.map(t => (
                 <button type="button" key={t.key} onClick={() => selectTenant(t.key)}
                   className={cn("w-full flex items-center justify-between px-3 h-9 text-xs hover:bg-navy-200",
                     tenant === t.key ? "text-emerald-400 bg-navy-200" : "text-sage")}>
@@ -133,6 +147,26 @@ export function Topbar() {
             </div>
           )}
         </div>
+
+        {statsStatus !== "CONNECTED" && (
+          <span
+            data-testid="topbar-connection-status"
+            className={cn(
+              "text-[10.5px] font-mono inline-flex items-center gap-1.5 px-2 py-1 rounded border",
+              statsStatus === "CONNECTING"      && "text-slate-300 border-slate-500/40",
+              statsStatus === "STALE"           && "text-amber-300 border-amber-300/40",
+              statsStatus === "UNAUTHENTICATED" && "text-severity-high border-severity-high/40",
+              statsStatus === "ERROR"           && "text-severity-high border-severity-high/40"
+            )}
+            aria-label={`Connector ${statsStatus.toLowerCase()}`}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-current" />
+            {statsStatus === "CONNECTING"      ? "Connecting…"
+              : statsStatus === "STALE"           ? "Stale"
+              : statsStatus === "UNAUTHENTICATED" ? "Sign in"
+              : "Connector error"}
+          </span>
+        )}
 
         <div ref={refs.range} className="relative">
           <button type="button"

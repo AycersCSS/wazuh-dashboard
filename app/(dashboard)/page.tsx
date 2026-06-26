@@ -6,6 +6,7 @@ import { useConnectorStats } from "@/lib/connector/useConnectorStats";
 import { useConnectorAlerts } from "@/lib/connector/useConnectorAlerts";
 import { ConnectionBanner } from "@/components/connector/ConnectionBanner";
 import { tenants as fallbackTenants } from "@/data/tenants";
+import { displayNameFor, tierFor } from "@/lib/tenantDisplay";
 import { cn } from "@/lib/cn";
 
 const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {
@@ -24,27 +25,13 @@ const useCaseOneLiner: Record<string, string> = {
   "customer-portal": "Per-tenant security snapshot for the future MergeIT portal."
 };
 
-const TENANT_LABELS: Record<string, string> = {
-  "acme-corp": "Acme Corp",
-  "globex-inc": "Globex",
-  "initech": "Initech",
-  "stark-industries": "Stark Industries"
-};
-
-const TIER_BY_TENANT: Record<string, "Bronze" | "Silver" | "Gold" | "Platinum"> = {
-  "acme-corp": "Platinum",
-  "globex-inc": "Gold",
-  "initech": "Silver",
-  "stark-industries": "Platinum"
-};
-
 export default function OverviewPage() {
   const { status, lastFetchedAt, tenants: liveTenants, totalAgents } = useConnectorStats();
   const tenants = liveTenants.length > 0
     ? liveTenants.map((id) => ({
         id,
-        name: TENANT_LABELS[id] ?? id,
-        tier: TIER_BY_TENANT[id] ?? "Silver",
+        name: displayNameFor(id),
+        tier: tierFor(id) ?? "Silver",
         securityScore: 75,
         openIncidents: 0,
         lastSyncAt: new Date().toISOString(),
