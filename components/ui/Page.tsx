@@ -8,7 +8,6 @@ export function Page({
   breadcrumb, title, description, actions, children
 }: {
   breadcrumb?: Crumb[];
-  icon?: unknown;
   title: string;
   description?: ReactNode;
   actions?: ReactNode;

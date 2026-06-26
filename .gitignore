@@ -41,3 +41,8 @@ next-env.d.ts
 .eslintcache
 .cache/
 .turbo/
+
+# local data
+/data/*.db
+/data/*.db-journal
+/data/otps.json

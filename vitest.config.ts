@@ -1,36 +1,17 @@
 import { defineConfig } from "vitest/config";
+import react from "@vitejs/plugin-react";
 import path from "node:path";
 
-// `tsconfig.json` sets `jsx: "preserve"` (Next.js compiles app code itself), but
-// vitest 4 defaults to the oxc transform, which inherits `jsx: preserve` and then
-// fails when vite's import-analysis re-parses the raw JSX in *.test.tsx. oxc does
-// not honour this esbuild block, so disable it (`oxc: false`) and let esbuild
-// (which respects `jsx: "automatic"`) transform test files instead.
-//
-// The esbuild block below uses a type cast because vitest 4's ESBuildOptions
-// type does not include `jsx` (it was moved to esbuild's own config in newer
-// versions). At runtime, esbuild reads these keys correctly; the type lag is
-// upstream.
 export default defineConfig({
-  oxc: false,
-  esbuild: {
-    jsx: "automatic",
-    jsxImportSource: "react"
-  } as never,
+  plugins: [react()],
   test: {
     environment: "jsdom",
-    setupFiles: ["./vitest.setup.ts"],
     globals: true,
-    css: false
+    setupFiles: ["./vitest.setup.ts"]
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "."),
-      // `server-only` throws on import outside a server context;
-      // vitest+jsdom isn't a server context, so alias to a no-op
-      // for tests. The build still uses the real package via the
-      // bundler's resolution.
-      "server-only": path.resolve(__dirname, "test-shims/server-only.ts")
+      "@": path.resolve(__dirname)
     }
   }
 });

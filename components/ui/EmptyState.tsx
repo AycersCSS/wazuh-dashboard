@@ -3,7 +3,6 @@ import type { ReactNode } from "react";
 export function EmptyState({
   title, description, action
 }: {
-  icon?: unknown;
   title: string;
   description?: ReactNode;
   action?: ReactNode;

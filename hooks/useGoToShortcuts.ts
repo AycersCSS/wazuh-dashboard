@@ -3,22 +3,16 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
 const map: Record<string, string> = {
-  O: "/",
-  M: "/microsoft-365",
-  N: "/ninjaone",
-  B: "/bitdefender",
-  C: "/cyber-essentials",
-  P: "/customer-portal",
+  D: "/",
   A: "/alerts",
-  R: "/agents",
+  G: "/agents",
   V: "/vulnerabilities",
   F: "/fim",
-  L: "/compliance",
-  T: "/mitre",
-  U: "/rules",
-  G: "/logs",
-  I: "/threat-intel",
-  S: "/settings"
+  R: "/rules",
+  C: "/compliance",
+  T: "/threat-intel",
+  M: "/mitre",
+  L: "/logs"
 };
 
 export function useGoToShortcuts() {
@@ -34,7 +28,6 @@ export function useGoToShortcuts() {
         if (k === "G") { armed = "G"; timer = window.setTimeout(() => { armed = null; }, 800); }
         return;
       }
-      if (k === "?" ) { armed = null; if (timer) clearTimeout(timer); return; }
       const dest = map[k];
       if (dest) {
         router.push(dest);

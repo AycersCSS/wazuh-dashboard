@@ -1,33 +1,55 @@
+import React from "react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import LoginPage from "@/app/login/page";
 
-let pushSpy: ReturnType<typeof vi.fn>;
+const push = vi.fn();
+const refresh = vi.fn();
+
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: pushSpy, replace: vi.fn(), back: vi.fn() })
+  useRouter: () => ({ push, refresh })
 }));
 
-global.fetch = vi.fn(async (url: string, init?: RequestInit) => {
-  if (url === "/api/connector/health") return new Response("{}", { status: 401 });
-  if (url === "/api/connector/auth/login" && init?.method === "POST") {
-    return new Response('{"ok":true}', { status: 200 });
-  }
-  return new Response("{}", { status: 404 });
-}) as never;
+describe("login page", () => {
+  beforeEach(() => {
+    push.mockReset();
+    refresh.mockReset();
+    global.fetch = vi.fn();
+  });
 
-import LoginPage from "../page";
+  it("submits the email, transitions to the code stage, and calls the verify endpoint", async () => {
+    (global.fetch as unknown as ReturnType<typeof vi.fn>)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true, name: "Alice" }) });
 
-beforeEach(() => { pushSpy = vi.fn(); });
-
-describe("LoginPage", () => {
-  it("submits and redirects on success", async () => {
     const user = userEvent.setup();
     render(<LoginPage />);
-    await user.type(screen.getByLabelText(/Username/i), "wazuh-user");
-    await user.type(screen.getByLabelText(/Password/i), "secret");
-    await user.click(screen.getByRole("button", { name: /Sign in/i }));
+
+    await user.type(screen.getByPlaceholderText("you@company.com"), "admin@acme.test");
+    await user.click(screen.getByRole("button", { name: /send code/i }));
+
+    await waitFor(() => expect(screen.getByPlaceholderText("000000")).toBeInTheDocument());
+
+    await user.type(screen.getByPlaceholderText("000000"), "123456");
+    await user.click(screen.getByRole("button", { name: /verify and sign in/i }));
+
     await waitFor(() => {
-      expect(pushSpy).toHaveBeenCalledWith("/");
+      expect(push).toHaveBeenCalledWith("/");
+      expect(refresh).toHaveBeenCalled();
     });
+    expect(global.fetch).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows a humanized error if send-otp fails", async () => {
+    (global.fetch as unknown as ReturnType<typeof vi.fn>)
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ ok: false, error: "send_failed" }) });
+
+    const user = userEvent.setup();
+    render(<LoginPage />);
+    await user.type(screen.getByPlaceholderText("you@company.com"), "admin@acme.test");
+    await user.click(screen.getByRole("button", { name: /send code/i }));
+
+    expect(await screen.findByText(/try again/i)).toBeInTheDocument();
   });
 });
