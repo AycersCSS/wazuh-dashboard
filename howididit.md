@@ -525,3 +525,4 @@ Task 2's red step.
 - Task 12: useConnectorAlerts hook (per-tenant, 30s polling). 5 tests passing.
 
 - Task 13: useSession hook + /login page. 4 tests passing.
+- Task 14: ConnectionBanner with 5 states. 5 tests passing.
