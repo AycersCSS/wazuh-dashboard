@@ -295,4 +295,44 @@ User reviewed `docs/superpowers/specs/2026-06-26-live-api-integration-design.md`
 and approved. Next: invoke the writing-plans skill to draft the
 implementation plan.
 
+### Plan written, self-reviewed, committed (2026-06-26)
+
+Plan committed at
+`docs/superpowers/plans/2026-06-26-live-api-connector.md`
+(commit `20d3b46`). 12 tasks, all TDD with failing-test-first steps,
+exact file paths, full code, expected outputs, and per-task commits.
+
+**Self-review caught and fixed 3 issues inline:**
+1. Task 9 imports: was `@/data/seed` (wrong), corrected to
+   `@/data/tenants` and `@/data/integrations` (verified via
+   `grep ^export data/seed.ts`).
+2. Task 4 known timing caveat: was vague, tightened to spell out
+   the `queueMicrotask` / `act()` interaction.
+3. Task 7 `IntegrationStatusDot`: was unused in this round, now
+   explicitly noted as a building block for the next round (use-case
+   pages), not dead code.
+
+**Lesson reinforced (lesson #2):** second time avoiding `git commit
+-am`. Used plain `git commit -m` with explicit `git add` for the
+plan file, then a second `git add howididit.md` for the log update.
+Result: 2 files in the commit, 11 pre-existing files left in the
+working tree, no sweep.
+
+**Plan summary:**
+
+| # | Task | Files |
+|---|------|-------|
+| 1 | Protocol types + parseMessage | `lib/connector/protocol.ts` |
+| 2 | MockServer (in-process) | `lib/connector/mockServer.ts` |
+| 3 | FakeWebSocket test helper | `lib/connector/__tests__/FakeWebSocket.ts` |
+| 4 | useConnector hook | `lib/connector/useConnector.ts` |
+| 5 | Public re-exports | `lib/connector/index.ts` |
+| 6 | ConnectionBanner | `components/connector/ConnectionBanner.tsx` |
+| 7 | IntegrationStatusDot (next round) | `components/connector/IntegrationStatusDot.tsx` |
+| 8 | WS proxy route stub | `app/api/connector/ws/route.ts` |
+| 9 | Wire Overview page | `app/page.tsx` |
+| 10 | .env.example | `.env.example` |
+| 11 | Custom Node server | `server.js`, `package.json` |
+| 12 | Final verification | (no new files) |
+
 ---
