@@ -1,0 +1,270 @@
+# How I Did It — Live API Connector Integration
+
+A running log of every design decision, file created, and step taken while
+integrating a live WebSocket-backed API connector into the MergeIT SOC
+dashboard. Updated continuously as work progresses.
+
+---
+
+## Project preferences (confirmed with user)
+
+- **Project log file:** `howididit.md` — every design decision, every file
+  created, and every step taken must be written down here as it happens.
+  This is a standing project rule, not a one-off.
+- **Why:** User asked explicitly: "for everything you design or do please
+  mark it down in a .md file called howididit.md".
+- **How to apply:** Append to this file after every meaningful action
+  (design section, approach choice, file write, command run). Do not batch
+  — log as you go so the file always reflects the current state.
+
+---
+
+## Project context (discovered during exploration)
+
+- **Repo:** `D:\projects\dashboard` (Next.js 14 app router, React 18,
+  Tailwind, Recharts, Vitest)
+- **Product:** MergeIT SOC dashboard — managed security operations
+  across Microsoft 365, NinjaOne, Bitdefender, Cyber Essentials, and
+  a customer portal.
+- **Data layer:** All client-side. `data/integrations.ts` and
+  `data/tenants.ts` are static mock arrays. No backend, no `app/api/`
+  folder, no env-var handling.
+- **Pages in scope (this round):** Overview (`/`) only. The five use-case
+  pages (`/microsoft-365`, `/ninjaone`, `/bitdefender`,
+  `/cyber-essentials`, `/customer-portal`) keep their mock data for now.
+- **Existing dependencies:** No SWR/React Query, no WebSocket library,
+  no SSE library. Tooling is intentionally thin.
+
+---
+
+## Brainstorming session — 2026-06-26
+
+### Step 1 — Explored project context
+
+Read `package.json`, `app/layout.tsx`, `app/page.tsx`, `data/integrations.ts`,
+`data/tenants.ts`, `next.config.mjs`. Listed repo structure.
+
+### Step 2 — Clarifying questions asked (one at a time)
+
+| # | Question                              | User's answer                                               |
+|---|---------------------------------------|-------------------------------------------------------------|
+| 1 | Which page should the connector feed? | Overview only; other 5 use cases stay on mock data for now |
+| 2 | REST polling / SSE / WebSocket?       | WebSocket — needed for bidirectional actions like restart/isolate machine |
+| 3 | Where does the WS terminate?          | Proxy via Next.js API route (server-side token, single CORS origin) |
+| 4 | Failure mode?                         | Show stale last-known snapshot + reconnect banner           |
+| 5 | WS library?                           | Thin custom client (~100 lines, zero deps, full reconnect control) |
+| 6 | Action UX?                            | Optimistic update + server ACK                              |
+
+### Step 3 — Approach chosen: **Option A**
+
+> **Option A — Connector is source of truth, Next.js is a dumb proxy.**
+> Browser ⇄ Next.js (proxy + auth) ⇄ MergeIT Connector ⇄ Tenant APIs.
+>
+> Picked because the connector already exists/coming-soon and will serve
+> all 5 use cases. Designing for it now means the next 4 use-case pages
+> drop in as config rather than per-integration rebuilds.
+
+Rejected:
+- **Option B** (dashboard calls tenant APIs directly) — duplicates
+  auth/rate-limit/webhook plumbing the connector already does.
+- **Option C** (hybrid: connector for state, direct for actions) — two
+  surfaces, two auth contexts, hard to justify.
+
+### Step 4 — Design sections (in progress)
+
+#### Section 1 — Architecture & data flow (APPROVED)
+
+```
+Browser (Overview page)
+   │  useConnector() hook
+   │    state: { status, lastMessageAt, tenants, integrations }
+   │    actions: { restartMachine(id), isolateMachine(id) }
+   │    optimistic + ACK
+   ▼
+Next.js API route (/api/connector/ws)
+   │  Auth (session cookie → connector token)
+   ▼
+MergeIT Connector
+   │  channels: tenants | integrations | tenant:<id>
+   │  commands: restart_machine | isolate_machine | ...
+   │  ACKs: { id, status, result }
+   ▼
+Tenant APIs (M365, NinjaOne, Bitdefender, CE)
+```
+
+**Channel protocol (single WS, many channels):**
+- Subscribe: `{ op: "subscribe", channel: "tenants" | "integrations" | "tenant:<id>" }`
+- Server push: `{ op: "state", channel, payload, ts }`
+- Client command: `{ op: "cmd", id: "<uuid>", channel, action, target }`
+- Server ACK: `{ op: "ack", id, status: "ok" | "error", result? }`
+
+**Why proxy via Next.js (not browser→connector direct):**
+- Connector token stays server-side.
+- No CORS configuration on the connector.
+- Single env var exposed to the browser (`NEXT_PUBLIC_CONNECTOR_WS_URL`).
+
+**This-round scope:** Overview subscribes to `tenants` and `integrations`
+channels. Commands wired to integration list actions (e.g., "Sync now",
+"Reconnect"). The 4 use-case pages are untouched.
+
+### Note — React Doctor flagged pre-existing issues (deferred)
+
+`npx react-doctor@latest` reported 4 warnings in files unrelated to the
+connector work. These are pre-existing in files modified by the
+`chore(cleanup)` commit, **not** regressions introduced by the
+live-connector design.
+
+| File | Rule | Confidence | Impact | Proposed fix |
+|------|------|------------|--------|--------------|
+| `components/Topbar.tsx:53` | `react-doctor/prefer-module-scope-static-value` — `refs` array rebuilt each render | high | breaks memoized children, extra work per render | hoist `refs` to module scope above the component |
+| `components/Topbar.tsx:72` | `react-doctor/exhaustive-deps` — `useEffect` reads `refs` without listing it | high | effect can read stale `refs` | add `refs` to deps (or move logic into the event handler that needs it) |
+| `components/ui/ConfirmDialog.tsx:32` | `react-doctor/no-event-handler` — event logic in `useEffect` | medium | extra render, runs late | move side effect into the click/keyboard handler that triggers it |
+| `components/ui/Drawer.tsx:25` | `react-doctor/no-event-handler` — same pattern | medium | extra render, runs late | same fix as ConfirmDialog |
+
+**Decision: deferred to a follow-up PR.** Per the React Doctor
+guidance ("Split unrelated, broad, or behavior-changing work into
+separate PRs/branches"), these are out of scope for the live-connector
+work and will be tracked as GitHub issues when the project moves to a
+repo with issue tracking. Note: the `react-hooks/exhaustive-deps`
+eslint-disable comment in Topbar won't silence the `react-doctor/`
+version — fix should use the correct rule name.
+
+### Section 2 — Components & file layout (presented 2026-06-26, awaiting approval)
+
+**New files:**
+
+```
+app/api/connector/ws/route.ts              ← Next.js WebSocket proxy
+lib/connector/protocol.ts                  ← Message types + parseMessage() guard
+lib/connector/useConnector.ts              ← React hook: WS + subs + actions
+lib/connector/mockServer.ts                ← Dev mock until real connector ships
+lib/connector/index.ts                     ← Public re-exports
+components/connector/ConnectionBanner.tsx  ← Live / reconnecting / stale banner
+components/connector/IntegrationStatusDot.tsx  ← Reusable pulsing dot
+types/connector.ts                         ← Shared types (re-exported)
+```
+
+**Modified (1):** `app/page.tsx` — swap `data/integrations` and
+`data/tenants` imports for `useConnector()`. Add ConnectionBanner at
+top. No layout changes.
+
+**Boundary principle:** `useConnector` is the only file that knows
+there's a WebSocket. Consumers get typed data + functions. This is
+what lets the next 4 use-case pages drop in as "swap mock for hook."
+
+### Section 3 — Data flow & reconnect strategy (presented 2026-06-26, awaiting approval)
+
+**State machine:** `DISCONNECTED → CONNECTING → CONNECTED → RECONNECTING ↔ STALE`
+
+- STALE is separate from RECONNECTING — a connection can be open but
+  the connector silent.
+- Stale threshold: `2 × max(channel interval)`. Default 60s for the
+  Overview subscriptions.
+- Reconnect backoff: 1s, 2s, 4s, 8s, 16s, 30s (cap). Ref-tracked to
+  avoid pile-up. Cleared on unmount.
+
+**Subscription lifecycle:** on every CONNECTED, the hook re-sends
+active subscriptions from a `useRef` Set. Per-channel state in
+separate `useState` slices so a `tenants` update doesn't re-render
+integration cards.
+
+**Optimistic + ACK flow:**
+
+1. `sendCommand` generates a uuid, optimistically mutates local state,
+   stores a promise in `pendingCommands` Map, sends the WS message.
+2. ACK `{id, status: "ok"}` → resolve, replace with server payload.
+3. ACK `{id, status: "error"}` → reject, roll back, toast the error.
+4. 10s timeout with no ACK → reject, roll back, toast "Connector didn't
+   respond."
+
+**Destructive actions** (restart_machine, isolate_machine) require a
+`ConfirmDialog` click first; otherwise flow is identical.
+
+**Mock mode:** `NEXT_PUBLIC_CONNECTOR_MOCK=1` (default until the real
+connector ships) → `useConnector` runs `MockConnector` locally with
+the same protocol, no WS at all. Mock → real is a one-line env swap.
+
+### Section 4 — Error handling & edge cases (presented 2026-06-26, awaiting approval)
+
+**Failure matrix** (detection → user-facing → auto-recovery):
+
+| Failure | Detection | User-facing | Auto-recover |
+|---------|-----------|-------------|--------------|
+| WS upgrade fails | `onerror` pre-open | "Reconnecting…" | yes, backoff |
+| WS drops mid-stream | `onclose` non-1000 | "Reconnecting… last Xm ago" | yes, backoff |
+| 401/403 on upgrade | HTTP error | "Auth failed" terminal + sign-in button | no |
+| Malformed JSON | `parseMessage` throws | console warn, drop | implicit |
+| Unknown `op` | guard returns "unknown" | console warn, drop | implicit |
+| State for unsubscribed channel | hook ignores | console warn | implicit |
+| ACK for unknown id | map miss | console warn | implicit |
+| 10s ACK timeout | per-command timer | toast, roll back | yes for state |
+| Two browser tabs | separate WSs | both work independently | n/a |
+| Page hidden | `visibilitychange` | keep WS open (default) | n/a |
+| User navigates away | cleanup | close WS, reject pending | implicit |
+| Server push contradicts optimistic | server push wins | console warn | implicit |
+
+**Strict rules in `useConnector`:**
+
+1. Server payload always wins.
+2. Reconnect resets all in-flight optimistic state — no resend (would
+   double-execute restart/isolate).
+3. Backoff has ±20% jitter to prevent thundering herd across tabs.
+4. Message rate cap 100/sec, drop + warn (protects from runaway
+   server).
+5. No silent failures — every drop logs `console.warn` with type and
+   reason.
+
+**Open question for user:** the "Auth failed" path. This app has no
+sign-in route visible in the current file list. Is the dashboard
+currently public, or is there an auth flow to wire into?
+
+**User answer:** No auth — public dashboard. Proxy route trusts all
+incoming requests; connector lives on a private network. The "Auth
+failed" terminal state is kept in code (safe to enable later) but
+unreachable in this design — no test cases for it.
+
+### Section 5 — Testing (presented 2026-06-26, awaiting approval)
+
+**Test files to add:**
+
+- `lib/connector/protocol.test.ts` — parseMessage guards (well-formed,
+  malformed JSON, unknown op, missing fields, wrong shapes).
+- `lib/connector/useConnector.test.ts` — using a fake `WebSocket`:
+  open/close on mount, subscribes on subscribe, state updates per
+  channel, ignores unsubscribed channels, sendCommand/ack flow,
+  10s timeout, reconnect + backoff schedule, rate cap 100/s, optimistic
+  rollback on error and on timeout.
+- `lib/connector/mockServer.test.ts` — emits state at intervals, ACKs
+  commands, supports restart/isolate, simulates disconnect.
+- `components/connector/ConnectionBanner.test.tsx` — Live /
+  Reconnecting / Stale rendering with timestamps.
+- `app/page.test.tsx` (new) — Overview renders cards + tenants from
+  hook, ConnectionBanner present, Sync now → ConfirmDialog → sendCommand.
+- `app/api/connector/ws/route.test.ts` — upgrade succeeds, token passed
+  through, bytes proxied both ways.
+
+**Coverage target:** 90%+ on `lib/connector/*`.
+
+**Explicitly not tested:** real connector (doesn't exist), browser WS
+quirks, visual regressions (no Chromatic/Playwright in this project).
+
+---
+
+## Design sign-off
+
+| Section | Status                                      |
+|---------|---------------------------------------------|
+| 1. Architecture & data flow | Approved (turn before Section 2)            |
+| 2. Components & file layout | Logged, awaiting your final sign-off         |
+| 3. Data flow & reconnect    | Logged, awaiting your final sign-off         |
+| 4. Error handling & edges   | Logged + auth decision (public dashboard)    |
+| 5. Testing                  | Logged, awaiting your final sign-off         |
+
+**Next steps once approved:**
+1. Update this doc with any edits from the final review.
+2. Write the formal spec to
+   `docs/superpowers/specs/2026-06-26-live-api-integration-design.md`
+   and commit it.
+3. Hand off to the writing-plans skill for the implementation plan.
+
+---
