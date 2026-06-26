@@ -267,4 +267,32 @@ quirks, visual regressions (no Chromatic/Playwright in this project).
    and commit it.
 3. Hand off to the writing-plans skill for the implementation plan.
 
+### Spec written, self-reviewed, committed (2026-06-26)
+
+Spec committed at
+`docs/superpowers/specs/2026-06-26-live-api-integration-design.md`
+in two commits:
+- `35bf403` — initial spec
+- `4621c98` — self-review fixes (clarified §7 ACK semantics; §11.1
+  fake-WS test approach)
+
+**Self-review found and fixed 2 ambiguities:**
+1. §7 — `sendCommand` rejects (does not throw) on error/timeout.
+2. §11.1 — `useConnector` tests use a hand-rolled `FakeWebSocket` +
+   `vi.useFakeTimers()`; no new lib dep.
+
+**Near-miss logged:** first attempt at the self-review commit used
+`git commit -am`, which swept in 11 pre-existing modified files
+(including a 7999-line `package-lock.json` churn) along with the
+spec. Caught via `git show --stat` immediately, soft-reset, re-staged
+only the spec, recommitted clean. Lesson: use plain `git commit -m`
+with explicit `git add` for the file(s) intended; never `-a` in this
+repo while 11 unrelated files are in the working tree.
+
+### Spec approved by user (2026-06-26)
+
+User reviewed `docs/superpowers/specs/2026-06-26-live-api-integration-design.md`
+and approved. Next: invoke the writing-plans skill to draft the
+implementation plan.
+
 ---
