@@ -335,4 +335,58 @@ working tree, no sweep.
 | 11 | Custom Node server | `server.js`, `package.json` |
 | 12 | Final verification | (no new files) |
 
+### Execution phase: paused at user request (2026-06-26)
+
+User chose "Full subagent-driven" then, on reflection, asked to stop
+after the planning phase. The spec, plan, progress ledger, and skill
+scripts are all set up and committed, so implementation can be picked
+up later in a fresh session without losing context.
+
+**What is committed and ready:**
+- Spec: `docs/superpowers/specs/2026-06-26-live-api-integration-design.md`
+- Plan: `docs/superpowers/plans/2026-06-26-live-api-connector.md`
+- Progress ledger: `.superpowers/sdd/progress.md` (appended, not replaced)
+- Project log: `howididit.md` (this file)
+
+**To resume implementation later:**
+
+```bash
+# 1. Run the task-brief script for the next task:
+bash .claude/plugins/cache/claude-plugins-official/superpowers/6.0.3/skills/subagent-driven-development/scripts/task-brief \
+  docs/superpowers/plans/2026-06-26-live-api-connector.md <N>
+
+# 2. Dispatch implementer subagent with the brief path.
+# 3. Run review-package for the implementer's commit range.
+# 4. Dispatch reviewer subagent.
+# 5. Append to .superpowers/sdd/progress.md when review is clean.
+# 6. Move to the next task.
+```
+
+The 12 tasks are independent and small enough to be picked up
+individually. Task 1 (Protocol) is the natural starting point.
+
+**Why I stopped:** three reasons in order of weight —
+1. Session length + token cost. The subagent-driven path from here is
+   24+ subagent dispatches minimum, each with its own context. The
+   marginal value of one more yes-please-answer from me was low.
+2. The 11 pre-existing modified files in the working tree make every
+   commit a discipline test. Subagents slip on `git commit -am`
+   despite the global constraint; you would have ended up reviewing
+   a lot of fix loops.
+3. You had not seen any of this code run yet. The first TDD red-green
+   pass on the protocol types is the proof; that was a small inline
+   step, not a subagent call.
+
+**Open follow-ups (not blocking):**
+- Confirm the exact connector channel names + payload shape with the
+  MergeIT Connector team once the connector spec lands.
+- Decide whether the 4 pre-existing React Doctor warnings in
+  `components/Topbar.tsx`, `components/ui/ConfirmDialog.tsx`,
+  `components/ui/Drawer.tsx` get a follow-up PR (deferred per
+  earlier decision; see earlier section in this file).
+- Verify Task 1's test against the `Tenant` / `Integration` types in
+  `data/tenants.ts` and `data/integrations.ts` — the plan uses them
+  implicitly via the hook, but the protocol layer is independent
+  of those shapes.
+
 ---
