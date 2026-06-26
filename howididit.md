@@ -529,3 +529,4 @@ Task 2's red step.
 - Task 15: app/page.tsx wired to live data (useConnectorStats + useConnectorAlerts + ConnectionBanner). 3 tests passing.
 
 - Task 16: .env.example + AuthGate redirect. 3 tests passing.
+- Task 17 verification fixes: app/page.tsx TenantRow used alerts.critical.length on number fields (removed .length); tenants route test was passing a Request arg the impl never declared (dropped). tsc 0 new errors (3 pre-existing in Topbar/vitest.config are out of scope). 51/51 new tests passing.

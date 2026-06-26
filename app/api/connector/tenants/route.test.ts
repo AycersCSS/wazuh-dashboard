@@ -24,7 +24,7 @@ beforeEach(() => { mockFetch.mockReset(); });
 describe("GET /api/connector/tenants", () => {
   it("returns tenant list", async () => {
     mockFetch.mockResolvedValue({ tenants: ["acme-corp", "globex-inc"] });
-    const res = await GET(new Request("http://localhost/api/connector/tenants") as never);
+    const res = await GET();
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json.tenants).toEqual(["acme-corp", "globex-inc"]);
@@ -33,7 +33,7 @@ describe("GET /api/connector/tenants", () => {
   it("forwards 401 from connector", async () => {
     const { ConnectorError } = await import("@/lib/connector/client");
     mockFetch.mockRejectedValue(new ConnectorError(401, "Unauthorized"));
-    const res = await GET(new Request("http://localhost/api/connector/tenants") as never);
+    const res = await GET();
     expect(res.status).toBe(401);
   });
 });

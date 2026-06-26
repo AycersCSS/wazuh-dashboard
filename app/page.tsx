@@ -181,9 +181,9 @@ function TenantRow({ tenantId, name, tier }: { tenantId: string; name: string; t
         <div className="text-[13px] text-cream">{name}</div>
       </div>
       <div className="flex items-center gap-2 text-[11px] font-mono">
-        <span className="text-severity-high">{alerts.critical.length}C</span>
-        <span className="text-severity-high">{alerts.high.length}H</span>
-        <span className="text-sage">{alerts.warning.length}W</span>
+        <span className="text-severity-high">{alerts.critical}C</span>
+        <span className="text-severity-high">{alerts.high}H</span>
+        <span className="text-sage">{alerts.warning}W</span>
       </div>
       <Badge tone={tier === "Platinum" ? "low" : tier === "Gold" ? "medium" : "info"} dot>{tier}</Badge>
     </li>
