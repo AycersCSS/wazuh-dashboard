@@ -498,4 +498,15 @@ shorter sessions.
 The plan is honest about everything that needs doing. Resume
 when ready.
 
+### Task 2: connectorFetch server-only client (2026-06-26)
+
+Implemented Task 2 from the v2 REST plan. Wrote
+`lib/connector/client.ts` verbatim from the plan (server-only wrapper,
+reads JWT cookie, adds Bearer, throws `ConnectorError` on non-2xx,
+clears cookie on 401). Test file at
+`lib/connector/__tests__/client.test.ts` was already on disk from
+Task 2's red step.
+
+- Task 2: connectorFetch server-only client. 5 tests passing.
+
 ---
