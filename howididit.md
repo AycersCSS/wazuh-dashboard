@@ -527,3 +527,5 @@ Task 2's red step.
 - Task 13: useSession hook + /login page. 4 tests passing.
 - Task 14: ConnectionBanner with 5 states. 5 tests passing.
 - Task 15: app/page.tsx wired to live data (useConnectorStats + useConnectorAlerts + ConnectionBanner). 3 tests passing.
+
+- Task 16: .env.example + AuthGate redirect. 3 tests passing.

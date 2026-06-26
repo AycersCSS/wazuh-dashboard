@@ -7,6 +7,7 @@ import { CommandPalette } from "@/components/CommandPalette";
 import { ToastProvider } from "@/hooks/useToasts";
 import { TimeRangeProvider } from "@/hooks/useTimeRange";
 import { MockWorkerBoot } from "@/components/MockWorkerBoot";
+import { AuthGate } from "@/components/AuthGate";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -34,16 +35,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <MockWorkerBoot />
         <ToastProvider>
           <TimeRangeProvider>
-            <div className="flex min-h-screen bg-navy text-cream">
-              <Sidebar />
-              <div className="flex-1 min-w-0 flex flex-col">
-                <Topbar />
-                <main id="main" className="flex-1 min-w-0 px-4 md:px-6 py-5 md:py-6">
-                  {children}
-                </main>
+            <AuthGate>
+              <div className="flex min-h-screen bg-navy text-cream">
+                <Sidebar />
+                <div className="flex-1 min-w-0 flex flex-col">
+                  <Topbar />
+                  <main id="main" className="flex-1 min-w-0 px-4 md:px-6 py-5 md:py-6">
+                    {children}
+                  </main>
+                </div>
               </div>
-            </div>
-            <CommandPalette />
+              <CommandPalette />
+            </AuthGate>
           </TimeRangeProvider>
         </ToastProvider>
       </body>
