@@ -514,3 +514,5 @@ Task 2's red step.
 ---
 - Task 2 fix: installed real `server-only` package; added test-shims/server-only.ts and vitest alias to make the import resolvable in vitest+jsdom (the real package throws on non-server import; the shim is a no-op for tests; build still uses the real package via bundler resolution). 5/5 still green.
 - Task 4: /api/connector/auth/login route. Forwards to connector /authenticate, sets JWT cookie on 200. 4 tests passing.
+
+- Task 5: /api/connector/auth/logout route. 1 test passing.
