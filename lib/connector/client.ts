@@ -38,11 +38,17 @@ export async function connectorFetch<T>(path: string, init: RequestInit = {}): P
   if (!res.ok) {
     const body = await res.text();
     if (res.status === 401) {
-      // Clear the cookie on 401 to prevent retry loops
-      try {
-        cookieStore.set({ name: COOKIE_NAME, value: "", maxAge: 0, path: "/" });
-      } catch {
-        // cookies() may throw in some contexts; best-effort
+      // Clear the cookie on 401 to prevent retry loops — but only for real
+      // connector-issued tokens. The dev-only "local-test." token is not
+      // accepted by the upstream connector, so the first data call would
+      // always 401; clearing the cookie in that case would also bounce the
+      // user off the dashboard. See app/(auth)/login/page.tsx.
+      if (jwt && !jwt.startsWith("local-test.")) {
+        try {
+          cookieStore.set({ name: COOKIE_NAME, value: "", maxAge: 0, path: "/" });
+        } catch {
+          // cookies() may throw in some contexts; best-effort
+        }
       }
     }
     throw new ConnectorError(res.status, body);

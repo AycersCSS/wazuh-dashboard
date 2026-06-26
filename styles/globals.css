@@ -10,6 +10,10 @@
   color-scheme: dark;
 }
 
+.light {
+  color-scheme: light;
+}
+
 * { box-sizing: border-box; }
 
 html, body {
@@ -24,14 +28,22 @@ html, body {
   text-rendering: optimizeLegibility;
 }
 
+.light html, .light body {
+  background: #FFF7F4;       /* soft warm white */
+  color: #3A0E12;            /* deep wine — readable on near-white */
+}
+
 body, table, .num { font-variant-numeric: tabular-nums; }
 
 ::-webkit-scrollbar { width: 10px; height: 10px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #1F4D80; border-radius: 6px; border: 2px solid transparent; background-clip: content-box; }
 ::-webkit-scrollbar-thumb:hover { background: #2A5E99; background-clip: content-box; }
+.light ::-webkit-scrollbar-thumb { background: #F2B8B0; }
+.light ::-webkit-scrollbar-thumb:hover { background: #E89A90; }
 
 ::selection { background: rgba(91, 208, 160, 0.30); color: #F3E4C9; }
+.light ::selection { background: rgba(192, 60, 70, 0.22); color: #3A0E12; }
 
 @layer components {
   .kbd {
@@ -41,6 +53,63 @@ body, table, .num { font-variant-numeric: tabular-nums; }
     color: #D3D4C0; background: #0E3055; border: 1px solid #1F4D80;
     border-bottom-width: 2px; border-radius: 4px; line-height: 1;
   }
+  .light .kbd {
+    color: #5A1A1F;
+    background: #FFFFFF;
+    border-color: #F2B8B0;
+  }
+}
+
+/* ===========================================================================
+   Light theme overrides.
+   The app's component layer uses fixed Tailwind utilities like bg-navy-100
+   and text-cream. Rather than rewrite every component, we re-skin those
+   classes under .light so the same class names produce a soft red/white
+   palette. The selectors below have higher specificity (two classes) than
+   Tailwind's compiled output, so they win.
+   =========================================================================== */
+
+/* Navy family → soft red/white surfaces */
+.light .bg-navy           { background-color: #FFF7F4 !important; }   /* page bg */
+.light .bg-navy-50        { background-color: #FFF7F4 !important; }
+.light .bg-navy-100       { background-color: #FFFFFF !important; }   /* raised card */
+.light .bg-navy-200       { background-color: #FCE9E5 !important; }   /* hover/inset */
+.light .bg-navy-300       { background-color: #F6D6D0 !important; }
+.light .bg-navy\/95       { background-color: rgba(255, 247, 244, 0.95) !important; }
+.light .bg-navy\/80       { background-color: rgba(255, 247, 244, 0.85) !important; }
+
+/* Borders */
+.light .border-navy-400   { border-color: #F2D5D0 !important; }
+.light .border-navy-500   { border-color: #E89A90 !important; }
+.light .border-navy-400\/60 { border-color: rgba(242, 213, 208, 0.6) !important; }
+
+/* Text */
+.light .text-cream        { color: #3A0E12 !important; }              /* body text */
+.light .text-sage         { color: #6B1E25 !important; }              /* titles/labels */
+.light .text-navy-600     { color: #8A4147 !important; }              /* muted text */
+
+/* Hover/inset surfaces that look up "navy" tokens at runtime */
+.light .hover\:bg-navy-100:hover { background-color: #FCE9E5 !important; }
+.light .hover\:bg-navy-200:hover { background-color: #F6D6D0 !important; }
+.light .hover\:text-cream:hover  { color: #3A0E12 !important; }
+.light .hover\:border-navy-500:hover { border-color: #C03C46 !important; }
+
+/* Borders written via shorthand ring/border with opacity */
+.light .border-severity-info\/40 { border-color: rgba(192, 60, 70, 0.30) !important; }
+.light .bg-emerald-400\/20       { background-color: rgba(192, 60, 70, 0.12) !important; }
+.light .bg-emerald-400\/15       { background-color: rgba(192, 60, 70, 0.10) !important; }
+.light .border-emerald-400\/40   { border-color: rgba(192, 60, 70, 0.30) !important; }
+.light .text-emerald-400         { color: #C03C46 !important; }        /* primary accent → wine */
+.light .bg-severity-critical\/15 { background-color: rgba(192, 60, 70, 0.10) !important; }
+
+/* Focus ring */
+.light .focus-visible\:ring-emerald-400:focus-visible { --tw-ring-color: #C03C46 !important; }
+
+/* Skip link (renders inside .light, so the rule above already restyles the
+   background via bg-emerald-400 → we'll just override the override) */
+.light a[href="#main"] {
+  background: #C03C46 !important;
+  color: #FFFFFF !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

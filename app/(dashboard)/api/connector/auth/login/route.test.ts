@@ -50,6 +50,31 @@ describe("POST /api/connector/auth/login", () => {
     expect(cookieStore.get("connector_jwt")?.value).toBe("real-jwt");
   });
 
+  it("short-circuits to local-test token for ADMIN/ADMIN without calling the connector", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue(
+      new Response(JSON.stringify({ error: "should not be called" }), { status: 500 })
+    );
+    vi.stubGlobal("fetch", fetchSpy);
+
+    const res = await POST(makeRequest({ username: "ADMIN", password: "ADMIN" }) as never);
+    expect(res.status).toBe(200);
+    const json = await res.json();
+    expect(json).toEqual({ ok: true });
+
+    const token = cookieStore.get("connector_jwt")?.value;
+    expect(token).toBeDefined();
+    expect(token).toMatch(/^local-test\./);
+
+    // Decode the payload (after the "local-test." prefix) and verify it claims local-test mode
+    const payloadB64 = token!.split(".")[1];
+    const payload = JSON.parse(Buffer.from(payloadB64, "base64url").toString("utf8"));
+    expect(payload).toMatchObject({ sub: "ADMIN", mode: "local-test" });
+    expect(typeof payload.iat).toBe("number");
+
+    // The connector must not be hit on the local-test path
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it("passes through 401 from connector without setting cookie", async () => {
     vi.stubGlobal("fetch", vi.fn().mockResolvedValue(
       new Response(JSON.stringify({ error: "Invalid credentials" }), { status: 401 })

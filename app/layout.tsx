@@ -1,13 +1,9 @@
 import type { Metadata } from "next";
 import { Oswald } from "next/font/google";
 import "../styles/globals.css";
-import { Sidebar } from "@/components/Sidebar";
-import { Topbar } from "@/components/Topbar";
-import { CommandPalette } from "@/components/CommandPalette";
+import { MockWorkerBoot } from "@/components/MockWorkerBoot";
 import { ToastProvider } from "@/hooks/useToasts";
 import { TimeRangeProvider } from "@/hooks/useTimeRange";
-import { MockWorkerBoot } from "@/components/MockWorkerBoot";
-import { AuthGate } from "@/components/AuthGate";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -27,26 +23,39 @@ export const viewport = {
   themeColor: "#0A2947"
 };
 
+// Pre-hydration script: read the persisted theme and apply the matching class
+// to <html> before React mounts, so users with the light theme don't see a
+// flash of the dark theme on first paint. Falls back to "dark" to match the
+// pre-existing default.
+const themeBootstrap = `
+(function () {
+  try {
+    var raw = localStorage.getItem("sentinel-stack:v1:theme");
+    var theme = raw ? JSON.parse(raw) : "dark";
+    if (theme === "light") {
+      document.documentElement.classList.add("light");
+      document.documentElement.classList.remove("dark");
+    } else {
+      document.documentElement.classList.add("dark");
+      document.documentElement.classList.remove("light");
+    }
+  } catch (e) {
+    document.documentElement.classList.add("dark");
+  }
+})();
+`.trim();
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="dark" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeBootstrap }} />
+      </head>
       <body className={oswald.variable}>
-        <a href="#main" className="sr-only focus:not-sr-only fixed top-2 left-2 z-50 inline-flex items-center h-9 px-3 rounded-lg text-sm font-medium bg-emerald-400 text-[#0A2947]">Skip to main content</a>
         <MockWorkerBoot />
         <ToastProvider>
           <TimeRangeProvider>
-            <AuthGate>
-              <div className="flex min-h-screen bg-navy text-cream">
-                <Sidebar />
-                <div className="flex-1 min-w-0 flex flex-col">
-                  <Topbar />
-                  <main id="main" className="flex-1 min-w-0 px-4 md:px-6 py-5 md:py-6">
-                    {children}
-                  </main>
-                </div>
-              </div>
-              <CommandPalette />
-            </AuthGate>
+            {children}
           </TimeRangeProvider>
         </ToastProvider>
       </body>

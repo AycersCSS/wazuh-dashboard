@@ -71,4 +71,32 @@ describe("connectorFetch", () => {
       body: "Unauthorized",
     });
   });
+
+  it("clears the cookie on 401 for a real token", async () => {
+    const setSpy = vi.fn();
+    mockCookies.mockReturnValue({
+      get: (name: string) => name === "connector_jwt" ? { value: "real-jwt" } : undefined,
+      set: setSpy,
+    } as never);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(
+      new Response("Unauthorized", { status: 401 })
+    ));
+
+    await expect(connectorFetch("/tenants")).rejects.toMatchObject({ status: 401 });
+    expect(setSpy).toHaveBeenCalledWith(expect.objectContaining({ maxAge: 0 }));
+  });
+
+  it("does not clear the cookie on 401 for a local-test token", async () => {
+    const setSpy = vi.fn();
+    mockCookies.mockReturnValue({
+      get: (name: string) => name === "connector_jwt" ? { value: "local-test.payload" } : undefined,
+      set: setSpy,
+    } as never);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue(
+      new Response("Unauthorized", { status: 401 })
+    ));
+
+    await expect(connectorFetch("/tenants")).rejects.toMatchObject({ status: 401 });
+    expect(setSpy).not.toHaveBeenCalled();
+  });
 });
