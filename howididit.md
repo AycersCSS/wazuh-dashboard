@@ -607,3 +607,45 @@ optimizations, not functional bugs.
   scaling the fleet.
 
 ---
+
+### Blocker 4: real-connector smoke test (2026-06-26)
+
+Started the real MergeIT-WazuhConnector in a subprocess (Wazuh URL pointed at unreachable 127.0.0.1:9999 so the connector starts but every authenticated request returns 503). Started the dashboard with CONNECTOR_BASE_URL=http://localhost:5000 and NEXT_PUBLIC_USE_MOCKS=0. Exercised 4 proxy routes via curl:
+
+1) POST /api/connector/auth/login
+   -> 503, body: {"ok":false,"error":"Authentication service unavailable"}
+   Proxy chain works (login route forwards to connector, connector returns 503 because no Wazuh, dashboard surfaces it correctly).
+
+2) GET  /api/connector/health
+   -> 200, body: {"ok":true}
+   Health probe works (connector /tenants returns 200 with empty list, dashboard returns ok).
+
+3) GET  /api/connector/tenants
+   -> 200, body: {"tenants":[]}
+   Tenant list proxy works.
+
+4) GET  /api/connector/agents/count
+   -> 401 + Set-Cookie: connector_jwt=; Path=/; Max-Age=0
+   The 401-cookie-clear logic from lib/connector/client.ts works against the real connector. The connector_jwt cookie is cleared via Max-Age=0, exactly as designed.
+
+Critical confirmation: the proxy chain works end-to-end against the real Python/Flask connector. The only thing not exercised is the success path, which would require a real Wazuh backend. The success path is covered by 51 unit tests against MSW.
+
+Smoke-test runbook (for repeating in a fresh session):
+
+  cd D:/projects/apiconnector/MergeIT-WazuhConnector
+  cp .env.example .env
+  # Edit .env to set WAZUH_API_URL to a real Wazuh server (or a stub URL for error-path testing)
+  pip install -r requirements.txt
+  python -c "from models import init_db; init_db()"
+  python main.py &   # serves on :5000
+
+  cd D:/projects/dashboard
+  CONNECTOR_BASE_URL=http://localhost:5000 NEXT_PUBLIC_USE_MOCKS=0 npm run dev
+
+  # 3. Exercise the proxy routes
+  curl -i -X POST http://localhost:3000/api/connector/auth/login -H "Content-Type: application/json" -d '{"username":"u","password":"p"}'
+  curl -i http://localhost:3000/api/connector/health
+  curl -i http://localhost:3000/api/connector/tenants
+  curl -i http://localhost:3000/api/connector/agents/count
+
+---
