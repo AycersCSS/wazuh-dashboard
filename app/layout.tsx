@@ -6,6 +6,7 @@ import { Topbar } from "@/components/Topbar";
 import { CommandPalette } from "@/components/CommandPalette";
 import { ToastProvider } from "@/hooks/useToasts";
 import { TimeRangeProvider } from "@/hooks/useTimeRange";
+import { MockWorkerBoot } from "@/components/MockWorkerBoot";
 
 const oswald = Oswald({
   subsets: ["latin"],
@@ -30,6 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" className="dark" suppressHydrationWarning>
       <body className={oswald.variable}>
         <a href="#main" className="sr-only focus:not-sr-only fixed top-2 left-2 z-50 inline-flex items-center h-9 px-3 rounded-lg text-sm font-medium bg-emerald-400 text-[#0A2947]">Skip to main content</a>
+        <MockWorkerBoot />
         <ToastProvider>
           <TimeRangeProvider>
             <div className="flex min-h-screen bg-navy text-cream">
