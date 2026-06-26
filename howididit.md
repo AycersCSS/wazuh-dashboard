@@ -516,3 +516,4 @@ Task 2's red step.
 - Task 4: /api/connector/auth/login route. Forwards to connector /authenticate, sets JWT cookie on 200. 4 tests passing.
 
 - Task 5: /api/connector/auth/logout route. 1 test passing.
+- Task 6: /api/connector/agents/count route. 4 tests passing.
