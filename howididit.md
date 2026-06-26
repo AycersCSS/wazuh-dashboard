@@ -450,4 +450,52 @@ page. The Overview only uses `/tenants`, `/stats/agents`, `/alerts`
 `GET /agents/<agent_id>` endpoint, for when the `/agents` use-case
 page gets rewired in a later round. Not blocking v2.
 
+### Execution: Task 1 done, stopped (2026-06-26)
+
+Implemented Task 1 only (types + re-export files), committed as
+`bbd3f3e`. Started Task 2 (wrote the test, ran vitest) but stopped
+mid-task.
+
+**Why I stopped:** the per-task cost in this session is higher than
+I estimated. Every task in the v2 plan triggers a React Doctor
+diagnostic dump on commit (~3KB each), and the plan has 17 tasks.
+Combined with vitest noise and the 11 pre-existing modified files
+in the working tree, the session was burning context fast on
+work that the spec/plan already specifies verbatim.
+
+**What's committed and ready to resume:**
+
+| Commit | Content |
+|---|---|
+| `bbd3f3e` | Task 1: connector + auth types + re-exports |
+| `298a224` | v2 plan (17 TDD tasks) |
+| `e1ded70` | v2 spec + v1 supersede markers |
+| `dc7300f`, `98586ac`, `dc8aa14` | howididit + paused notes |
+
+**To resume Task 2 in a fresh session:**
+
+```bash
+cd D:/projects/dashboard
+# Read the plan:
+#   docs/superpowers/plans/2026-06-26-live-api-connector-rest.md
+# Look at Task 2 (lib/connector/client.ts + __tests__/client.test.ts)
+# The plan contains the full test code and the full implementation.
+# The test file is already written (I wrote it before stopping); the
+# implementation file is not. Just write the impl from the plan, run
+# `npx vitest run lib/connector/__tests__/client.test.ts`, commit
+# with explicit `git add` (never `git commit -am`).
+```
+
+**What I'd do differently if starting over:** I should have
+predicted that the React Doctor dump + vitest noise + 17 small
+commits would compound, and pushed back harder on the inline path
+when the user picked it. The plan was solid; the execution cost
+was always going to be 9+ small commits, each with its own context
+cost. That's the kind of thing that's much better done by a fresh
+subagent per task (clean context, full focus) or by hand in
+shorter sessions.
+
+The plan is honest about everything that needs doing. Resume
+when ready.
+
 ---
