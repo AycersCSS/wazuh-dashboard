@@ -523,3 +523,5 @@ Task 2's red step.
 - Task 10: msw 2.14.6 installed; browser + server mocks wired; vitest.setup.ts adds MSW server lifecycle; MockWorkerBoot client component starts MSW in dev when NEXT_PUBLIC_USE_MOCKS=1. 23/23 new tests pass (4 pre-existing Drawer.test failures are out of scope).
 - Task 11: useConnectorStats hook (30s polling, 60s stale). 5 tests passing.
 - Task 12: useConnectorAlerts hook (per-tenant, 30s polling). 5 tests passing.
+
+- Task 13: useSession hook + /login page. 4 tests passing.
