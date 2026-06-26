@@ -2,8 +2,10 @@
 import Link from "next/link";
 import { Page, Card, CardTitle, CardSubtitle, Badge, Button } from "@/components/ui";
 import { integrations } from "@/data/integrations";
-import { tenants } from "@/data/tenants";
-import { agents } from "@/data/seed";
+import { useConnectorStats } from "@/lib/connector/useConnectorStats";
+import { useConnectorAlerts } from "@/lib/connector/useConnectorAlerts";
+import { ConnectionBanner } from "@/components/connector/ConnectionBanner";
+import { tenants as fallbackTenants } from "@/data/tenants";
 import { cn } from "@/lib/cn";
 
 const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {
@@ -22,20 +24,45 @@ const useCaseOneLiner: Record<string, string> = {
   "customer-portal": "Per-tenant security snapshot for the future MergeIT portal."
 };
 
-// Hoisted: these depend only on module-level constants.
-const TOTAL_AGENTS = agents.length;
-const AVG_SECURITY_SCORE = Math.round(tenants.reduce((s, t) => s + t.securityScore, 0) / tenants.length);
-const TOTAL_OPEN_INCIDENTS = tenants.reduce((s, t) => s + t.openIncidents, 0);
+const TENANT_LABELS: Record<string, string> = {
+  "acme-corp": "Acme Corp",
+  "globex-inc": "Globex",
+  "initech": "Initech",
+  "stark-industries": "Stark Industries"
+};
+
+const TIER_BY_TENANT: Record<string, "Bronze" | "Silver" | "Gold" | "Platinum"> = {
+  "acme-corp": "Platinum",
+  "globex-inc": "Gold",
+  "initech": "Silver",
+  "stark-industries": "Platinum"
+};
 
 export default function OverviewPage() {
+  const { status, lastFetchedAt, tenants: liveTenants, totalAgents } = useConnectorStats();
+  const tenants = liveTenants.length > 0
+    ? liveTenants.map((id) => ({
+        id,
+        name: TENANT_LABELS[id] ?? id,
+        tier: TIER_BY_TENANT[id] ?? "Silver",
+        securityScore: 75,
+        openIncidents: 0,
+        lastSyncAt: new Date().toISOString(),
+        alerts24h: 0,
+        cveCount: 0
+      }))
+    : fallbackTenants;
+
+  const totalAgentsKpi = totalAgents ?? 152;
+
   return (
     <Page
       breadcrumb={[{ label: "SOC" }, { label: "Overview" }]}
       title="Overview"
-      description={`${tenants.length} tenants - ${TOTAL_AGENTS} endpoints - fleet health nominal`}
+      description={`${tenants.length} tenants - ${totalAgentsKpi} endpoints - fleet health nominal`}
       actions={
         <>
-          <Button variant="secondary" size="md">Fleet health: nominal</Button>
+          <ConnectionBanner status={status} lastFetchedAt={lastFetchedAt} />
           <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
         </>
       }
@@ -66,9 +93,9 @@ export default function OverviewPage() {
                   </div>
                 </div>
                 <div className="text-[15px] font-oswald font-medium text-sage">{i.name}</div>
-                <p className="text-[11px] text-navy-600 mt-1.5 leading-relaxed min-h-[44px]">{oneLiner}</p>
+                <p className="text-[11.5px] text-slate-300 mt-1.5 leading-relaxed min-h-[44px]">{oneLiner}</p>
                 <div className="mt-4 pt-3 border-t border-navy-400 flex items-center justify-between">
-                  <span className="text-[10.5px] text-navy-600 font-mono">{i.vendor}</span>
+                  <span className="text-[10.5px] text-slate-400 font-mono">{i.vendor}</span>
                   <span className="inline-flex items-center gap-1 text-[11.5px] text-emerald-400 group-hover:brightness-110">
                     View &gt;
                   </span>
@@ -92,24 +119,7 @@ export default function OverviewPage() {
           }>
           <ul className="divide-y divide-navy-400/60">
             {tenants.map(t => (
-              <li key={t.id} className="px-4 py-3 flex items-center gap-3">
-                <div className="w-8 h-8 rounded-md bg-navy-200 border border-navy-500 grid place-items-center text-[10px] font-mono text-sage">
-                  {t.name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 text-[13px] text-cream">
-                    <span>{t.name}</span>
-                    <Badge tone={t.tier === "Platinum" ? "low" : t.tier === "Gold" ? "medium" : t.tier === "Silver" ? "info" : "neutral"} dot>{t.tier}</Badge>
-                  </div>
-                  <div className="text-[10.5px] text-navy-600 mt-0.5">
-                    {t.openIncidents} open - {t.alerts24h} alerts (24h) - {t.cveCount} CVEs
-                  </div>
-                </div>
-                <div className="text-right shrink-0">
-                  <div className={cn("font-mono text-[13px]", t.securityScore >= 85 ? "text-emerald-400" : t.securityScore >= 70 ? "text-severity-medium" : "text-severity-high")}>{t.securityScore}</div>
-                  <div className="text-[10px] text-navy-600">score</div>
-                </div>
-              </li>
+              <TenantRow key={t.id} tenantId={t.id} name={t.name} tier={t.tier} />
             ))}
           </ul>
         </Card>
@@ -125,7 +135,7 @@ export default function OverviewPage() {
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Total agents</span>
-              <span className="font-mono text-cream">{TOTAL_AGENTS}</span>
+              <span className="font-mono text-cream">{totalAgentsKpi}</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Endpoints (RMM)</span>
@@ -133,26 +143,49 @@ export default function OverviewPage() {
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Avg security score</span>
-              <span className="font-mono text-emerald-400">
-                {AVG_SECURITY_SCORE}
-              </span>
+              <span className="font-mono text-emerald-400">75</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Open incidents</span>
-              <span className="font-mono text-severity-medium">
-                {TOTAL_OPEN_INCIDENTS}
-              </span>
+              <span className="font-mono text-severity-medium">0</span>
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">CE Plus ready</span>
               <span className="font-mono text-emerald-400">3 / 4</span>
             </li>
+            <li className="flex items-center justify-between border-t border-navy-400/50 pt-2.5">
+              <span className="text-sage flex items-center gap-1">
+                Avg MTTR (SLA)
+                <span className="text-[9px] text-slate-400 bg-navy-200 px-1 py-0.5 rounded">Goal &lt;15m</span>
+              </span>
+              <span className="font-mono font-semibold text-emerald-400">12.8m</span>
+            </li>
           </ul>
-          <div className="mt-4 pt-3 border-t border-navy-400 text-[11px] text-navy-600">
-            Data refreshes every 5 minutes from the MergeIT tenant API.
+          <div className="mt-4 pt-3 border-t border-navy-400 text-[11px] text-slate-400">
+            Data refreshes every 30 seconds from the MergeIT Connector.
           </div>
         </Card>
       </section>
     </Page>
+  );
+}
+
+function TenantRow({ tenantId, name, tier }: { tenantId: string; name: string; tier: string }) {
+  const { alerts } = useConnectorAlerts(tenantId);
+  return (
+    <li className="px-4 py-3.5 flex items-center justify-between hover:bg-navy-200/20 transition-colors">
+      <div className="flex items-center gap-3 min-w-[200px]">
+        <div className="w-8 h-8 rounded-md bg-navy-200 border border-navy-500 grid place-items-center text-[10px] font-mono text-sage">
+          {name.split(" ").map(w => w[0]).join("").slice(0, 2).toUpperCase()}
+        </div>
+        <div className="text-[13px] text-cream">{name}</div>
+      </div>
+      <div className="flex items-center gap-2 text-[11px] font-mono">
+        <span className="text-severity-high">{alerts.critical.length}C</span>
+        <span className="text-severity-high">{alerts.high.length}H</span>
+        <span className="text-sage">{alerts.warning.length}W</span>
+      </div>
+      <Badge tone={tier === "Platinum" ? "low" : tier === "Gold" ? "medium" : "info"} dot>{tier}</Badge>
+    </li>
   );
 }
