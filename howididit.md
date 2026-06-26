@@ -517,3 +517,4 @@ Task 2's red step.
 
 - Task 5: /api/connector/auth/logout route. 1 test passing.
 - Task 6: /api/connector/agents/count route. 4 tests passing.
+- Task 7: /api/connector/alerts route. 2 tests passing.
