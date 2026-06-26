@@ -530,3 +530,80 @@ Task 2's red step.
 
 - Task 16: .env.example + AuthGate redirect. 3 tests passing.
 - Task 17 verification fixes: app/page.tsx TenantRow used alerts.critical.length on number fields (removed .length); tenants route test was passing a Request arg the impl never declared (dropped). tsc 0 new errors (3 pre-existing in Topbar/vitest.config are out of scope). 51/51 new tests passing.
+
+### Implementation complete (2026-06-26, ultracode mode)
+
+**17 tasks implemented, 19 commits, 51/51 new tests passing.**
+
+Commit history (bbd3f3e..be09a52):
+
+| Commit | Task |
+|---|---|
+| `bbd3f3e` | Task 1: connector + auth types + re-exports |
+| `3966641` | Task 2 WIP: client test file |
+| `719fe07` | Task 2: connectorFetch server-only client |
+| `f62f2c7` | Task 2 fix: real `server-only` package + vitest alias shim |
+| `8fedb72` | Task 3: server-only session helpers |
+| `ac47016` | Task 4: login proxy route |
+| `5bcd7e2` | Task 5: logout proxy route |
+| `6e910f0` | Task 6: agents count proxy route |
+| `3514e23` | Task 7: alerts proxy route |
+| `eb7db08` | Task 8: tenants + health proxy routes |
+| `9a3369e` | Task 9: MSW handlers + mock data |
+| `d7d1f18` | Task 10: install msw, wire browser+server, vitest setup, layout |
+| `2618ccb` | Task 11: useConnectorStats hook |
+| `c8cb90b` | Task 12: useConnectorAlerts hook |
+| `5556136` | Task 13: useSession hook + /login page |
+| `a432aa0` | Task 14: ConnectionBanner with 5 states |
+| `01ff5d3` | Task 15: wire Overview page to live data |
+| `15f82a7` | Task 16: .env.example + AuthGate |
+| `be09a52` | Task 17 verification: drop .length + Request arg |
+
+**Final whole-branch review verdict: READY TO MERGE.**
+Zero Critical issues. Five Important items are all scale/UX
+optimizations, not functional bugs.
+
+**Real plan defects found and fixed inline (3):**
+1. `import "server-only"` in `lib/connector/client.ts` — plan did
+   not specify adding the package. Fixed by installing the real
+   package + `test-shims/server-only.ts` shim + vitest alias.
+2. Plan useSession test overrode `global.fetch` directly, but
+   MSW is now globally active in vitest (Task 10). Implementer
+   correctly switched to `server.use(http...)` — canonical MSW
+   pattern.
+3. Plan test for /api/connector/tenants passed a `Request` arg
+   to `GET()` but the route signature has no args. Dropped.
+
+**Two real bugs found at Task 17 verification and fixed inline:**
+1. `app/page.tsx TenantRow` called `.length` on number fields.
+2. `app/api/connector/tenants/route.test.ts` called
+   `GET(new Request(...))` but the impl has no args.
+
+**Pre-existing issues left untouched (per plan constraints):**
+- 4 React Doctor warnings in Topbar/ConfirmDialog/Drawer
+- 3 tsc errors in Topbar.tsx and vitest.config.ts
+- 4 test failures in components/ui/__tests__/Drawer.test.tsx
+  (jsdom doesnt implement HTMLDialogElement.showModal)
+
+**Architectural pieces in place:**
+- 6 proxy routes forward every connector call; browser never
+  touches CONNECTOR_BASE_URL
+- JWT in httpOnly cookie set by login route, cleared on 401
+- 2 polling hooks with 30s interval, 60s stale, optimistic ACK N/A
+- 5-status ConnectionBanner
+- AuthGate redirects to /login when unauthenticated
+- MSW intercepts proxy routes in dev (browser worker) + tests
+  (node server); bypassed when NEXT_PUBLIC_USE_MOCKS != "1"
+
+**Known follow-ups (not blocking, documented by reviewer):**
+- Per-tenant TenantRow triggers 4 simultaneous 30s polls. Fine
+  for 4 tenants; needs a batch endpoint + cache layer before
+  scaling to 20+ tenants.
+- AuthGate has a brief "Loading..." flash on every navigation.
+  Move auth check to a server component for instant rendering.
+- 5s stale-check interval is more aggressive than needed;
+  could be 30s. Minor perf.
+- Stale-while-revalidate would be a future improvement when
+  scaling the fleet.
+
+---
