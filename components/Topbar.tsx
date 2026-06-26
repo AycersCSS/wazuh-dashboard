@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect } from "react";
+import { useReducer, useRef, useEffect } from "react";
 import { cn } from "@/lib/cn";
 import { formatCompact } from "@/lib/format";
 import { useTimeRange, type TimeRangeKey } from "@/hooks/useTimeRange";
@@ -23,40 +23,56 @@ const ranges: { key: TimeRangeKey; label: string }[] = [
   { key: "30d", label: "Last 30 days" }
 ];
 
+type MenuKey = "tenant" | "range" | "notif" | "user" | "help";
+type TopbarState = { tenant: TenantKey; menu: MenuKey | null };
+type TopbarAction =
+  | { type: "toggle"; menu: MenuKey }
+  | { type: "closeMenu" }
+  | { type: "setTenant"; tenant: TenantKey };
+
+function topbarReducer(s: TopbarState, a: TopbarAction): TopbarState {
+  switch (a.type) {
+    case "toggle":   return { ...s, menu: s.menu === a.menu ? null : a.menu };
+    case "closeMenu": return { ...s, menu: null };
+    case "setTenant": return { tenant: a.tenant, menu: null };
+  }
+}
+
 export function Topbar() {
   const cmd = useCommandPalette();
   const toasts = useToasts();
   const { range, setKey } = useTimeRange();
   useGoToShortcuts();
 
-  const [tenant, setTenant] = useState<TenantKey>("all");
-  const [tenantOpen, setTenantOpen] = useState(false);
-  const [rangeOpen, setRangeOpen] = useState(false);
-  const [notifOpen, setNotifOpen] = useState(false);
-  const [userOpen, setUserOpen] = useState(false);
-  const [helpOpen, setHelpOpen] = useState(false);
+  // The five header dropdowns are mutually exclusive — one open at a time — so
+  // group them (plus the tenant selection) in a single useReducer instead of
+  // six independent useState calls that each trigger their own render.
+  const [{ tenant, menu }, dispatch] = useReducer(topbarReducer, { tenant: "all", menu: null });
+  const toggle = (m: MenuKey) => dispatch({ type: "toggle", menu: m });
 
-  const tenantRef = useRef<HTMLDivElement>(null);
-  const rangeRef = useRef<HTMLDivElement>(null);
-  const notifRef = useRef<HTMLDivElement>(null);
-  const userRef = useRef<HTMLDivElement>(null);
-  const helpRef = useRef<HTMLDivElement>(null);
+  const refs = {
+    tenant: useRef<HTMLDivElement>(null),
+    range: useRef<HTMLDivElement>(null),
+    notif: useRef<HTMLDivElement>(null),
+    user: useRef<HTMLDivElement>(null),
+    help: useRef<HTMLDivElement>(null),
+  };
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
-      if (tenantRef.current && !tenantRef.current.contains(e.target as Node)) setTenantOpen(false);
-      if (rangeRef.current && !rangeRef.current.contains(e.target as Node)) setRangeOpen(false);
-      if (notifRef.current && !notifRef.current.contains(e.target as Node)) setNotifOpen(false);
-      if (userRef.current  && !userRef.current.contains(e.target as Node))  setUserOpen(false);
-      if (helpRef.current  && !helpRef.current.contains(e.target as Node))  setHelpOpen(false);
+      const target = e.target as Node;
+      if ((Object.values(refs) as React.RefObject<HTMLDivElement>[]).every(r => r.current && !r.current.contains(target))) {
+        dispatch({ type: "closeMenu" });
+      }
     }
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
+    // refs are stable refs; intentionally excluded from deps.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function selectTenant(k: TenantKey) {
-    setTenant(k);
-    setTenantOpen(false);
+    dispatch({ type: "setTenant", tenant: k });
     const t = tenants.find(x => x.key === k);
     toasts.push({ variant: "success", title: "Tenant switched", description: `Now viewing ${t?.label}` });
   }
@@ -66,15 +82,15 @@ export function Topbar() {
   return (
     <header className="sticky top-0 z-30 bg-navy/95 backdrop-blur border-b border-navy-400">
       <div className="h-14 flex items-center gap-3 px-4">
-        <div ref={tenantRef} className="relative">
+        <div ref={refs.tenant} className="relative">
           <button type="button"
-            onClick={() => { setTenantOpen(o => !o); setRangeOpen(false); setNotifOpen(false); setUserOpen(false); setHelpOpen(false); }}
+            onClick={() => toggle("tenant")}
             className="flex items-center gap-2 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            aria-haspopup="menu" aria-expanded={tenantOpen}>
+            aria-haspopup="menu" aria-expanded={menu === "tenant"}>
             <span className="text-[12px] font-medium text-cream">{tenantLabel}</span>
-            <span className={cn("text-navy-600 transition-transform text-[10px]", tenantOpen && "rotate-180")}>v</span>
+            <span className={cn("text-navy-600 transition-transform text-[10px]", menu === "tenant" && "rotate-180")}>v</span>
           </button>
-          {tenantOpen && (
+          {menu === "tenant" && (
             <div className="absolute left-0 top-10 w-[280px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="px-3 py-2 text-[10px] uppercase tracking-[0.18em] text-navy-600 font-semibold border-b border-navy-400">Select tenant</div>
               {tenants.map(t => (
@@ -92,19 +108,19 @@ export function Topbar() {
           )}
         </div>
 
-        <div ref={rangeRef} className="relative">
+        <div ref={refs.range} className="relative">
           <button type="button"
-            onClick={() => { setRangeOpen(o => !o); setTenantOpen(false); setNotifOpen(false); setUserOpen(false); setHelpOpen(false); }}
+            onClick={() => toggle("range")}
             className="hidden md:flex items-center gap-1.5 h-8 px-2.5 bg-navy-100 border border-navy-400 rounded-md hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            aria-haspopup="menu" aria-expanded={rangeOpen}>
+            aria-haspopup="menu" aria-expanded={menu === "range"}>
             <span className="text-[12px] text-cream">{range.label}</span>
-            <span className={cn("text-navy-600 transition-transform text-[10px]", rangeOpen && "rotate-180")}>v</span>
+            <span className={cn("text-navy-600 transition-transform text-[10px]", menu === "range" && "rotate-180")}>v</span>
           </button>
-          {rangeOpen && (
+          {menu === "range" && (
             <div className="absolute right-0 top-10 w-[200px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               {ranges.map(r => (
                 <button type="button" key={r.key}
-                  onClick={() => { setKey(r.key); setRangeOpen(false); toasts.push({ variant: "info", title: "Time range updated", description: r.label, duration: 2000 }); }}
+                  onClick={() => { setKey(r.key); dispatch({ type: "closeMenu" }); toasts.push({ variant: "info", title: "Time range updated", description: r.label, duration: 2000 }); }}
                   className={cn("w-full flex items-center justify-between px-3 h-8 text-xs hover:bg-navy-200",
                     range.key === r.key ? "text-emerald-400 bg-navy-200" : "text-sage")}>
                   <span>{r.label}</span>
@@ -134,14 +150,14 @@ export function Topbar() {
           <span>Dark</span>
         </button>
 
-        <div ref={helpRef} className="relative">
+        <div ref={refs.help} className="relative">
           <button type="button"
-            onClick={() => { setHelpOpen(o => !o); setTenantOpen(false); setNotifOpen(false); setUserOpen(false); }}
+            onClick={() => toggle("help")}
             className="inline-flex items-center justify-center w-8 h-8 rounded-md text-navy-600 hover:text-cream hover:bg-navy-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            aria-label="Help" aria-haspopup="menu" aria-expanded={helpOpen}>
+            aria-label="Help" aria-haspopup="menu" aria-expanded={menu === "help"}>
             <span className="text-[12px]">?</span>
           </button>
-          {helpOpen && (
+          {menu === "help" && (
             <div className="absolute right-0 top-10 w-[320px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="px-3 h-10 flex items-center border-b border-navy-400 text-xs font-semibold text-cream">
                 Keyboard shortcuts
@@ -165,7 +181,7 @@ export function Topbar() {
                 ))}
               </ul>
               <div className="border-t border-navy-400 p-2 flex justify-between">
-                <button type="button" onClick={() => { setHelpOpen(false); cmd.setOpen(true); }} className="inline-flex items-center gap-1.5 h-7 px-2.5 text-xs font-medium bg-navy border border-navy-500 rounded-md hover:bg-navy-200 text-cream">
+                <button type="button" onClick={() => { dispatch({ type: "closeMenu" }); cmd.setOpen(true); }} className="inline-flex items-center gap-1.5 h-7 px-2.5 text-xs font-medium bg-navy border border-navy-500 rounded-md hover:bg-navy-200 text-cream">
                   Open palette
                 </button>
                 <button type="button" onClick={() => toasts.push({ variant: "info", title: "Opening documentation" })} className="inline-flex items-center gap-1.5 h-7 px-2.5 text-xs font-medium bg-navy border border-navy-500 rounded-md hover:bg-navy-200 text-cream">
@@ -176,15 +192,15 @@ export function Topbar() {
           )}
         </div>
 
-        <div ref={notifRef} className="relative">
+        <div ref={refs.notif} className="relative">
           <button type="button"
-            onClick={() => { setNotifOpen(o => !o); setTenantOpen(false); setRangeOpen(false); setUserOpen(false); setHelpOpen(false); }}
+            onClick={() => toggle("notif")}
             className="relative inline-flex items-center justify-center w-8 h-8 rounded-md text-navy-600 hover:text-cream hover:bg-navy-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            aria-label="Notifications" aria-haspopup="menu" aria-expanded={notifOpen}>
+            aria-label="Notifications" aria-haspopup="menu" aria-expanded={menu === "notif"}>
             <span className="text-[12px]">bell</span>
             <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-severity-critical" />
           </button>
-          {notifOpen && (
+          {menu === "notif" && (
             <div className="absolute right-0 top-10 w-[360px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="flex items-center justify-between px-3 h-10 border-b border-navy-400">
                 <div className="text-xs font-semibold text-cream">Notifications</div>
@@ -201,7 +217,7 @@ export function Topbar() {
                 ].map((n) => (
                   <li key={n.title + n.time}>
                     <button type="button"
-                      onClick={() => { setNotifOpen(false); toasts.push({ variant: n.sev as any, title: "Opened: " + n.title, duration: 2000 }); }}
+                      onClick={() => { dispatch({ type: "closeMenu" }); toasts.push({ variant: n.sev as any, title: "Opened: " + n.title, duration: 2000 }); }}
                       className="w-full text-left px-3 py-2.5 border-b border-navy-400/60 last:border-0 hover:bg-navy-200 cursor-pointer">
                       <span className={cn(
                         "mt-1.5 w-1.5 h-1.5 rounded-full flex-none inline-block align-middle mr-2.5",
@@ -217,25 +233,25 @@ export function Topbar() {
               </ul>
               <div className="px-3 h-9 flex items-center justify-between border-t border-navy-400">
                 <span className="text-[10.5px] text-navy-600">Showing 4 of 17</span>
-                <button type="button" onClick={() => setNotifOpen(false)} className="text-[11.5px] text-emerald-400 hover:brightness-110">View all</button>
+                <button type="button" onClick={() => dispatch({ type: "closeMenu" })} className="text-[11.5px] text-emerald-400 hover:brightness-110">View all</button>
               </div>
             </div>
           )}
         </div>
 
-        <div ref={userRef} className="relative">
+        <div ref={refs.user} className="relative">
           <button type="button"
-            onClick={() => { setUserOpen(o => !o); setTenantOpen(false); setRangeOpen(false); setNotifOpen(false); setHelpOpen(false); }}
+            onClick={() => toggle("user")}
             className="flex items-center gap-2 h-8 pl-1 pr-2 bg-navy-100 border border-navy-400 rounded-md hover:border-navy-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-            aria-label="User menu" aria-haspopup="menu" aria-expanded={userOpen}>
+            aria-label="User menu" aria-haspopup="menu" aria-expanded={menu === "user"}>
             <span className="w-6 h-6 rounded-md bg-emerald-400/20 border border-emerald-400/40 grid place-items-center text-[10px] font-semibold text-emerald-400">AC</span>
             <span className="hidden md:flex flex-col text-left leading-tight">
               <span className="text-xs font-medium text-cream">Alex Chen</span>
               <span className="text-[10px] text-navy-600">MergeIT SOC Analyst - L2</span>
             </span>
-            <span className={cn("text-navy-600 transition-transform text-[10px]", userOpen && "rotate-180")}>v</span>
+            <span className={cn("text-navy-600 transition-transform text-[10px]", menu === "user" && "rotate-180")}>v</span>
           </button>
-          {userOpen && (
+          {menu === "user" && (
             <div className="absolute right-0 top-10 w-[260px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               <div className="px-3 py-3 border-b border-navy-400">
                 <div className="text-[13px] font-semibold text-cream">Alex Chen</div>
@@ -252,7 +268,7 @@ export function Topbar() {
                   { label: "Profile",     action: () => toasts.push({ title: "Profile (coming soon)" }) },
                   { label: "My shifts",   action: () => toasts.push({ title: "Shifts view (coming soon)" }) },
                   { label: "On-call",     action: () => toasts.push({ title: "On-call roster (coming soon)" }) },
-                  { label: "Shortcuts",   action: () => { setUserOpen(false); setHelpOpen(true); } }
+                  { label: "Shortcuts",   action: () => toasts.push({ variant: "info", title: "Press ⌘K for command palette" }) }
                 ].map(({ label, action }) => (
                   <li key={label}>
                     <button type="button" onClick={action} className="w-full flex items-center gap-2.5 px-3 h-8 text-xs text-sage hover:text-cream hover:bg-navy-200 transition-colors">

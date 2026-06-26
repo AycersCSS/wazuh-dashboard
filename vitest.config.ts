@@ -6,12 +6,17 @@ import path from "node:path";
 // fails when vite's import-analysis re-parses the raw JSX in *.test.tsx. oxc does
 // not honour this esbuild block, so disable it (`oxc: false`) and let esbuild
 // (which respects `jsx: "automatic"`) transform test files instead.
+//
+// The esbuild block below uses a type cast because vitest 4's ESBuildOptions
+// type does not include `jsx` (it was moved to esbuild's own config in newer
+// versions). At runtime, esbuild reads these keys correctly; the type lag is
+// upstream.
 export default defineConfig({
   oxc: false,
   esbuild: {
     jsx: "automatic",
     jsxImportSource: "react"
-  },
+  } as never,
   test: {
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
