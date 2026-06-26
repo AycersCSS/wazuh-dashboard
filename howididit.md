@@ -510,3 +510,4 @@ Task 2's red step.
 - Task 2: connectorFetch server-only client. 5 tests passing.
 
 ---
+- Task 2 fix: installed real `server-only` package; added test-shims/server-only.ts and vitest alias to make the import resolvable in vitest+jsdom (the real package throws on non-server import; the shim is a no-op for tests; build still uses the real package via bundler resolution). 5/5 still green.
