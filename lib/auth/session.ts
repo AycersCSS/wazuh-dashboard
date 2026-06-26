@@ -16,7 +16,7 @@ export function setJwt(token: string): void {
     name: COOKIE_NAME,
     value: token,
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "strict",
     secure: isProd,
     path: "/"
   });
@@ -27,7 +27,7 @@ export function clearJwt(): void {
     name: COOKIE_NAME,
     value: "",
     httpOnly: true,
-    sameSite: "lax",
+    sameSite: "strict",
     secure: isProd,
     path: "/",
     maxAge: 0
