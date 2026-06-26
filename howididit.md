@@ -407,6 +407,8 @@ User pointed at the actual connector:
 | `useConnector` hook over WebSocket | `useSWR` / `useQuery` or hand-rolled `useEffect` + `fetch` |
 | Public dashboard (no auth) | **Has auth**: `/authenticate`, `/customer/login`, `/customer/register` (JWT) |
 
+- Task 3: server-only session cookie helpers. 3 tests passing.
+
 **The connector endpoints that matter for the dashboard:**
 
 | Endpoint | Used for |
