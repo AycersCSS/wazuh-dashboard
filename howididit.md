@@ -389,4 +389,48 @@ individually. Task 1 (Protocol) is the natural starting point.
   implicitly via the hook, but the protocol layer is independent
   of those shapes.
 
+### Plan SUPERSEDED by the real connector (2026-06-26)
+
+User pointed at the actual connector:
+`D:\projects\apiconnector\MergeIT-WazuhConnector`.
+
+**Reality vs. plan:**
+
+| Plan assumed | Connector actually has |
+|--------------|------------------------|
+| WebSocket transport | REST (Flask, no WS) |
+| Custom `subscribe` / `state` / `cmd` / `ack` JSON protocol | Plain HTTP endpoints |
+| Bidirectional commands (restart/isolate) | **Read-only API — no command endpoints** |
+| Custom Node `ws` proxy + native WebSocket client | `fetch()` from browser or Next.js server route |
+| 60s staleness threshold | Polling interval — REST has no push |
+| Optimistic+ACK with 10s timeout | N/A; standard request/response |
+| `useConnector` hook over WebSocket | `useSWR` / `useQuery` or hand-rolled `useEffect` + `fetch` |
+| Public dashboard (no auth) | **Has auth**: `/authenticate`, `/customer/login`, `/customer/register` (JWT) |
+
+**The connector endpoints that matter for the dashboard:**
+
+| Endpoint | Used for |
+|----------|----------|
+| `POST /authenticate` | Admin sign-in (proxy to Wazuh) |
+| `POST /customer/login` | Per-tenant customer sign-in |
+| `POST /customer/register` | Self-serve customer onboarding |
+| `GET /stats/agents?status=&tenant=` | The "Total agents" / "Endpoints (RMM)" KPIs |
+| `GET /alerts?limit=&time_range=&tenant=` | The "Open incidents" / severity breakdown per tenant |
+| `GET /tenants` | The "MSP fleet" tenant list |
+| `GET /tenants/check?name=` | Registration flow validation |
+
+**No command endpoints** — restart/isolate, "Sync now" etc. are not
+implementable against this connector as it stands. The 5 use-case
+pages lose those affordances until the connector grows them.
+
+**User's decision:** redesign around the real REST API, throw out
+the WebSocket transport, keep the JWT auth. This is the right call —
+the WebSocket plan was an architectural guess that didn't survive
+contact with the actual code.
+
+**Next:** re-brainstorm with the connector's actual endpoint list in
+hand. The spec/plan will be rewritten — same goals (live data on
+Overview, then 5 use-case pages), different transport (REST + JWT +
+polling), smaller scope (no commands yet).
+
 ---
