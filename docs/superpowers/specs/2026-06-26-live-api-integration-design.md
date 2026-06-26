@@ -169,6 +169,11 @@ Hook.sendCommand({ id: uuid, action, target })
   └──► 10s timeout                  → reject, roll back, toast "Connector didn't respond"
 ```
 
+`sendCommand` returns a `Promise<{status: "ok", result} | {status: "error", reason}>`.
+The hook itself **rejects** the promise on error and timeout (does not
+throw synchronously). Callers `.then()` / `.catch()` / `await` it
+normally.
+
 Destructive actions (`restart_machine`, `isolate_machine`) require a
 `ConfirmDialog` click first; otherwise the flow is identical.
 
@@ -238,11 +243,13 @@ real connector exists.
 - `lib/connector/protocol.test.ts` — `parseMessage` guards
   (well-formed, malformed JSON, unknown op, missing fields, wrong
   shapes).
-- `lib/connector/useConnector.test.ts` — using a fake `WebSocket`:
+- `lib/connector/useConnector.test.ts` — using a hand-rolled
+  `FakeWebSocket` class (no library dep — the project has none):
   open/close on mount, subscribes on subscribe, state updates per
   channel, ignores unsubscribed channels, sendCommand/ack flow,
   10s timeout, reconnect + backoff schedule, rate cap 100/s,
-  optimistic rollback on error and on timeout.
+  optimistic rollback on error and on timeout. Tests use
+  `vi.useFakeTimers()` for the timer-driven behavior.
 - `lib/connector/mockServer.test.ts` — emits state at intervals,
   ACKs commands, supports restart/isolate, simulates disconnect.
 - `components/connector/ConnectionBanner.test.tsx` — Live /
