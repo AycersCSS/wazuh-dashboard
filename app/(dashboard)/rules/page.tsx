@@ -4,6 +4,7 @@ import { Page, DataGrid, type Column, Card, EmptyState, SearchInput, Badge } fro
 import { rules } from "@/data/seed";
 import { ruleStatus, useToggleRule, useAlertsStore } from "@/hooks/useAlertsStore";
 import { useToasts } from "@/hooks/useToasts";
+import { useAudit } from "@/hooks/useAudit";
 import { formatRelativeTime } from "@/lib/format";
 import type { Rule } from "@/types";
 
@@ -11,6 +12,7 @@ export default function RulesPage() {
   useAlertsStore();
   const toasts = useToasts();
   const toggle = useToggleRule();
+  const audit = useAudit();
   const [search, setSearch] = useState("");
 
   const filtered = useMemo(() => {
@@ -33,7 +35,7 @@ export default function RulesPage() {
       return (
         <button
           type="button"
-          onClick={() => { toggle(r.id); toasts.push({ variant: "info", title: `Rule ${r.id} ${s === "enabled" ? "disabled" : "enabled"}` }); }}
+          onClick={() => { audit.record({ scope: "rule", type: "rule.toggle", summary: `Rule ${r.id}: ${s} → ${s === "enabled" ? "disabled" : "enabled"}`, outcome: "success", target: { kind: "rule", id: r.id }, meta: { from: s, to: s === "enabled" ? "disabled" : "enabled", level: r.level, description: r.description } }); toggle(r.id); toasts.push({ variant: "info", title: `Rule ${r.id} ${s === "enabled" ? "disabled" : "enabled"}` }); }}
           className={`inline-flex items-center gap-1.5 h-6 px-2 rounded-md border text-xs font-medium ${s === "enabled" ? "bg-emerald-400/15 border-emerald-400/40 text-emerald-400" : "bg-navy-200 border-navy-400 text-navy-600"}`}>
           <span className={`w-1.5 h-1.5 rounded-full ${s === "enabled" ? "bg-emerald-400" : "bg-navy-600"}`} />
           {s}

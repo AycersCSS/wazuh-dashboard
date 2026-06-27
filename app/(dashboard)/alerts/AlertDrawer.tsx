@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Drawer, Button, Badge, Tabs, Card, ConfirmDialog } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useAcknowledge, useArchive, isAcked } from "@/hooks/useAlertsStore";
+import { useAudit } from "@/hooks/useAudit";
 import { severityBucket, severityLabel } from "@/types";
 import type { Alert } from "@/types";
 import Link from "next/link";
@@ -12,6 +13,7 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
   const toasts = useToasts();
   const ack = useAcknowledge();
   const archive = useArchive();
+  const audit = useAudit();
   const [escalate, setEscalate] = useState(false);
 
   if (!alert) return null;
@@ -20,17 +22,47 @@ export function AlertDrawer({ alert, open, onClose }: { alert: Alert | null; ope
 
   function copyId() {
     navigator.clipboard?.writeText(alert!.id);
+    audit.record({
+      scope: "alert",
+      type: "alert.copy_id",
+      summary: `Copied alert ID ${alert!.id}`,
+      target: { kind: "alert", id: alert!.id }
+    });
     toasts.push({ variant: "success", title: "Copied", description: alert!.id });
   }
   function onAck() {
+    audit.record({
+      scope: "alert",
+      type: "alert.ack",
+      summary: `Acknowledged ${severityLabel(alert!.rule.level)} alert ${alert!.id} (${alert!.rule.description})`,
+      outcome: "success",
+      target: { kind: "alert", id: alert!.id },
+      meta: { severity: alert!.rule.level, ruleId: alert!.rule.id, agentId: alert!.agent.id }
+    });
     ack([alert!.id]);
     toasts.push({ variant: "success", title: "Acknowledged", description: alert!.id });
   }
   function onArchive() {
+    audit.record({
+      scope: "alert",
+      type: "alert.archive",
+      summary: `Archived alert ${alert!.id}`,
+      outcome: "success",
+      target: { kind: "alert", id: alert!.id },
+      meta: { severity: alert!.rule.level, ruleId: alert!.rule.id }
+    });
     archive([alert!.id]);
     toasts.push({ variant: "info", title: "Archived", description: alert!.id });
   }
   function onEscalateConfirm() {
+    audit.record({
+      scope: "alert",
+      type: "alert.escalate",
+      summary: `Escalated ${severityLabel(alert!.rule.level)} alert ${alert!.id} to L2 (PagerDuty #INC-4421)`,
+      outcome: "requested",
+      target: { kind: "alert", id: alert!.id },
+      meta: { severity: alert!.rule.level, pagerDutyIncident: "INC-4421" }
+    });
     setEscalate(false);
     toasts.push({ variant: "warn", title: "Escalated to L2", description: "PagerDuty incident #INC-4421 created" });
   }

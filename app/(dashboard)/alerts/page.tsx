@@ -5,6 +5,7 @@ import { alerts } from "@/data/seed";
 import { useTimeRange } from "@/hooks/useTimeRange";
 import { useToasts } from "@/hooks/useToasts";
 import { useAcknowledge, useAlertsStore } from "@/hooks/useAlertsStore";
+import { useAudit } from "@/hooks/useAudit";
 import { severityBucket, severityLabel } from "@/types";
 import { formatRelativeTime } from "@/lib/format";
 import { AlertDrawer } from "./AlertDrawer";
@@ -19,6 +20,7 @@ export default function AlertsPage() {
   const { range } = useTimeRange();
   const ack = useAcknowledge();
   const store = useAlertsStore();
+  const audit = useAudit();
   const [filters, setFilters] = useState<AlertFilters>({ severities: new Set(), search: "", showAcked: true });
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [active, setActive] = useState<Alert | null>(null);
@@ -77,8 +79,8 @@ export default function AlertsPage() {
       description={`${alerts.length} events - ${criticalAlertCount} critical - ${range.label}`}
       actions={
         <>
-          <Button variant="secondary" onClick={() => toasts.push({ variant: "info", title: "Export started", description: "JSON download queued" })}>Export</Button>
-          <Button variant="primary" onClick={() => { ack(visibleIds); toasts.push({ variant: "success", title: `Acknowledged ${visibleIds.length} alerts` }); }}>Acknowledge all visible</Button>
+          <Button variant="secondary" onClick={() => { audit.record({ scope: "alert", type: "alert.export_requested", summary: `Export requested for ${visibleIds.length} visible alerts`, meta: { count: visibleIds.length } }); toasts.push({ variant: "info", title: "Export started", description: "JSON download queued" }); }}>Export</Button>
+          <Button variant="primary" onClick={() => { audit.record({ scope: "alert", type: "alert.bulk_ack_visible", summary: `Acknowledged all ${visibleIds.length} visible alerts`, outcome: "success", meta: { count: visibleIds.length, filterSeverities: [...filters.severities] } }); ack(visibleIds); toasts.push({ variant: "success", title: `Acknowledged ${visibleIds.length} alerts` }); }}>Acknowledge all visible</Button>
         </>
       }
     >
@@ -89,9 +91,9 @@ export default function AlertsPage() {
           <div className="px-4 py-2 flex items-center justify-between border-b border-navy-400">
             <span className="text-xs text-sage">{selected.size} selected</span>
             <div className="flex items-center gap-2">
-              <Button size="sm" variant="primary" onClick={() => { ack([...selected]); toasts.push({ variant: "success", title: `Acknowledged ${selected.size}` }); setSelected(new Set()); }}>Acknowledge</Button>
-              <Button size="sm" variant="secondary" onClick={() => toasts.push({ variant: "warn", title: `Escalated ${selected.size}`, description: "PagerDuty incident created" })}>Escalate to L2</Button>
-              <Button size="sm" variant="ghost" onClick={() => setSelected(new Set())}>Clear</Button>
+              <Button size="sm" variant="primary" onClick={() => { audit.record({ scope: "alert", type: "alert.bulk_ack_selected", summary: `Acknowledged ${selected.size} selected alerts`, outcome: "success", meta: { count: selected.size, alertIds: [...selected] } }); ack([...selected]); toasts.push({ variant: "success", title: `Acknowledged ${selected.size}` }); setSelected(new Set()); }}>Acknowledge</Button>
+              <Button size="sm" variant="secondary" onClick={() => { audit.record({ scope: "alert", type: "alert.bulk_escalate", summary: `Escalated ${selected.size} selected alerts to L2`, outcome: "requested", meta: { count: selected.size, alertIds: [...selected] } }); toasts.push({ variant: "warn", title: `Escalated ${selected.size}`, description: "PagerDuty incident created" }); }}>Escalate to L2</Button>
+              <Button size="sm" variant="ghost" onClick={() => { audit.record({ scope: "alert", type: "alert.selection_clear", summary: `Cleared ${selected.size} selected alerts` }); setSelected(new Set()); }}>Clear</Button>
             </div>
           </div>
         </Card>

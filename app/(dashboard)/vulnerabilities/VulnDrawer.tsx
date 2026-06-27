@@ -2,6 +2,7 @@
 import { Drawer, Button, Badge, Tabs } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useSetVulnStatus, vulnStatus } from "@/hooks/useAlertsStore";
+import { useAudit } from "@/hooks/useAudit";
 import type { VulnState } from "@/types";
 import { vulnerabilities, agents } from "@/data/seed";
 import Link from "next/link";
@@ -13,6 +14,7 @@ const NEXT: Record<VulnState, VulnState | null> = {
 export function VulnDrawer({ cve, open, onClose }: { cve: string | null; open: boolean; onClose: () => void }) {
   const toasts = useToasts();
   const setStatus = useSetVulnStatus();
+  const audit = useAudit();
   if (!cve) return null;
   const v = vulnerabilities.find(x => x.cve === cve);
   if (!v) return null;
@@ -20,6 +22,14 @@ export function VulnDrawer({ cve, open, onClose }: { cve: string | null; open: b
   const next = NEXT[status];
 
   function set(s: VulnState) {
+    audit.record({
+      scope: "vuln",
+      type: s === "wont_fix" ? "vuln.wont_fix" : "vuln.status_change",
+      summary: `${v!.cve} status: ${status} → ${s}`,
+      outcome: "success",
+      target: { kind: "cve", id: v!.cve },
+      meta: { from: status, to: s, severity: v!.severity, package: v!.package }
+    });
     setStatus(v!.cve, s);
     toasts.push({ variant: "success", title: `${v!.cve} marked ${s.replace("_", " ")}` });
   }

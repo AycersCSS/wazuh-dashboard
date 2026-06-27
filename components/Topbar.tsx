@@ -10,7 +10,9 @@ import { useCommandPalette } from "@/hooks/useCommandPalette";
 import { useTheme } from "@/hooks/useTheme";
 import { useSession } from "@/lib/auth/useSession";
 import { useConnectorStats } from "@/lib/connector/useConnectorStats";
-import { buildTenantOptions, ALL_TENANTS_KEY } from "@/lib/tenantDisplay";
+import { buildTenantOptions, ALL_TENANTS_KEY, displayNameFor } from "@/lib/tenantDisplay";
+import { useTenantSelection } from "@/hooks/useTenantSelection";
+import { useAudit } from "@/hooks/useAudit";
 
 const ranges: { key: TimeRangeKey; label: string }[] = [
   { key: "1h",  label: "Last 1 hour" },
@@ -20,20 +22,19 @@ const ranges: { key: TimeRangeKey; label: string }[] = [
 ];
 
 type MenuKey = "tenant" | "range" | "notif" | "user" | "help";
-// tenant holds either the "all" sentinel or a live tenant ID from the
-// connector (via useConnectorStats). The dropdown is driven by live data,
-// not a closed union, so the state is widened to `string`.
-type TopbarState = { tenant: string; menu: MenuKey | null };
+// Tenant selection is sourced from the TenantSelection context (lifted out
+// of the Topbar so the audit recorder and any future consumer can read it)
+// and persisted to localStorage. The reducer here only tracks which
+// dropdown is open, since the dropdowns are mutually exclusive.
+type TopbarState = { menu: MenuKey | null };
 type TopbarAction =
   | { type: "toggle"; menu: MenuKey }
-  | { type: "closeMenu" }
-  | { type: "setTenant"; tenant: string };
+  | { type: "closeMenu" };
 
 function topbarReducer(s: TopbarState, a: TopbarAction): TopbarState {
   switch (a.type) {
-    case "toggle":   return { ...s, menu: s.menu === a.menu ? null : a.menu };
-    case "closeMenu": return { ...s, menu: null };
-    case "setTenant": return { tenant: a.tenant, menu: null };
+    case "toggle":   return { menu: s.menu === a.menu ? null : a.menu };
+    case "closeMenu": return { menu: null };
   }
 }
 
@@ -44,6 +45,8 @@ export function Topbar() {
   const { signOut, user } = useSession();
   const { range, setKey } = useTimeRange();
   const { theme, toggleTheme } = useTheme();
+  const { tenant: activeTenant, setTenant: setActiveTenant } = useTenantSelection();
+  const audit = useAudit();
   useGoToShortcuts();
 
   // Identity comes from the signed-in session. While useSession is still
@@ -59,6 +62,7 @@ export function Topbar() {
     // signOut() awaits the POST to /api/connector/auth/logout, which calls
     // clearJwt() server-side. Without this, the cookie persists after the user
     // clicks "Sign out" (security review finding #1).
+    audit.record({ scope: "auth", type: "auth.logout", summary: "Signed out" });
     try {
       await signOut();
     } finally {
@@ -69,7 +73,9 @@ export function Topbar() {
   // The five header dropdowns are mutually exclusive — one open at a time — so
   // group them (plus the tenant selection) in a single useReducer instead of
   // six independent useState calls that each trigger their own render.
-  const [{ tenant, menu }, dispatch] = useReducer(topbarReducer, { tenant: ALL_TENANTS_KEY, menu: null });
+  const [{ menu }, dispatch] = useReducer(topbarReducer, { menu: null });
+  const tenant = activeTenant;
+  const setTenant = setActiveTenant;
   const toggle = (m: MenuKey) => dispatch({ type: "toggle", menu: m });
 
   // Drive the tenant dropdown from the live agent-manager data plane
@@ -86,9 +92,9 @@ export function Topbar() {
   // label always resolves to a row that exists.
   useEffect(() => {
     if (tenant !== ALL_TENANTS_KEY && !tenantOptions.some(o => o.key === tenant)) {
-      dispatch({ type: "setTenant", tenant: ALL_TENANTS_KEY });
+      setActiveTenant(ALL_TENANTS_KEY);
     }
-  }, [tenant, tenantOptions]);
+  }, [tenant, tenantOptions, setActiveTenant]);
 
   const refs = {
     tenant: useRef<HTMLDivElement>(null),
@@ -112,9 +118,17 @@ export function Topbar() {
   }, []);
 
   function selectTenant(k: string) {
-    dispatch({ type: "setTenant", tenant: k });
-    const t = tenantOptions.find(x => x.key === k);
-    toasts.push({ variant: "success", title: "Tenant switched", description: `Now viewing ${t?.label}` });
+    const previousLabel = tenantLabel;
+    const nextLabel = tenantOptions.find(x => x.key === k)?.label ?? k;
+    setActiveTenant(k);
+    audit.record({
+      scope: "tenant",
+      type: "tenant.switch",
+      summary: `Switched tenant: ${previousLabel} → ${nextLabel}`,
+      target: { kind: "tenant", id: k },
+      meta: { from: tenant, to: k, fromLabel: previousLabel, toLabel: nextLabel }
+    });
+    toasts.push({ variant: "success", title: "Tenant switched", description: `Now viewing ${nextLabel}` });
   }
 
   const tenantLabel = tenantOptions.find(t => t.key === tenant)?.label ?? "All tenants";
@@ -180,7 +194,18 @@ export function Topbar() {
             <div className="absolute right-0 top-10 w-[200px] bg-navy-100 border border-navy-500 rounded-lg shadow-pop z-40 animate-slide-in-right">
               {ranges.map(r => (
                 <button type="button" key={r.key}
-                  onClick={() => { setKey(r.key); dispatch({ type: "closeMenu" }); toasts.push({ variant: "info", title: "Time range updated", description: r.label, duration: 2000 }); }}
+                  onClick={() => {
+                    const previous = range.key;
+                    setKey(r.key);
+                    audit.record({
+                      scope: "ui",
+                      type: "time_range.change",
+                      summary: `Time range: ${previous} → ${r.key}`,
+                      meta: { from: previous, to: r.key }
+                    });
+                    dispatch({ type: "closeMenu" });
+                    toasts.push({ variant: "info", title: "Time range updated", description: r.label, duration: 2000 });
+                  }}
                   className={cn("w-full flex items-center justify-between px-3 h-8 text-xs hover:bg-navy-200",
                     range.key === r.key ? "text-emerald-400 bg-navy-200" : "text-sage")}>
                   <span>{r.label}</span>
@@ -205,7 +230,16 @@ export function Topbar() {
         </div>
 
         <button type="button"
-          onClick={toggleTheme}
+          onClick={() => {
+            const previous = theme;
+            toggleTheme();
+            audit.record({
+              scope: "ui",
+              type: "ui.theme_toggle",
+              summary: `Theme: ${previous} → ${previous === "dark" ? "light" : "dark"}`,
+              meta: { from: previous, to: previous === "dark" ? "light" : "dark" }
+            });
+          }}
           className="inline-flex items-center justify-center w-8 h-8 rounded-md text-navy-600 hover:text-cream hover:bg-navy-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
           aria-label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
           title={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}

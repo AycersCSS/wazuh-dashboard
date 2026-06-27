@@ -105,3 +105,65 @@ export interface KpiSummary {
 export type VulnState = "open" | "in_progress" | "patched" | "wont_fix";
 export type FimReviewState = "unreviewed" | "reviewed";
 export type AgentIsolation = "normal" | "isolated";
+
+/**
+ * Audit log event. Recorded for every user-driven action that mutates state,
+ * changes tenant context, navigates between surfaces, or touches auth.
+ * `actor` is the signed-in username; `tenant` is the active tenant at the
+ * time of the action (null when the user is on "All tenants" or the action
+ * is not tenant-scoped). `summary` is the human-readable line shown in the
+ * /audit page table; `meta` is the structured payload for filtering and
+ * drill-in. Events are stored newest-first, capped at MAX events to bound
+ * localStorage growth.
+ */
+export type AuditScope =
+  | "auth"
+  | "alert"
+  | "agent"
+  | "vuln"
+  | "rule"
+  | "fim"
+  | "log"
+  | "tenant"
+  | "data"
+  | "integration"
+  | "navigation"
+  | "ui"
+  | "help"
+  | "notifications"
+  | "review";
+
+export type AuditOutcome = "success" | "failure" | "requested" | "stub" | "cancelled";
+
+export interface AuditEvent {
+  /** Stable id; `${ts}-${counter}` so the table has a unique key. */
+  id: string;
+  /** ISO timestamp at the moment the action fired. */
+  ts: string;
+  /** Signed-in username. "anonymous" if no session. */
+  actor: string;
+  /** Connector tenant id at the time of the action. null = unscoped. */
+  tenant: string | null;
+  /** Top-level category. Used for filtering and the chip on the row. */
+  scope: AuditScope;
+  /**
+   * Machine key for the event. Form `<scope>.<verb>`, e.g. "alert.ack",
+   * "tenant.switch", "auth.logout". Filterable on the /audit page.
+   */
+  type: string;
+  /**
+   * Human-readable one-liner, e.g. "Acknowledged alert 1702.5". Rendered
+   * verbatim in the table; used as the primary search target.
+   */
+  summary: string;
+  /** Free-form structured payload. Surfaced in the detail drawer. */
+  meta?: Record<string, unknown>;
+  /** Optional outcome hint. */
+  outcome?: AuditOutcome;
+  /**
+   * Optional explicit target. e.g. { kind: "alert", id: "1702.5" } or
+   * { kind: "cve", id: "CVE-2024-1234" }. Used for "filter by target"
+   * shortcuts in the detail drawer.
+   */
+  target?: { kind: string; id: string };
+}

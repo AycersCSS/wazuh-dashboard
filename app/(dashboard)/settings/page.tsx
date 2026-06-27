@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Page, Card, CardTitle, Button, Badge, Tooltip } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useReset, useAlertsStore } from "@/hooks/useAlertsStore";
+import { useAudit } from "@/hooks/useAudit";
 import { alerts } from "@/data/seed";
 
 const integrations = [
@@ -15,6 +16,7 @@ const integrations = [
 export default function SettingsPage() {
   const toasts = useToasts();
   const reset = useReset();
+  const audit = useAudit();
   useAlertsStore();
   const [confirmReset, setConfirmReset] = useState(false);
 
@@ -27,8 +29,10 @@ export default function SettingsPage() {
       a.href = url; a.download = `sentinel-stack-alerts-${Date.now()}.json`;
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
+      audit.record({ scope: "data", type: "data.export_alerts", summary: `Exported ${alerts.length} alerts as JSON`, outcome: "success", meta: { count: alerts.length, format: "json" } });
       toasts.push({ variant: "success", title: "Export complete", description: `${alerts.length} alerts downloaded` });
     } catch (e) {
+      audit.record({ scope: "data", type: "data.export_alerts", summary: `Alert export failed`, outcome: "failure" });
       toasts.push({ variant: "error", title: "Export failed" });
     }
   }
@@ -63,7 +67,7 @@ export default function SettingsPage() {
                 <div className="text-xs text-navy-600">{i.desc}</div>
               </div>
               <Badge tone={i.status === "connected" ? "low" : "neutral"} dot>{i.status}</Badge>
-              <Button size="sm" variant="secondary" onClick={() => toasts.push({ variant: "info", title: `Configuring ${i.name} (coming soon)` })}>Configure</Button>
+              <Button size="sm" variant="secondary" onClick={() => { audit.record({ scope: "integration", type: "integration.configure_request", summary: `Configure requested for ${i.name}`, outcome: "stub", meta: { integration: i.name, currentStatus: i.status } }); toasts.push({ variant: "info", title: `Configuring ${i.name} (coming soon)` }); }}>Configure</Button>
             </li>
           ))}
         </ul>
@@ -115,8 +119,8 @@ export default function SettingsPage() {
             <div className="text-base font-semibold text-cream">Reset to defaults?</div>
             <div className="text-sm text-sage mt-2">This clears all your acknowledgements, archived alerts, rule toggles, and CVE status changes. The page will reload.</div>
             <div className="flex justify-end gap-2 mt-4">
-              <Button variant="ghost" onClick={() => setConfirmReset(false)}>Cancel</Button>
-              <Button variant="primary" onClick={() => { reset(); toasts.push({ variant: "success", title: "Reset complete" }); setConfirmReset(false); }}>Reset</Button>
+              <Button variant="ghost" onClick={() => { audit.record({ scope: "data", type: "data.reset_cancelled", summary: `Cancelled reset to defaults` }); setConfirmReset(false); }}>Cancel</Button>
+              <Button variant="primary" onClick={() => { audit.record({ scope: "data", type: "data.reset_defaults", summary: `Reset all local state to defaults`, outcome: "success", meta: { scope: "all-local-state" } }); reset(); toasts.push({ variant: "success", title: "Reset complete" }); setConfirmReset(false); }}>Reset</Button>
             </div>
           </div>
         </div>

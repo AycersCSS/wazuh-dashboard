@@ -28,6 +28,7 @@ const rawWazuh: Item[] = [
   { href: "/rules",          label: "Rules" },
   { href: "/logs",           label: "Logs" },
   { href: "/threat-intel",   label: "Threat Intel" },
+  { href: "/audit",          label: "Audit log", tag: "new" },
   { href: "/settings",       label: "Settings" }
 ];
 

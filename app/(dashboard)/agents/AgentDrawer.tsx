@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Drawer, Button, Badge, Tabs, ConfirmDialog } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useIsolateAgent, agentIsolation } from "@/hooks/useAlertsStore";
+import { useAudit } from "@/hooks/useAudit";
 import { formatRelativeTime } from "@/lib/format";
 import Link from "next/link";
 import { alerts, fimEvents, vulnerabilities } from "@/data/seed";
@@ -11,6 +12,7 @@ import type { Agent } from "@/types";
 export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; open: boolean; onClose: () => void }) {
   const toasts = useToasts();
   const isolate = useIsolateAgent();
+  const audit = useAudit();
   const [confirm, setConfirm] = useState<null | "isolate" | "restart">(null);
 
   if (!agent) return null;
@@ -20,11 +22,28 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
   const myVulns  = vulnerabilities.filter(v => v.agentCount > 0).slice(0, 5);
 
   function doIsolate() {
+    const next = iso === "isolated" ? "unisolate" : "isolate";
+    audit.record({
+      scope: "agent",
+      type: next === "isolate" ? "agent.isolate" : "agent.unisolate",
+      summary: `${next === "isolate" ? "Isolated" : "Unisolated"} agent ${agent!.name} (${agent!.ip})`,
+      outcome: "success",
+      target: { kind: "agent", id: agent!.id },
+      meta: { agentName: agent!.name, ip: agent!.ip, os: agent!.os.name, action: next }
+    });
     isolate(agent!.id, "isolated");
-    toasts.push({ variant: "warn", title: "Agent isolated", description: agent!.name });
+    toasts.push({ variant: "warn", title: next === "isolate" ? "Agent isolated" : "Agent released", description: agent!.name });
     setConfirm(null);
   }
   function doRestart() {
+    audit.record({
+      scope: "agent",
+      type: "agent.restart",
+      summary: `Restart requested for ${agent!.name}`,
+      outcome: "requested",
+      target: { kind: "agent", id: agent!.id },
+      meta: { agentName: agent!.name, ip: agent!.ip }
+    });
     toasts.push({ variant: "info", title: "Restart requested", description: `${agent!.name} - will report in ~60s` });
     setConfirm(null);
   }
