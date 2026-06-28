@@ -38,19 +38,19 @@ beforeEach(() => {
 });
 
 describe("GET /api/connector/health", () => {
-  it("returns 200 when connector is up", async () => {
+  it("returns 401 when no session cookie is present", async () => {
+    const res = await GET();
+    expect(res.status).toBe(401);
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 when connector is up and a real JWT is present", async () => {
+    cookieStore.set("connector_jwt", { value: "real-jwt" });
     mockFetch.mockResolvedValue({ tenants: [] });
     const res = await GET();
     expect(res.status).toBe(200);
     const json = await res.json();
     expect(json).toEqual({ ok: true });
-  });
-
-  it("returns 503 when connector errors", async () => {
-    const { ConnectorError } = await import("@/lib/connector/client");
-    mockFetch.mockRejectedValue(new ConnectorError(503, "down"));
-    const res = await GET();
-    expect(res.status).toBe(503);
   });
 
   it("returns 200 for a local-test token without calling the connector", async () => {
@@ -60,5 +60,15 @@ describe("GET /api/connector/health", () => {
     const json = await res.json();
     expect(json.ok).toBe(true);
     expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  it("returns 503 with generic error when connector fails", async () => {
+    cookieStore.set("connector_jwt", { value: "real-jwt" });
+    const { ConnectorError } = await import("@/lib/connector/client");
+    mockFetch.mockRejectedValue(new ConnectorError(503, "Wazuh down — internal host prod-conn-01.internal:55000"));
+    const res = await GET();
+    expect(res.status).toBe(503);
+    const json = await res.json();
+    expect(json.error).toBe("connector_unavailable");
   });
 });

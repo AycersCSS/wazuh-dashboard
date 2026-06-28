@@ -13,7 +13,10 @@ export async function GET(): Promise<Response> {
   // Treat the user as authenticated for health-check purposes so the AuthGate
   // keeps them on the dashboard. Will be removed before going live.
   const jwt = cookies().get(COOKIE_NAME)?.value;
-  if (jwt && jwt.startsWith("local-test.")) {
+  if (!jwt) {
+    return NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 });
+  }
+  if (jwt.startsWith("local-test.")) {
     return NextResponse.json({ ok: true, mode: "local-test" });
   }
 
@@ -22,8 +25,9 @@ export async function GET(): Promise<Response> {
     return NextResponse.json({ ok: true });
   } catch (e) {
     if (e instanceof ConnectorError) {
-      return NextResponse.json({ ok: false, error: e.body }, { status: 503 });
+      // Do not echo the raw upstream body to the browser
+      return NextResponse.json({ ok: false, error: "connector_unavailable" }, { status: 503 });
     }
-    return NextResponse.json({ ok: false, error: "Unknown" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "connector_unavailable" }, { status: 503 });
   }
 }

@@ -27,6 +27,14 @@ export const viewport = {
 // to <html> before React mounts, so users with the light theme don't see a
 // flash of the dark theme on first paint. Falls back to "dark" to match the
 // pre-existing default.
+//
+// SECURITY: the value from localStorage is JSON-parsed and compared via
+// strict equality to a whitelist of known values ("dark" / "light"). It is
+// never assigned to innerHTML, href, className, or any other execution path.
+// Any future change that renders the theme value into the DOM (e.g. as a
+// tooltip or aria label) MUST sanitize or whitelist the value first, because
+// localStorage is shared across all scripts on the origin and is an untrusted
+// source (security audit finding #10).
 const themeBootstrap = `
 (function () {
   try {

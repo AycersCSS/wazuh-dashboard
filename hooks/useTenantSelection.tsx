@@ -9,6 +9,13 @@ import { ALL_TENANTS_KEY } from "@/lib/tenantDisplay";
  * currently-selected tenant. Backed by localStorage so the selection
  * survives a page refresh — earlier, the Topbar's reducer reset to "all"
  * on every page load.
+ *
+ * SECURITY: the value from localStorage is JSON-parsed and treated as an
+ * opaque string. It is compared against known tenant IDs from the connector
+ * and the ALL_TENANTS_KEY sentinel but is never assigned to innerHTML, href,
+ * or any DOM property. See app/layout.tsx:themeBootstrap for the same
+ * pattern. localStorage is shared across all scripts on the origin; treat
+ * its contents as untrusted.
  */
 const KEY = "selected-tenant";
 const subscribers = new Set<(tenant: string) => void>();

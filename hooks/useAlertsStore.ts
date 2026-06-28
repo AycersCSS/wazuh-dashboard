@@ -138,6 +138,11 @@ export function useIsolateAgent() {
 
 export function useReset() {
   return useCallback(() => {
+    // The audit log and selected-tenant keys survive the reset so the
+    // data.reset_defaults audit event is self-attesting — the last record
+    // in the log is the reset itself. Only persistent mutable state (alert
+    // acks, vuln statuses, rule toggles, agent isolations, FIM reviews) is
+    // wiped. See lib/storage.ts:clear() for the preserve list.
     storage.clear();
     hydrateFromSeed();
     persistAll();

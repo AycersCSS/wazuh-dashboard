@@ -25,12 +25,20 @@ export const storage = {
     if (typeof window === "undefined") return;
     window.localStorage.removeItem(k(key));
   },
-  clear(): void {
+  /**
+   * Removes every sentinel-stack:v1:* key from localStorage except the ones
+   * listed in `preserve`. By default the audit log and selected-tenant
+   * settings survive the reset so the data.reset_defaults event is
+   * self-attesting — the last record in the log IS the reset itself, and
+   * the target tenant selection survives to re-scope the fresh seed.
+   */
+  clear(preserve: string[] = ["audit", "selected-tenant"]): void {
     if (typeof window === "undefined") return;
+    const preserveKeys = new Set(preserve.map(p => `${NS}:${p}`));
     const toRemove: string[] = [];
     for (let i = 0; i < window.localStorage.length; i++) {
       const key = window.localStorage.key(i);
-      if (key && key.startsWith(`${NS}:`)) toRemove.push(key);
+      if (key && key.startsWith(`${NS}:`) && !preserveKeys.has(key)) toRemove.push(key);
     }
     toRemove.forEach(key => window.localStorage.removeItem(key));
   }
