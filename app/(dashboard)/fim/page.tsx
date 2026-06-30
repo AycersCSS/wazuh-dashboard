@@ -1,14 +1,21 @@
 "use client";
 import { useState, useMemo } from "react";
 import { Page, DataGrid, type Column, Card, EmptyState, SearchInput, Button, Badge } from "@/components/ui";
-import { fimEvents } from "@/data/seed";
 import { formatRelativeTime } from "@/lib/format";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
 import type { FimEvent } from "@/types";
 
 export default function FimPage() {
   const [view, setView] = useState<"timeline" | "table">("timeline");
   const [action, setAction] = useState<"all" | "modified" | "added" | "deleted">("all");
   const [search, setSearch] = useState("");
+
+  // TODO(replace-when-endpoint-ready): GET /experimental/syscheck
+  const { data, status } = useWazuhResource<{ events: FimEvent[]; total: number }>(
+    buildPath("/api/wazuh/fim", { limit: 500 })
+  );
+  const fimEvents = data?.events ?? [];
+  const isLoading = status === "LOADING";
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -17,7 +24,7 @@ export default function FimPage() {
       if (q && !(f.path.toLowerCase().includes(q) || f.agent.toLowerCase().includes(q) || f.user.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [action, search]);
+  }, [fimEvents, action, search]);
 
   const columns: Column<FimEvent>[] = [
     { key: "time", header: "Time", width: "140px", sortable: true, sortValue: f => new Date(f.timestamp).getTime(), cell: f => <span className="text-navy-600">{formatRelativeTime(f.timestamp)}</span> },
@@ -32,7 +39,7 @@ export default function FimPage() {
     <Page
       breadcrumb={[{ href: "/", label: "Analyze" }, { label: "File Integrity" }]}
       title="File Integrity"
-      description={`${fimEvents.length} events in last 24h`}
+      description={`${fimEvents.length} events in last 24h${isLoading ? " - loading..." : ""}`}
       actions={
         <div className="flex items-center bg-navy-200 rounded-lg p-0.5">
           <button type="button" onClick={() => setView("timeline")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "timeline" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
@@ -60,11 +67,11 @@ export default function FimPage() {
 
       {view === "table" ? (
         <DataGrid columns={columns} rows={filtered} rowKey={f => f.id}
-          emptyState={<EmptyState title="No FIM events" description="Try adjusting filters." />} />
+          emptyState={<EmptyState title={isLoading ? "Loading FIM events..." : "No FIM events"} description={isLoading ? "Pulling syscheck events from Wazuh." : "Try adjusting filters."} />} />
       ) : (
         <Card padded={false}>
           {filtered.length === 0 ? (
-            <EmptyState title="No FIM events" description="Try adjusting filters." />
+            <EmptyState title={isLoading ? "Loading FIM events..." : "No FIM events"} description={isLoading ? "Pulling syscheck events from Wazuh." : "Try adjusting filters."} />
           ) : (
             <ul className="divide-y divide-navy-400/60">
               {filtered.map(f => (

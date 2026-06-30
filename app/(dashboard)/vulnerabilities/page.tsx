@@ -1,10 +1,10 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Page, DataGrid, type Column, Card, EmptyState, SearchInput, Button, Badge } from "@/components/ui";
-import { vulnerabilities } from "@/data/seed";
 import { VulnDrawer } from "./VulnDrawer";
 import { vulnStatus } from "@/hooks/useAlertsStore";
-import { useAlertsStore } from "@/hooks/useAlertsStore";
+import { useAlertsStore, useHydrateFromLive } from "@/hooks/useAlertsStore";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
 import type { Vulnerability } from "@/types";
 
 export default function VulnerabilitiesPage() {
@@ -12,6 +12,18 @@ export default function VulnerabilitiesPage() {
   const [patchable, setPatchable] = useState(false);
   const [active, setActive] = useState<string | null>(null);
   useAlertsStore();
+  const hydrate = useHydrateFromLive();
+
+  // TODO(replace-when-endpoint-ready): GET /vulnerability
+  const { data, status } = useWazuhResource<{ vulnerabilities: Vulnerability[]; total: number }>(
+    buildPath("/api/wazuh/vulnerabilities", { limit: 500 })
+  );
+  const vulnerabilities = data?.vulnerabilities ?? [];
+  const isLoading = status === "LOADING";
+
+  useEffect(() => {
+    if (data?.vulnerabilities) hydrate({ vulns: data.vulnerabilities });
+  }, [data, hydrate]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -20,7 +32,7 @@ export default function VulnerabilitiesPage() {
       if (q && !(v.cve.toLowerCase().includes(q) || v.title.toLowerCase().includes(q) || v.package.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [search, patchable]);
+  }, [vulnerabilities, search, patchable]);
 
   const columns: Column<Vulnerability>[] = [
     { key: "cve", header: "CVE", width: "180px", cell: v => <span className="font-mono text-cream">{v.cve}</span> },
@@ -43,7 +55,7 @@ export default function VulnerabilitiesPage() {
     <Page
       breadcrumb={[{ href: "/", label: "Analyze" }, { label: "Vulnerabilities" }]}
       title="Vulnerabilities"
-      description={`${vulnerabilities.length} open CVEs - ${totalOcc} occurrences across the fleet`}
+      description={`${vulnerabilities.length} open CVEs - ${totalOcc} occurrences across the fleet${isLoading ? " - loading..." : ""}`}
       actions={<Button variant="secondary" onClick={() => { setPatchable(p => !p); }}>{patchable ? "Showing patchable only" : "Show patchable only"}</Button>}
     >
       <Card padded={false}>
@@ -61,7 +73,7 @@ export default function VulnerabilitiesPage() {
         rows={filtered}
         rowKey={v => v.cve}
         onRowClick={v => setActive(v.cve)}
-        emptyState={<EmptyState title="No CVEs match" description="Try clearing search or filters." />}
+        emptyState={<EmptyState title={isLoading ? "Loading vulnerabilities..." : "No CVEs match"} description={isLoading ? "Pulling CVEs from Wazuh." : "Try clearing search or filters."} />}
       />
 
       <VulnDrawer cve={active} open={!!active} onClose={() => setActive(null)} />

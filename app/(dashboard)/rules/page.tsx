@@ -1,11 +1,11 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Page, DataGrid, type Column, Card, EmptyState, SearchInput, Badge } from "@/components/ui";
-import { rules } from "@/data/seed";
-import { ruleStatus, useToggleRule, useAlertsStore } from "@/hooks/useAlertsStore";
+import { ruleStatus, useToggleRule, useAlertsStore, useHydrateFromLive } from "@/hooks/useAlertsStore";
 import { useToasts } from "@/hooks/useToasts";
 import { useAudit } from "@/hooks/useAudit";
 import { formatRelativeTime } from "@/lib/format";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
 import type { Rule } from "@/types";
 
 export default function RulesPage() {
@@ -13,7 +13,18 @@ export default function RulesPage() {
   const toasts = useToasts();
   const toggle = useToggleRule();
   const audit = useAudit();
+  const hydrate = useHydrateFromLive();
   const [search, setSearch] = useState("");
+
+  // TODO(replace-when-endpoint-ready): GET /rules
+  const { data } = useWazuhResource<{ rules: Rule[]; total: number }>(
+    buildPath("/api/wazuh/rules", { limit: 500 })
+  );
+  const rules = data?.rules ?? [];
+
+  useEffect(() => {
+    if (data?.rules) hydrate({ rules: data.rules });
+  }, [data, hydrate]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -21,7 +32,7 @@ export default function RulesPage() {
       if (q && !(r.id.includes(q) || r.description.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [search]);
+  }, [rules, search]);
 
   const columns: Column<Rule>[] = [
     { key: "id", header: "ID", width: "120px", cell: r => <span className="font-mono text-cream">{r.id}</span> },

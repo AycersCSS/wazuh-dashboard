@@ -7,7 +7,10 @@ import { useConnectorAlerts } from "@/lib/connector/useConnectorAlerts";
 import { ConnectionBanner } from "@/components/connector/ConnectionBanner";
 import { tenants as fallbackTenants } from "@/data/tenants";
 import { displayNameFor, tierFor } from "@/lib/tenantDisplay";
-import { cn } from "@/lib/cn";
+import { useWazuhResource, buildPath, useIntegrationStates, type IntegrationConnectionState } from "@/lib/wazuh";
+import type { WazuhAgentStatusCount, WazuhClusterStatus } from "@/lib/wazuh";
+import { integrations as integrationMetadata } from "@/data/integrations";
+import type { IntegrationHealth } from "@/data/integrations";
 
 const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {
   "microsoft-365":  { href: "/microsoft-365" },
@@ -27,26 +30,46 @@ const useCaseOneLiner: Record<string, string> = {
 
 export default function OverviewPage() {
   const { status, lastFetchedAt, tenants: liveTenants, totalAgents } = useConnectorStats();
+  const integrationStates = useIntegrationStates();
+
+  // TODO(replace-when-endpoint-ready): GET /agents/summary/status — gives
+  // us the active/disconnected/pending/never_connected counts the KPI panel
+  // wants. The hook returns null while loading or when the upstream is
+  // unreachable; we fall back to the live tenant list count.
+  const { data: agentStatus } = useWazuhResource<WazuhAgentStatusCount>(
+    buildPath("/api/wazuh/agents/status-count")
+  );
+
+  // TODO(replace-when-endpoint-ready): GET /manager/status — feeds the
+  // "Avg MTTR" and "CE Plus ready" KPIs once the upstream exposes them.
+  const { data: clusterStatus } = useWazuhResource<WazuhClusterStatus>(
+    buildPath("/api/wazuh/manager")
+  );
+
   const tenants = liveTenants.length > 0
     ? liveTenants.map((id) => ({
         id,
         name: displayNameFor(id),
         tier: tierFor(id) ?? "Silver",
-        securityScore: 75,
-        openIncidents: 0,
+        // TODO(replace-when-endpoint-ready): these are derived from a future
+        // /tenants/:id endpoint. Until that lands we show "—".
+        securityScore: null as number | null,
+        openIncidents: null as number | null,
         lastSyncAt: new Date().toISOString(),
-        alerts24h: 0,
-        cveCount: 0
+        alerts24h: null as number | null,
+        cveCount: null as number | null
       }))
     : fallbackTenants;
 
-  const totalAgentsKpi = totalAgents ?? 152;
+  const totalAgentsKpi = totalAgents ?? agentStatus
+    ? (agentStatus!.active + agentStatus!.disconnected + agentStatus!.pending + agentStatus!.never_connected)
+    : null;
 
   return (
     <Page
       breadcrumb={[{ label: "SOC" }, { label: "Overview" }]}
       title="Overview"
-      description={`${tenants.length} tenants - ${totalAgentsKpi} endpoints - fleet health nominal`}
+      description={`${tenants.length} tenants - ${totalAgentsKpi !== null ? totalAgentsKpi : "—"} endpoints - fleet health nominal`}
       actions={
         <>
           <ConnectionBanner status={status} lastFetchedAt={lastFetchedAt} />
@@ -55,10 +78,16 @@ export default function OverviewPage() {
       }
     >
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {integrations.map(i => {
+        {integrationMetadata.map((i: IntegrationHealth) => {
           const route = useCaseRoutes[i.id];
           const oneLiner = useCaseOneLiner[i.id];
-          const tone = i.status === "Connected" ? "low" : i.status === "Degraded" ? "medium" : "critical";
+          const live = integrationStates[i.id as keyof typeof integrationStates];
+          // The connection state is driven by the live API. We do NOT show
+          // "Connected" unless the integration actually returned a Connected
+          // record. The seeded `i.status` field is the metadata default; the
+          // live state overrides it.
+          const statusLabel = live?.statusName ?? connectionLabel(live?.state);
+          const tone = connectionTone(live?.state);
           return (
             <Link
               key={i.id}
@@ -76,7 +105,7 @@ export default function OverviewPage() {
                         {route.tag}
                       </span>
                     )}
-                    <Badge tone={tone} dot>{i.status}</Badge>
+                    <Badge tone={tone} dot>{statusLabel}</Badge>
                   </div>
                 </div>
                 <div className="text-[15px] font-oswald font-medium text-sage">{i.name}</div>
@@ -122,34 +151,34 @@ export default function OverviewPage() {
             </li>
             <li className="flex items-center justify-between">
               <span className="text-sage">Total agents</span>
-              <span className="font-mono text-cream">{totalAgentsKpi}</span>
+              <span className="font-mono text-cream">{totalAgentsKpi !== null ? totalAgentsKpi : "—"}</span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-sage">Endpoints (RMM)</span>
-              <span className="font-mono text-cream">152</span>
+              <span className="text-sage">Active agents</span>
+              <span className="font-mono text-cream">{agentStatus?.active ?? "—"}</span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-sage">Avg security score</span>
-              <span className="font-mono text-emerald-400">75</span>
+              <span className="text-sage">Disconnected</span>
+              <span className="font-mono text-cream">{agentStatus?.disconnected ?? "—"}</span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-sage">Open incidents</span>
-              <span className="font-mono text-severity-medium">0</span>
+              <span className="text-sage">Pending</span>
+              <span className="font-mono text-cream">{agentStatus?.pending ?? "—"}</span>
             </li>
             <li className="flex items-center justify-between">
-              <span className="text-sage">CE Plus ready</span>
-              <span className="font-mono text-emerald-400">3 / 4</span>
+              <span className="text-sage">Never connected</span>
+              <span className="font-mono text-severity-high">{agentStatus?.never_connected ?? "—"}</span>
             </li>
             <li className="flex items-center justify-between border-t border-navy-400/50 pt-2.5">
               <span className="text-sage flex items-center gap-1">
-                Avg MTTR (SLA)
-                <span className="text-[9px] text-slate-400 bg-navy-200 px-1 py-0.5 rounded">Goal &lt;15m</span>
+                Manager
+                <span className="text-[9px] text-slate-400 bg-navy-200 px-1 py-0.5 rounded">wazuh</span>
               </span>
-              <span className="font-mono font-semibold text-emerald-400">12.8m</span>
+              <span className="font-mono text-cream">{clusterStatus?.manager ?? "—"}</span>
             </li>
           </ul>
           <div className="mt-4 pt-3 border-t border-navy-400 text-[11px] text-slate-400">
-            Data refreshes every 30 seconds from the MergeIT Connector.
+            Data refreshes every 30 seconds from the MergeIT Connector + Wazuh API.
           </div>
         </Card>
       </section>
@@ -175,4 +204,33 @@ function TenantRow({ tenantId, name, tier }: { tenantId: string; name: string; t
       <Badge tone={tier === "Platinum" ? "low" : tier === "Gold" ? "medium" : "info"} dot>{tier}</Badge>
     </li>
   );
+}
+
+// Map a live connection state to the badge label/tone shown on the
+// integration cards. NO "Connected" label unless the upstream actually
+// reported a Connected record.
+function connectionLabel(state: IntegrationConnectionState | undefined): string {
+  switch (state) {
+    case "CONNECTED":    return "Connected";
+    case "DEGRADED":     return "Degraded";
+    case "DISCONNECTED": return "Disconnected";
+    case "NOT_CONNECTED":return "Not connected";
+    case "UNAUTHENTICATED": return "Sign in";
+    case "ERROR":        return "Error";
+    case "LOADING":      return "Checking…";
+    default:             return "Not connected";
+  }
+}
+
+function connectionTone(state: IntegrationConnectionState | undefined): "low" | "medium" | "high" | "critical" | "info" | "neutral" {
+  switch (state) {
+    case "CONNECTED":    return "low";
+    case "DEGRADED":     return "medium";
+    case "DISCONNECTED": return "critical";
+    case "NOT_CONNECTED":return "critical";
+    case "UNAUTHENTICATED": return "high";
+    case "ERROR":        return "critical";
+    case "LOADING":      return "neutral";
+    default:             return "neutral";
+  }
 }

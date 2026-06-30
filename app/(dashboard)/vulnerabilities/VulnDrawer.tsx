@@ -3,8 +3,8 @@ import { Drawer, Button, Badge, Tabs } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useSetVulnStatus, vulnStatus } from "@/hooks/useAlertsStore";
 import { useAudit } from "@/hooks/useAudit";
-import type { VulnState } from "@/types";
-import { vulnerabilities, agents } from "@/data/seed";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import type { VulnState, Vulnerability, Agent } from "@/types";
 import Link from "next/link";
 
 const NEXT: Record<VulnState, VulnState | null> = {
@@ -15,11 +15,23 @@ export function VulnDrawer({ cve, open, onClose }: { cve: string | null; open: b
   const toasts = useToasts();
   const setStatus = useSetVulnStatus();
   const audit = useAudit();
+
+  // TODO(replace-when-endpoint-ready): GET /vulnerability?cve=:cve — gives
+  // us the single CVE record plus the list of affected agents.
+  const { data: vulnRes } = useWazuhResource<{ vulnerabilities: Vulnerability[] }>(
+    cve ? buildPath("/api/wazuh/vulnerabilities", { limit: 1 }) : null
+  );
+  // TODO(replace-when-endpoint-ready): GET /agents?cve=:cve — affected agents list.
+  const { data: agentsRes } = useWazuhResource<{ agents: Agent[] }>(
+    cve ? buildPath("/api/wazuh/agents", { limit: 12 }) : null
+  );
+
   if (!cve) return null;
-  const v = vulnerabilities.find(x => x.cve === cve);
+  const v = vulnRes?.vulnerabilities.find(x => x.cve === cve);
   if (!v) return null;
   const status = vulnStatus(v.cve);
   const next = NEXT[status];
+  const affectedAgents = (agentsRes?.agents ?? []).slice(0, Math.min(v.agentCount, 12));
 
   function set(s: VulnState) {
     audit.record({
@@ -82,7 +94,7 @@ export function VulnDrawer({ cve, open, onClose }: { cve: string | null; open: b
           )},
           { id: "agents", label: `Affected agents (${v.agentCount})`, content: (
             <ul className="divide-y divide-navy-400/60 -mx-1 text-xs">
-              {agents.slice(0, Math.min(v.agentCount, 12)).map(a => (
+              {affectedAgents.map(a => (
                 <li key={a.id} className="px-1 py-2 flex items-center gap-2">
                   <span className="font-mono text-sage">{a.name}</span>
                   <span className="text-navy-600">{a.ip}</span>

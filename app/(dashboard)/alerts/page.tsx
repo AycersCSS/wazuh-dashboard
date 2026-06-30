@@ -1,19 +1,18 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Page, DataGrid, type Column, Button, Card, EmptyState, Badge } from "@/components/ui";
-import { alerts } from "@/data/seed";
 import { useTimeRange } from "@/hooks/useTimeRange";
 import { useToasts } from "@/hooks/useToasts";
 import { useAcknowledge, useAlertsStore } from "@/hooks/useAlertsStore";
 import { useAudit } from "@/hooks/useAudit";
 import { severityBucket, severityLabel } from "@/types";
 import { formatRelativeTime } from "@/lib/format";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import { useTenantSelection } from "@/hooks/useTenantSelection";
+import { useHydrateFromLive } from "@/hooks/useAlertsStore";
 import { AlertDrawer } from "./AlertDrawer";
 import { AlertFiltersBar, type AlertFilters } from "./AlertFilters";
 import type { Alert } from "@/types";
-
-// Hoisted: alerts is a module constant, so this count never changes at runtime.
-const criticalAlertCount = alerts.reduce((n, a) => a.rule.level >= 13 ? n + 1 : n, 0);
 
 export default function AlertsPage() {
   const toasts = useToasts();
@@ -21,9 +20,27 @@ export default function AlertsPage() {
   const ack = useAcknowledge();
   const store = useAlertsStore();
   const audit = useAudit();
+  const { tenant } = useTenantSelection();
+  const hydrate = useHydrateFromLive();
   const [filters, setFilters] = useState<AlertFilters>({ severities: new Set(), search: "", showAcked: true });
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [active, setActive] = useState<Alert | null>(null);
+
+  // TODO(replace-when-endpoint-ready): GET /alerts. Tenant scope is sourced
+  // from the topbar selection; "all" means fleet-wide.
+  const { data: alertsRes, status: alertsStatus } = useWazuhResource<{ alerts: Alert[]; total: number }>(
+    buildPath("/api/wazuh/alerts", {
+      limit: 500,
+      tenant: tenant === "all" ? undefined : tenant
+    })
+  );
+  const alerts = alertsRes?.alerts ?? [];
+  const isLoading = alertsStatus === "LOADING";
+
+  // Hydrate the local store (alert ack state) from the live list.
+  useEffect(() => {
+    if (alertsRes?.alerts) hydrate({ alerts: alertsRes.alerts });
+  }, [alertsRes, hydrate]);
 
   const filtered = useMemo(() => {
     const q = filters.search.trim().toLowerCase();
@@ -34,8 +51,9 @@ export default function AlertsPage() {
       if (q && !(a.id.toLowerCase().includes(q) || a.rule.description.toLowerCase().includes(q) || a.agent.name.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [filters, store]);
+  }, [alerts, filters, store]);
 
+  const criticalAlertCount = filtered.reduce((n, a) => a.rule.level >= 13 ? n + 1 : n, 0);
   const visibleIds = filtered.map(a => a.id);
   const columns: Column<Alert>[] = [
     {
@@ -76,10 +94,25 @@ export default function AlertsPage() {
     <Page
       breadcrumb={[{ href: "/", label: "Operate" }, { label: "Alerts" }]}
       title="Alerts"
-      description={`${alerts.length} events - ${criticalAlertCount} critical - ${range.label}`}
+      description={`${alerts.length} events - ${criticalAlertCount} critical - ${range.label}${isLoading ? " - loading..." : ""}`}
       actions={
         <>
-          <Button variant="secondary" onClick={() => { audit.record({ scope: "alert", type: "alert.export_requested", summary: `Export requested for ${visibleIds.length} visible alerts`, meta: { count: visibleIds.length } }); toasts.push({ variant: "info", title: "Export started", description: "JSON download queued" }); }}>Export</Button>
+          <Button variant="secondary" onClick={() => {
+            try {
+              const payload = { exportedAt: new Date().toISOString(), alerts: filtered };
+              const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+              const url = URL.createObjectURL(blob);
+              const a = document.createElement("a");
+              a.href = url; a.download = `sentinel-stack-alerts-${Date.now()}.json`;
+              document.body.appendChild(a); a.click(); a.remove();
+              URL.revokeObjectURL(url);
+              audit.record({ scope: "alert", type: "alert.export_requested", summary: `Export requested for ${visibleIds.length} visible alerts`, outcome: "success", meta: { count: visibleIds.length } });
+              toasts.push({ variant: "success", title: "Export complete", description: `${visibleIds.length} alerts downloaded` });
+            } catch {
+              audit.record({ scope: "alert", type: "alert.export_requested", summary: `Alert export failed`, outcome: "failure" });
+              toasts.push({ variant: "error", title: "Export failed" });
+            }
+          }}>Export</Button>
           <Button variant="primary" onClick={() => { audit.record({ scope: "alert", type: "alert.bulk_ack_visible", summary: `Acknowledged all ${visibleIds.length} visible alerts`, outcome: "success", meta: { count: visibleIds.length, filterSeverities: [...filters.severities] } }); ack(visibleIds); toasts.push({ variant: "success", title: `Acknowledged ${visibleIds.length} alerts` }); }}>Acknowledge all visible</Button>
         </>
       }

@@ -2,46 +2,56 @@
 import { useState, useRef, useEffect, useMemo } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { Page, Card, Badge, SearchInput, Select, Button } from "@/components/ui";
-import { fimEvents } from "@/data/seed";
 import { formatRelativeTime } from "@/lib/format";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import type { WazuhLogEntry } from "@/lib/wazuh";
 import { cn } from "@/lib/cn";
 
 interface Row { id: string; ts: string; source: string; agent: string; severity: "low" | "medium" | "high" | "critical" | "info"; message: string; }
 
-const seedRows: Row[] = Array.from({ length: 400 }, (_, i) => {
-  const f = fimEvents[i % fimEvents.length];
-  return {
-    id: `L-${(1_000_000 + i).toString(16).toUpperCase()}`,
-    ts: new Date(Date.now() - i * 1500).toISOString(),
-    source: ["sshd", "auditd", "nginx", "kubelet", "wazuh-modulesd"][i % 5],
-    agent: f.agent,
-    severity: (["low","medium","high","critical","info"] as const)[i % 5],
-    message: f.path
-  };
-});
-
 export default function LogsPage() {
-  const [rows, setRows] = useState<Row[]>(seedRows);
+  const [rows, setRows] = useState<Row[]>([]);
   const [paused, setPaused] = useState(false);
   const [search, setSearch] = useState("");
   const [source, setSource] = useState("all");
   const [severity, setSeverity] = useState("all");
   const [active, setActive] = useState<Row | null>(null);
 
+  // TODO(replace-when-endpoint-ready): GET /logs/archives — initial 400-row
+  // backfill. Subsequent rows come from the live SSE/poll endpoint (TBD).
+  const { data, status } = useWazuhResource<{ entries: WazuhLogEntry[]; total: number }>(
+    buildPath("/api/wazuh/logs", { limit: 400 })
+  );
   useEffect(() => {
-    if (paused) return;
+    if (!data?.entries) return;
+    setRows(data.entries.map(e => ({
+      id: e.id,
+      ts: e.timestamp,
+      source: e.source,
+      agent: e.agent,
+      severity: e.severity,
+      message: e.message
+    })));
+  }, [data]);
+
+  // TODO(replace-when-endpoint-ready): live tail. Once the SSE/poll endpoint
+  // exists, replace this synthetic-tick fallback with a real stream. The
+  // tick fires every 2s and inserts a row at the top (capped at 800).
+  useEffect(() => {
+    if (paused || status === "LOADING") return;
+    if (rows.length === 0) return; // don't synthesise until the first real fetch lands
     const t = window.setInterval(() => {
       setRows(prev => [{
         id: `L-${Date.now().toString(16).toUpperCase()}`,
         ts: new Date().toISOString(),
         source: ["sshd","auditd","nginx","kubelet","wazuh-modulesd"][Math.floor(Math.random()*5)],
-        agent: seedRows[Math.floor(Math.random()*seedRows.length)].agent,
+        agent: prev[0]?.agent ?? "unknown",
         severity: (["low","medium","high","critical","info"] as const)[Math.floor(Math.random()*5)],
         message: `event tick ${prev.length}`
       }, ...prev].slice(0, 800));
     }, 2000);
     return () => window.clearInterval(t);
-  }, [paused]);
+  }, [paused, status, rows.length]);
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -62,7 +72,7 @@ export default function LogsPage() {
     <Page
       breadcrumb={[{ href: "/", label: "Configure" }, { label: "Logs" }]}
       title="Logs"
-      description={`${rows.length} events - ${paused ? "paused" : "live"}`}
+      description={`${rows.length} events - ${paused ? "paused" : "live"}${status === "LOADING" ? " - loading..." : ""}`}
       actions={<Button variant="secondary" onClick={() => setPaused(p => !p)}>{paused ? "Resume" : "Pause"}</Button>}
     >
       <Card padded={false}>

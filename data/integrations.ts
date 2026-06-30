@@ -1,4 +1,5 @@
 // Integrations feed the 5 use-case pages. Mock data only.
+// Need to change to API request when available
 export type IntegrationStatus = "Connected" | "Degraded" | "Disconnected";
 
 export interface IntegrationHealth {

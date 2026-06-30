@@ -1,22 +1,54 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Page, Card, CardTitle, CardSubtitle, Badge, EmptyState } from "@/components/ui";
-import { compliance } from "@/data/seed";
 import type { ComplianceControl } from "@/types";
 
 const frameworkOrder: ComplianceControl["framework"][] = ["PCI DSS", "HIPAA", "GDPR", "NIST 800-53", "ISO 27001"];
+const frameworkSlug: Record<ComplianceControl["framework"], string> = {
+  "PCI DSS":     "pci_dss",
+  "HIPAA":       "hipaa",
+  "GDPR":        "gdpr",
+  "NIST 800-53": "nist_800-53",
+  "ISO 27001":   "iso_27001"
+};
 
 function pct(pass: number, total: number) { return total ? Math.round((pass / total) * 100) : 0; }
 
 export default function CompliancePage() {
   const [open, setOpen] = useState<Record<string, boolean>>({ "PCI DSS": true, "HIPAA": true });
+  const [controls, setControls] = useState<ComplianceControl[]>([]);
+
+  // TODO(replace-when-endpoint-ready): GET /compliance/:framework — fan out
+  // on mount. The page groups by framework; an empty / null response means
+  // the upstream endpoint is not yet implemented, and that framework is
+  // rendered with an empty state.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      for (const fw of frameworkOrder) {
+        try {
+          const res = await fetch(`/api/wazuh/compliance?framework=${frameworkSlug[fw]}`);
+          if (!res.ok || cancelled) continue;
+          const data = (await res.json()) as { framework?: string; controls?: ComplianceControl[] } | null;
+          if (!data?.controls) continue;
+          setControls(prev => {
+            const others = prev.filter(c => c.framework !== fw);
+            return [...others, ...data.controls!];
+          });
+        } catch {
+          /* keep empty state */
+        }
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const groups = useMemo(() => {
     const m = new Map<ComplianceControl["framework"], ComplianceControl[]>();
     frameworkOrder.forEach(f => m.set(f, []));
-    compliance.forEach(c => m.get(c.framework)!.push(c));
+    controls.forEach(c => m.get(c.framework)!.push(c));
     return m;
-  }, []);
+  }, [controls]);
 
   return (
     <Page

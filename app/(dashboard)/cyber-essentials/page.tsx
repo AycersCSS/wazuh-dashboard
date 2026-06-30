@@ -1,36 +1,25 @@
 "use client";
 import Link from "next/link";
 import { Page, Card, CardTitle, CardSubtitle, StatCard, Badge, Button, Table, type Column } from "@/components/ui";
-import { getIntegration } from "@/data/integrations";
 import { useToasts } from "@/hooks/useToasts";
+import { useIntegrationHealth } from "@/lib/wazuh";
+import { useTimeRange } from "@/hooks/useTimeRange";
+import { IntegrationStatusBanner } from "@/components/IntegrationStatusBanner";
 import { formatRelativeTime } from "@/lib/format";
 import { cn } from "@/lib/cn";
 
-const integration = getIntegration("cyber-essentials")!;
-
-const kpis = [
-  { label: "Score (5 controls)",   value: "82%",    delta: "+3",    dir: "up" as const,  hint: "weighted across controls",  accent: "low" as const },
-  { label: "Failing controls",     value: "1",      delta: "-1",    dir: "down" as const, hint: "boundary firewalls",       accent: "medium" as const },
-  { label: "Evidence collected",   value: "1,284",  delta: "+94",   dir: "up" as const,  hint: "last 24h",                 accent: "info" as const },
-  { label: "Next assessment",      value: "in 41d", delta: "Aug 14", dir: "up" as const,  hint: "3 of 4 tenants ready",     accent: "low" as const }
-];
-
-const controls = [
-  { id: "ce-1", control: "Boundary firewalls",      status: "pass", pct: 96 },
-  { id: "ce-2", control: "Secure configuration",    status: "pass", pct: 91 },
-  { id: "ce-3", control: "Access control",          status: "pass", pct: 88 },
-  { id: "ce-4", control: "Malware protection",      status: "pass", pct: 100 },
-  { id: "ce-5", control: "Patch management",        status: "warn", pct: 64 }
-];
-
+// TODO(replace-when-endpoint-ready): GET /integrations/cyber-essentials
 type Rec = { id: string; time: string; sev: "critical" | "high" | "medium" | "low" | "info"; tenant: string; control: string; desc: string; wazuh: string };
 
-const recent: Rec[] = [
-  { id: "CE-031", time: "5m",  sev: "high",     tenant: "Acme Corp",  control: "CE-5 Patch",   desc: "12 endpoints missing Sep 2024 cumulative",  wazuh: "rule 93012" },
-  { id: "CE-030", time: "32m", sev: "medium",   tenant: "Globex",     control: "CE-1 Boundary", desc: "Open port 3389 detected on host globex-rds-007", wazuh: "rule 93014" },
-  { id: "CE-029", time: "1h",  sev: "low",      tenant: "Initech",    control: "CE-3 Access",   desc: "Stale local admin account > 90 days",          wazuh: "rule 93021" },
-  { id: "CE-028", time: "4h",  sev: "info",     tenant: "Stark Industries", control: "CE-2 Config", desc: "Evidence snapshot captured (1,284 controls)", wazuh: "rule 93000" }
+const WAZUH_MAPPING: { label: string; href: string }[] = [
+  { label: "Patch control -> Vulnerabilities",        href: "/vulnerabilities" },
+  { label: "Access control -> Compliance",            href: "/compliance" },
+  { label: "Malware protection -> Alerts (EDR)",      href: "/alerts" },
+  { label: "Boundary firewalls -> Rules (FIM)",        href: "/fim" }
 ];
+
+const INTEGRATION_DESCRIPTION =
+  "Auto-builds the Cyber Essentials Plus evidence pack from Wazuh data: patch levels, MFA coverage, EDR health, FIM coverage on critical paths, and access-control posture. One report per tenant, refreshed nightly.";
 
 const columns: Column<Rec>[] = [
   { key: "time", header: "Time", width: "90px", cell: r => <span className="text-navy-600">{r.time}</span> },
@@ -43,14 +32,31 @@ const columns: Column<Rec>[] = [
 
 export default function CyberEssentialsPage() {
   const toasts = useToasts();
+  const { range } = useTimeRange();
+  const { live, state, errorMessage, isLoading, refetch } = useIntegrationHealth("cyber-essentials");
+
+  const showData = state === "CONNECTED" || state === "DEGRADED";
+
+  const recent: Rec[] = (live?.recent ?? []).map((e) => ({
+    id: e.id,
+    time: e.time,
+    sev: e.severity,
+    tenant: e.tenant,
+    control: e.primary,
+    desc: e.description,
+    wazuh: `rule ${e.wazuhRuleId}`
+  }));
+
   function refresh() {
-    toasts.push({ variant: "info", title: "Refreshing Cyber Essentials", description: "Re-collecting evidence from Wazuh..." });
+    refetch();
+    toasts.push({ variant: "info", title: "Refreshing Cyber Essentials", description: "Re-querying the integration endpoint..." });
   }
+
   return (
     <Page
       breadcrumb={[{ href: "/", label: "MergeIT" }, { label: "Report" }, { label: "Cyber Essentials" }]}
       title="Cyber Essentials"
-      description="One evidence pack per tenant, auto-built from Wazuh. CE Plus ready."
+      description={showData && live ? `Connected to ${live.vendor} - last sync ${formatRelativeTime(live.lastSyncAt)}` : "One evidence pack per tenant, auto-built from Wazuh. CE Plus ready."}
       actions={
         <>
           <Button variant="secondary" onClick={refresh}>Refresh</Button>
@@ -58,118 +64,113 @@ export default function CyberEssentialsPage() {
         </>
       }
     >
-      <section>
-        <Card>
-          <div className="flex items-start gap-3">
-            <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0 text-[10px] font-mono text-emerald-400">
-              CE
-            </div>
-            <div>
-              <div className="text-[15px] text-sage font-normal font-oswald">Audit-ready evidence, collected nightly</div>
-              <p className="text-[11px] text-navy-600 mt-1.5 leading-relaxed max-w-3xl">
-                {integration.description} The five CE Plus controls map directly to
-                Wazuh data sources - patches to vulnerability scans, access control to compliance checks, malware protection to EDR detections, and so on.
-                No spreadsheet wrangling before the assessor arrives.
-              </p>
-            </div>
-          </div>
-        </Card>
-      </section>
+      <IntegrationStatusBanner
+        state={state}
+        errorMessage={errorMessage}
+        integrationName="Cyber Essentials"
+        onRetry={refresh}
+      />
 
-      <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {kpis.map(k => <StatCard key={k.label} {...k} />)}
-      </section>
-
-      <section className="grid grid-cols-12 gap-5">
-        <Card className="col-span-12 lg:col-span-6" padded={false}
-          header={
-            <>
-              <div>
-                <CardTitle>Integration status</CardTitle>
-                <CardSubtitle>{integration.vendor} - last sync {formatRelativeTime(integration.lastSyncAt)}</CardSubtitle>
-              </div>
-              <Badge tone={integration.status === "Connected" ? "low" : integration.status === "Degraded" ? "medium" : "critical"} dot>{integration.status}</Badge>
-            </>
-          }>
-          <ul className="divide-y divide-navy-400/60">
-            {integration.healthMetrics.map(m => (
-              <li key={m.label} className="px-4 py-2.5 flex items-center justify-between">
-                <span className="text-[12px] text-sage">{m.label}</span>
-                <span className={cn(
-                  "font-mono text-[12px]",
-                  m.tone === "ok" ? "text-emerald-400" : m.tone === "warn" ? "text-severity-medium" : "text-severity-critical"
-                )}>{m.value}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-
-        <Card className="col-span-12 lg:col-span-6" padded={false}
-          header={
-            <>
-              <div>
-                <CardTitle>5 controls - current score</CardTitle>
-                <CardSubtitle>Weighted across the MergeIT fleet</CardSubtitle>
-              </div>
-            </>
-          }>
-          <ul className="divide-y divide-navy-400/60">
-            {controls.map(c => (
-              <li key={c.id} className="px-4 py-2.5 flex items-center gap-3">
-                <Badge tone={c.status === "pass" ? "low" : c.status === "warn" ? "medium" : "critical"} dot>{c.status}</Badge>
-                <span className="flex-1 text-[12px] text-sage">{c.control}</span>
-                <div className="w-32 h-1.5 bg-navy-200 rounded-full overflow-hidden">
-                  <div
-                    className={cn("h-full", c.pct >= 90 ? "bg-emerald-400" : c.pct >= 75 ? "bg-severity-medium" : "bg-severity-high")}
-                    style={{ width: `${c.pct}%` }}
-                  />
+      {showData && live ? (
+        <>
+          <section>
+            <Card>
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 rounded-lg bg-emerald-400/15 border border-emerald-400/40 grid place-items-center shrink-0 text-[10px] font-mono text-emerald-400">
+                  CE
                 </div>
-                <span className="font-mono text-[12px] text-cream w-10 text-right">{c.pct}%</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      </section>
+                <div>
+                  <div className="text-[15px] text-sage font-normal font-oswald">Audit-ready evidence, collected nightly</div>
+                  <p className="text-[11px] text-navy-600 mt-1.5 leading-relaxed max-w-3xl">
+                    {INTEGRATION_DESCRIPTION} The five CE Plus controls map directly to
+                    Wazuh data sources - patches to vulnerability scans, access control to compliance checks, malware protection to EDR detections, and so on.
+                    No spreadsheet wrangling before the assessor arrives.
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </section>
 
-      <Card className="col-span-12 lg:col-span-12" padded={false}
-        header={
-          <>
-            <div>
-              <CardTitle>How this maps to Wazuh</CardTitle>
-              <CardSubtitle>Underlying data sources feeding this view</CardSubtitle>
-            </div>
-          </>
-        }>
-        <div className="grid grid-cols-12 gap-5 p-4">
-          <ul className="col-span-12 lg:col-span-8 space-y-1.5">
-            {integration.wazuhMapping.map(m => (
-              <li key={m.label} className="flex items-center gap-2 text-[12px]">
-                <span className="text-emerald-400 shrink-0 text-[10px] font-mono">WAZ</span>
-                <span className="text-sage flex-1">{m.label}</span>
-                <Link href={m.href} className="text-emerald-400 hover:brightness-110 text-[11px]">
-                  Open
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <div className="col-span-12 lg:col-span-4 text-[11px] text-navy-600 flex items-start gap-2 lg:border-l lg:border-navy-400 lg:pl-5">
-            Custom rule family <span className="font-mono text-sage">93000-93099</span> - managed by MergeIT.
+          <section className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+            {live.kpis.length > 0
+              ? live.kpis.map(k => <StatCard key={k.label} label={k.label} value={k.value} delta="—" dir="flat" hint={`${range.label} - live`} accent="info" />)
+              : [<StatCard key="p" label="No data" value="—" delta="—" dir="flat" hint={`Connected, but no KPIs reported in ${range.label}`} accent="info" />]}
+          </section>
+
+          <section className="grid grid-cols-12 gap-5">
+            <Card className="col-span-12 lg:col-span-6" padded={false}
+              header={
+                <>
+                  <div>
+                    <CardTitle>Integration status</CardTitle>
+                    <CardSubtitle>{live.vendor} - last sync {formatRelativeTime(live.lastSyncAt)}</CardSubtitle>
+                  </div>
+                  <Badge tone={live.status === "Connected" ? "low" : live.status === "Degraded" ? "medium" : "critical"} dot>{live.status}</Badge>
+                </>
+              }>
+              {live.healthMetrics && live.healthMetrics.length > 0 ? (
+                <ul className="divide-y divide-navy-400/60">
+                  {live.healthMetrics.map(m => (
+                    <li key={m.label} className="px-4 py-2.5 flex items-center justify-between">
+                      <span className="text-[12px] text-sage">{m.label}</span>
+                      <span className={cn("font-mono text-[12px]", "text-cream")}>{m.value}</span>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <div className="p-4 text-[12px] text-navy-600">No health metrics reported.</div>
+              )}
+            </Card>
+
+            <Card className="col-span-12 lg:col-span-6" padded={false}
+              header={
+                <>
+                  <div>
+                    <CardTitle>How this maps to Wazuh</CardTitle>
+                    <CardSubtitle>Underlying data sources feeding this view</CardSubtitle>
+                  </div>
+                </>
+              }>
+              <ul className="px-4 py-2 space-y-1.5">
+                {WAZUH_MAPPING.map(m => (
+                  <li key={m.label} className="flex items-center gap-2 text-[12px]">
+                    <span className="text-emerald-400 shrink-0 text-[10px] font-mono">WAZ</span>
+                    <span className="text-sage flex-1">{m.label}</span>
+                    <Link href={m.href} className="text-emerald-400 hover:brightness-110 text-[11px]">Open</Link>
+                  </li>
+                ))}
+              </ul>
+              <div className="px-4 py-3 border-t border-navy-400/60 text-[11px] text-navy-600 flex items-start gap-2">
+                Custom rule family <span className="font-mono text-sage">93000-93099</span> - managed by MergeIT.
+              </div>
+            </Card>
+          </section>
+
+          <Card padded={false}
+            header={
+              <>
+                <div>
+                  <CardTitle>Recent activity</CardTitle>
+                  <CardSubtitle>Last 24h - Cyber Essentials evidence - click an event to investigate in Wazuh</CardSubtitle>
+                </div>
+                <Link href="/compliance"><Button size="sm" variant="secondary">All controls</Button></Link>
+              </>
+            }>
+            {recent.length > 0
+              ? <Table columns={columns} rows={recent} rowKey={r => r.id} />
+              : <div className="p-6 text-center text-[12px] text-navy-600">No recent Cyber Essentials activity in this window.</div>}
+          </Card>
+        </>
+      ) : !isLoading ? (
+        <Card>
+          <div className="p-6 text-center">
+            <div className="text-sm text-cream">No Cyber Essentials data to display</div>
+            <p className="text-[12px] text-navy-600 mt-2 max-w-md mx-auto">
+              The data sections on this page only appear once the Cyber Essentials integration is connected and reporting.
+            </p>
           </div>
-        </div>
-      </Card>
-
-      <Card padded={false}
-        header={
-          <>
-            <div>
-              <CardTitle>Recent activity</CardTitle>
-              <CardSubtitle>Last 24h - Cyber Essentials evidence - click an event to investigate in Wazuh</CardSubtitle>
-            </div>
-            <Link href="/compliance"><Button size="sm" variant="secondary">All controls</Button></Link>
-          </>
-        }>
-        <Table columns={columns} rows={recent} rowKey={r => r.id} />
-      </Card>
+        </Card>
+      ) : null}
     </Page>
   );
 }

@@ -1,16 +1,25 @@
 "use client";
 import { Page, Card, CardTitle, CardSubtitle, Badge } from "@/components/ui";
-import { threatActors, mitreTactics } from "@/data/seed";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import type { WazuhThreatActor } from "@/lib/wazuh";
+import { mitreTactics } from "@/data/seed";
 
 export default function ThreatIntelPage() {
   const techToTactic = new Map<string, string>();
   mitreTactics.forEach(t => t.techniques.forEach(tech => techToTactic.set(tech, t.tactic)));
 
+  // TODO(replace-when-endpoint-ready): GET /threat-intel/actors
+  const { data } = useWazuhResource<{ actors: WazuhThreatActor[]; total: number }>(
+    buildPath("/api/wazuh/threat-actors", { limit: 100 })
+  );
+  const threatActors = data?.actors ?? [];
+  const totalSightings = threatActors.reduce((s, a) => s + a.observed24h, 0);
+
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Operate" }, { label: "Threat Intel" }]}
       title="Threat Intel"
-      description={`${threatActors.length} actors tracked - ${threatActors.reduce((s, a) => s + a.observed24h, 0)} sightings in last 24h`}
+      description={`${threatActors.length} actors tracked - ${totalSightings} sightings in last 24h`}
     >
       <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {threatActors.map(a => (

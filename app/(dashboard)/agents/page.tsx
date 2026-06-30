@@ -1,28 +1,52 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Page, DataGrid, type Column, Card, EmptyState, Badge } from "@/components/ui";
-import { agents, alerts } from "@/data/seed";
 import { AgentCard } from "./AgentCard";
 import { AgentDrawer } from "./AgentDrawer";
 import { AgentFiltersBar, type AgentFilters } from "./AgentFilters";
 import { formatRelativeTime } from "@/lib/format";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import { useHydrateFromLive } from "@/hooks/useAlertsStore";
+import type { WazuhAgentsList, WazuhAgentStatusCount } from "@/lib/wazuh";
 import type { Agent } from "@/types";
-
-// Hoisted: agents and alerts are module constants, so alert counts never change.
-const alertCountByAgent = new Map<string, number>();
-for (const a of alerts) alertCountByAgent.set(a.agent.id, (alertCountByAgent.get(a.agent.id) ?? 0) + 1);
-const activeCount = agents.reduce((n, a) => a.status === "active" ? n + 1 : n, 0);
-const disconnCount = agents.reduce((n, a) => a.status === "disconnected" ? n + 1 : n, 0);
 
 export default function AgentsPage() {
   const [view, setView] = useState<"grid" | "table">("grid");
   const [filters, setFilters] = useState<AgentFilters>({ search: "", status: "all", os: "all" });
   const [active, setActive] = useState<Agent | null>(null);
+  const hydrate = useHydrateFromLive();
+
+  // TODO(replace-when-endpoint-ready): GET /agents
+  const { data: agentsRes, status: agentsStatus } = useWazuhResource<WazuhAgentsList>(
+    buildPath("/api/wazuh/agents", { limit: 500 })
+  );
+  // TODO(replace-when-endpoint-ready): GET /agents/summary/status
+  const { data: statusCounts } = useWazuhResource<WazuhAgentStatusCount>(
+    buildPath("/api/wazuh/agents/status-count")
+  );
+
+  // Hydrate the local store (isolation state) from the live list.
+  useEffect(() => {
+    if (agentsRes?.agents) hydrate({ agents: agentsRes.agents });
+  }, [agentsRes, hydrate]);
+
+  // Until the Wazuh /agents endpoint returns alert counts per agent, we
+  // approximate the per-agent alert total client-side once the alerts list
+  // arrives. (See lib/wazuh/types.ts#WazuhAgentsList for the contract.)
+  const [alertCountByAgent, setAlertCountByAgent] = useState<Map<string, number>>(new Map());
+  useEffect(() => {
+    // Placeholder: the real implementation will key off
+    // useWazuhResource<{ alerts: Alert[] }>(...) and count by agent.id.
+    setAlertCountByAgent(new Map());
+  }, [agentsRes]);
+
+  const agents = agentsRes?.agents ?? [];
+  const isLoading = agentsStatus === "LOADING";
 
   const osOptions = useMemo(() => {
     const set = new Set(agents.map(a => a.os.name));
     return [...set].map(n => ({ value: n, label: n }));
-  }, []);
+  }, [agents]);
 
   const filtered = useMemo(() => {
     const q = filters.search.trim().toLowerCase();
@@ -32,7 +56,10 @@ export default function AgentsPage() {
       if (q && !(a.name.toLowerCase().includes(q) || a.ip.includes(q) || a.os.name.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [filters]);
+  }, [agents, filters]);
+
+  const activeCount = statusCounts?.active ?? agents.reduce((n, a) => a.status === "active" ? n + 1 : n, 0);
+  const disconnCount = statusCounts?.disconnected ?? agents.reduce((n, a) => a.status === "disconnected" ? n + 1 : n, 0);
 
   const columns: Column<Agent>[] = [
     { key: "name", header: "Name", sortable: true, sortValue: a => a.name, cell: a => <span className="font-mono text-cream">{a.name}</span> },
@@ -48,7 +75,7 @@ export default function AgentsPage() {
     <Page
       breadcrumb={[{ href: "/", label: "Operate" }, { label: "Agents" }]}
       title="Agents"
-      description={`${agents.length} endpoints - ${activeCount} active - ${disconnCount} disconnected`}
+      description={`${agents.length} endpoints - ${activeCount} active - ${disconnCount} disconnected${isLoading ? " - loading..." : ""}`}
       actions={
         <div className="flex items-center bg-navy-200 rounded-lg p-0.5">
           <button type="button" onClick={() => setView("grid")} className={`inline-flex items-center gap-1 h-7 px-2 rounded-md text-xs font-medium ${view === "grid" ? "bg-navy-100 text-cream shadow-sm" : "text-navy-600 hover:text-cream"}`}>
@@ -64,7 +91,10 @@ export default function AgentsPage() {
 
       {filtered.length === 0 ? (
         <Card padded={false}>
-          <EmptyState title="No agents match" description="Try removing filters." />
+          <EmptyState
+            title={isLoading ? "Loading agents..." : "No agents match"}
+            description={isLoading ? "Pulling agent list from Wazuh." : "Try removing filters."}
+          />
         </Card>
       ) : view === "grid" ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">

@@ -5,8 +5,9 @@ import { useToasts } from "@/hooks/useToasts";
 import { useIsolateAgent, agentIsolation } from "@/hooks/useAlertsStore";
 import { useAudit } from "@/hooks/useAudit";
 import { formatRelativeTime } from "@/lib/format";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import type { Alert, Vulnerability, FimEvent } from "@/types";
 import Link from "next/link";
-import { alerts, fimEvents, vulnerabilities } from "@/data/seed";
 import type { Agent } from "@/types";
 
 export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; open: boolean; onClose: () => void }) {
@@ -15,11 +16,30 @@ export function AgentDrawer({ agent, open, onClose }: { agent: Agent | null; ope
   const audit = useAudit();
   const [confirm, setConfirm] = useState<null | "isolate" | "restart">(null);
 
+  // TODO(replace-when-endpoint-ready): GET /alerts?agent_id=:id
+  const { data: alertsRes } = useWazuhResource<{ alerts: Alert[] }>(
+    agent ? buildPath("/api/wazuh/alerts", { limit: 50 }) : null
+  );
+  // TODO(replace-when-endpoint-ready): GET /experimental/syscheck?agent_id=:id
+  const { data: fimRes } = useWazuhResource<{ events: FimEvent[] }>(
+    agent ? buildPath("/api/wazuh/fim", { limit: 50 }) : null
+  );
+  // TODO(replace-when-endpoint-ready): GET /vulnerability?agent_id=:id
+  const { data: vulnsRes } = useWazuhResource<{ vulnerabilities: Vulnerability[] }>(
+    agent ? buildPath("/api/wazuh/vulnerabilities", { limit: 50 }) : null
+  );
+
   if (!agent) return null;
   const iso = agentIsolation(agent.id);
-  const myAlerts = alerts.filter(a => a.agent.id === agent.id).slice(0, 8);
-  const myFim    = fimEvents.filter(f => f.agent === agent.name).slice(0, 5);
-  const myVulns  = vulnerabilities.filter(v => v.agentCount > 0).slice(0, 5);
+  const myAlerts = (alertsRes?.alerts ?? [])
+    .filter(a => a.agent.id === agent.id)
+    .slice(0, 8);
+  const myFim    = (fimRes?.events ?? [])
+    .filter(f => f.agent === agent.name)
+    .slice(0, 5);
+  const myVulns  = (vulnsRes?.vulnerabilities ?? [])
+    .filter(v => v.agentCount > 0)
+    .slice(0, 5);
 
   function doIsolate() {
     const next = iso === "isolated" ? "unisolate" : "isolate";

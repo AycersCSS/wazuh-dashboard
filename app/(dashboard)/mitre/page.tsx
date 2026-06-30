@@ -1,23 +1,51 @@
 "use client";
 import { useMemo, useState } from "react";
 import { Page, Card, CardTitle, CardSubtitle, Badge, Button } from "@/components/ui";
-import { alerts, mitreTactics } from "@/data/seed";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import type { WazuhMitreCoverage } from "@/lib/wazuh";
+// mitreTactics is a static reference list of ATT&CK tactic/technique IDs.
+// Wazuh does not expose this roster on its own — it's a dashboard-side
+// concern. We use it to lay out the heatmap; the live alert counts come
+// from /api/wazuh/alerts (or /api/wazuh/mitre when that endpoint lands).
+import { mitreTactics } from "@/data/seed";
 import { cn } from "@/lib/cn";
 
 export default function MitrePage() {
   const [active, setActive] = useState<string | null>(null);
 
+  // TODO(replace-when-endpoint-ready): GET /experimental/mitre
+  // Until the upstream endpoint lands, the seed mitreTactics list provides
+  // the technique roster; alert counts are sourced from the live alerts feed.
+  const { data: alertsRes } = useWazuhResource<{ alerts: { rule: { mitre?: { id: string; technique: string } } }[] }>(
+    buildPath("/api/wazuh/alerts", { limit: 500 })
+  );
+  const { data: mitreRes } = useWazuhResource<WazuhMitreCoverage>(
+    buildPath("/api/wazuh/mitre")
+  );
+
   const matrix = useMemo(() => {
     const m = new Map<string, Map<string, number>>();
     mitreTactics.forEach(t => m.set(t.id, new Map()));
-    alerts.forEach(a => {
-      const mi = a.rule.mitre;
-      if (!mi) return;
-      const cell = m.get(mi.id);
-      if (cell) cell.set(mi.technique, (cell.get(mi.technique) ?? 0) + 1);
-    });
+    if (mitreRes?.matrix) {
+      // Prefer the upstream coverage matrix when it exists.
+      for (const [tacticId, techs] of Object.entries(mitreRes.matrix)) {
+        const cell = m.get(tacticId);
+        if (!cell) continue;
+        for (const [tech, count] of Object.entries(techs)) {
+          cell.set(tech, (cell.get(tech) ?? 0) + count);
+        }
+      }
+    } else if (alertsRes?.alerts) {
+      // Fall back to deriving from the live alerts list.
+      for (const a of alertsRes.alerts) {
+        const mi = a.rule.mitre;
+        if (!mi) continue;
+        const cell = m.get(mi.id);
+        if (cell) cell.set(mi.technique, (cell.get(mi.technique) ?? 0) + 1);
+      }
+    }
     return m;
-  }, []);
+  }, [alertsRes, mitreRes]);
 
   const observedTactics = useMemo(() => {
     return mitreTactics

@@ -13,6 +13,8 @@ import { useConnectorStats } from "@/lib/connector/useConnectorStats";
 import { buildTenantOptions, ALL_TENANTS_KEY, displayNameFor } from "@/lib/tenantDisplay";
 import { useTenantSelection } from "@/hooks/useTenantSelection";
 import { useAudit } from "@/hooks/useAudit";
+import { useWazuhResource, buildPath, type WazuhAgentStatusCount, type WazuhClusterStatus } from "@/lib/wazuh";
+import type { Alert } from "@/types";
 
 const ranges: { key: TimeRangeKey; label: string }[] = [
   { key: "1h",  label: "Last 1 hour" },
@@ -86,6 +88,41 @@ export function Topbar() {
   // connecting, stale, unauthenticated, or errored.
   const { tenants: liveTenantIds, totalAgents, status: statsStatus } = useConnectorStats();
   const tenantOptions = buildTenantOptions(liveTenantIds, totalAgents);
+
+  // TODO(replace-when-endpoint-ready): GET /agents/summary/status + /manager/status
+  // The "64 agents / 1,284 evt/s" pill in the chrome used to be hardcoded.
+  // It now reflects the live agent count from the connector and the alert
+  // throughput (alerts/min over the last 5 min) from the alerts list.
+  const { data: agentStatus } = useWazuhResource<WazuhAgentStatusCount>(
+    buildPath("/api/wazuh/agents/status-count")
+  );
+  const { data: alertsRes } = useWazuhResource<{ alerts: Alert[]; total: number }>(
+    buildPath("/api/wazuh/alerts", { limit: 500 })
+  );
+  const { data: cluster } = useWazuhResource<WazuhClusterStatus>(
+    buildPath("/api/wazuh/manager")
+  );
+
+  // Approximate EPS from the last 500 alerts spread over their timestamp range.
+  const eventsPerSecond = (() => {
+    const list = alertsRes?.alerts ?? [];
+    if (list.length < 2) return null;
+    const times = list.map(a => new Date(a.timestamp).getTime()).sort((a, b) => a - b);
+    const spanSec = (times[times.length - 1] - times[0]) / 1000;
+    if (spanSec <= 0) return null;
+    return list.length / spanSec;
+  })();
+
+  // Live notifications list: take the top 4 alerts and surface them as
+  // in-app notifications. This replaces the previously hardcoded list.
+  // TODO(replace-when-endpoint-ready): when the upstream exposes a
+  // dedicated /notifications endpoint, swap to that.
+  const notifications = (alertsRes?.alerts ?? []).slice(0, 4).map((a) => ({
+    sev: a.rule.level >= 13 ? "critical" : a.rule.level >= 10 ? "high" : a.rule.level >= 7 ? "medium" : "info",
+    title: `${a.rule.description} - ${a.agent.name}`,
+    time: a.timestamp,
+    tenant: displayNameFor(a.agent.id)
+  }));
 
   // Defensive: if the previously selected tenant disappears from the live
   // list (e.g. removed upstream), reset the selection to "all" so the trigger
@@ -220,12 +257,12 @@ export function Topbar() {
 
         <div className="hidden md:flex items-center gap-3 text-xs">
           <div className="flex items-center gap-1.5 text-navy-600">
-            <span><span className="text-cream font-mono">{formatCompact(64)}</span> agents</span>
+            <span><span className="text-cream font-mono">{totalAgents !== null ? formatCompact(totalAgents) : (agentStatus ? formatCompact(agentStatus.active + agentStatus.disconnected + agentStatus.pending + agentStatus.never_connected) : "—")}</span> agents</span>
           </div>
           <span className="w-px h-4 bg-navy-400" />
           <div className="flex items-center gap-1.5 text-navy-600">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-soft" />
-            <span><span className="text-cream font-mono">1,284</span> evt/s</span>
+            <span><span className="text-cream font-mono">{eventsPerSecond !== null ? formatCompact(eventsPerSecond) : "—"}</span> evt/s</span>
           </div>
         </div>
 
@@ -317,13 +354,10 @@ export function Topbar() {
                   className="text-[11px] text-navy-600 hover:text-cream">Mark all read</button>
               </div>
               <ul className="max-h-[320px] overflow-y-auto">
-                {[
-                  { sev: "critical", title: "Critical alert on Acme Corp - sign-in from unknown country", time: "2m",  tenant: "Acme Corp" },
-                  { sev: "high",     title: "3 endpoints out of date on Bitdefender engines",            time: "14m", tenant: "Globex" },
-                  { sev: "medium",   title: "Cyber Essentials evidence pack due in 6 days",                time: "1h",  tenant: "Initech" },
-                  { sev: "info",     title: "NinjaOne sync completed for 28 devices",                     time: "3h",  tenant: "Stark Industries" }
-                ].map((n) => (
-                  <li key={n.title + n.time}>
+                {notifications.length === 0
+                  ? <li className="px-3 py-4 text-[11.5px] text-navy-600">No recent alerts. Endpoint not yet implemented.</li>
+                  : notifications.map((n, idx) => (
+                  <li key={n.title + idx}>
                     <button type="button"
                       onClick={() => { dispatch({ type: "closeMenu" }); toasts.push({ variant: n.sev as any, title: "Opened: " + n.title, duration: 2000 }); }}
                       className="w-full text-left px-3 py-2.5 border-b border-navy-400/60 last:border-0 hover:bg-navy-200 cursor-pointer">
@@ -334,13 +368,13 @@ export function Topbar() {
                         n.sev === "medium"   ? "bg-severity-medium" : "bg-severity-info"
                       )} />
                       <span className="text-xs text-cream leading-snug">{n.title}</span>
-                      <span className="block text-[10.5px] text-navy-600 mt-0.5">{n.tenant} - {n.time} ago</span>
+                      <span className="block text-[10.5px] text-navy-600 mt-0.5">{n.tenant} - {new Date(n.time).toLocaleTimeString()}</span>
                     </button>
                   </li>
                 ))}
               </ul>
               <div className="px-3 h-9 flex items-center justify-between border-t border-navy-400">
-                <span className="text-[10.5px] text-navy-600">Showing 4 of 17</span>
+                <span className="text-[10.5px] text-navy-600">Showing {notifications.length} of {alertsRes?.total ?? notifications.length}</span>
                 <button type="button" onClick={() => dispatch({ type: "closeMenu" })} className="text-[11.5px] text-emerald-400 hover:brightness-110">View all</button>
               </div>
             </div>
@@ -408,6 +442,8 @@ export function Topbar() {
       </div>
 
       <div className="hidden lg:flex h-7 items-center gap-3 px-4 border-t border-navy-400 text-[11px] text-navy-600">
+        {/* TODO(replace-when-endpoint-ready): derive pending review count from
+            the compliance / review endpoints instead of a hardcoded "3". */}
         <button type="button"
           onClick={() => toasts.push({ variant: "warn", title: "3 Cyber Essentials reviews pending", description: "Opening review queue..." })}
           className="flex items-center gap-1.5 hover:text-cream">
@@ -415,7 +451,7 @@ export function Topbar() {
           <span><span className="text-cream">3 reviews</span> pending across tenants</span>
         </button>
         <span className="w-px h-3 bg-navy-400" />
-        <span>Latest indexer snapshot: <span className="font-mono text-cream">02:14:38 UTC</span></span>
+        <span>Manager: <span className="font-mono text-cream">{cluster?.manager ?? "—"}</span></span>
         <span className="w-px h-3 bg-navy-400" />
         <span>SOC tip: <span className="text-cream">acknowledge within 15m to keep MTTR under target</span></span>
       </div>

@@ -1,13 +1,13 @@
 "use client";
 import { useCallback, useEffect, useSyncExternalStore } from "react";
-import {
-  alerts as seedAlerts,
-  vulnerabilities as seedVulns,
-  rules as seedRules,
-  agents as seedAgents
-} from "@/data/seed";
 import { storage } from "@/lib/storage";
-import type { VulnState, FimReviewState, AgentIsolation } from "@/types";
+import type { Alert, Vulnerability, Rule, Agent, VulnState, FimReviewState, AgentIsolation } from "@/types";
+
+// TODO(replace-when-endpoint-ready): hydrateFromLive() replaces the old
+// seed-based hydration. The hook no longer imports `data/seed`; instead,
+// each page that has already fetched its live list calls hydrateFromLive()
+// with the data it received from the Wazuh proxy. This keeps the local
+// store in sync with whatever the upstream returned on first paint.
 
 type AlertState = { acknowledged: boolean; archived: boolean };
 type RuleState  = { status: "enabled" | "disabled" };
@@ -34,16 +34,48 @@ function subscribe(cb: () => void) { subscribers.add(cb); return () => subscribe
 function snapshot() { return cachedSnapshot; }
 function getServerSnapshot() { return snapshot(); }
 
-function hydrateFromSeed() {
-  alertMap = Object.fromEntries(
-    seedAlerts.map(a => [a.id, { acknowledged: !!a.acknowledged, archived: !!a.archived }])
-  );
-  vulnMap = Object.fromEntries(seedVulns.map(v => [v.cve, { status: "open" as VulnState }]));
-  ruleMap = Object.fromEntries(seedRules.map(r => [r.id, { status: r.status }]));
-  fimMap = {};
-  agentMap = Object.fromEntries(
-    seedAgents.map(a => [a.id, { isolation: "normal" as AgentIsolation }])
-  );
+/**
+ * Populate the local store from a set of live lists. Called by pages that
+ * have already fetched the data from /api/wazuh/* — typically from a
+ * useWazuhResource hook. Idempotent: unknown keys are added, existing keys
+ * are preserved (so user-acked alerts survive a re-hydration).
+ */
+function hydrateFromLive(input: {
+  alerts?: Alert[];
+  vulns?: Vulnerability[];
+  rules?: Rule[];
+  agents?: Agent[];
+}) {
+  if (input.alerts) {
+    for (const a of input.alerts) {
+      if (!(a.id in alertMap)) {
+        alertMap[a.id] = { acknowledged: !!a.acknowledged, archived: !!a.archived };
+      }
+    }
+  }
+  if (input.vulns) {
+    for (const v of input.vulns) {
+      if (!(v.cve in vulnMap)) {
+        vulnMap[v.cve] = { status: "open" };
+      }
+    }
+  }
+  if (input.rules) {
+    for (const r of input.rules) {
+      if (!(r.id in ruleMap)) {
+        ruleMap[r.id] = { status: r.status };
+      }
+    }
+  }
+  if (input.agents) {
+    for (const a of input.agents) {
+      if (!(a.id in agentMap)) {
+        agentMap[a.id] = { isolation: "normal" };
+      }
+    }
+  }
+  persistAll();
+  notify();
 }
 
 let hydrated = false;
@@ -65,8 +97,15 @@ function hydrateOnce(): boolean {
     fimMap   = persisted.fim    ?? {};
     agentMap = persisted.agents ?? {};
   } else {
-    hydrateFromSeed();
-    persistAll();
+    // No persisted state. We do NOT hydrate from a seed any more — the
+    // dashboard waits for the live /api/wazuh/* responses and calls
+    // hydrateFromLive() from each page once they arrive. The maps stay
+    // empty until then.
+    alertMap = {};
+    vulnMap  = {};
+    ruleMap  = {};
+    fimMap   = {};
+    agentMap = {};
   }
   return true;
 }
@@ -144,9 +183,25 @@ export function useReset() {
     // acks, vuln statuses, rule toggles, agent isolations, FIM reviews) is
     // wiped. See lib/storage.ts:clear() for the preserve list.
     storage.clear();
-    hydrateFromSeed();
-    persistAll();
+    // Wipe the in-memory maps; pages that have live data will re-hydrate
+    // via hydrateFromLive() on their next successful fetch.
+    alertMap = {};
+    vulnMap  = {};
+    ruleMap  = {};
+    fimMap   = {};
+    agentMap = {};
     notify();
+  }, []);
+}
+
+/**
+ * Public hook version of hydrateFromLive() so React components can call it
+ * from a useEffect when their /api/wazuh/* responses arrive. Returns a
+ * stable callback.
+ */
+export function useHydrateFromLive() {
+  return useCallback((input: Parameters<typeof hydrateFromLive>[0]) => {
+    hydrateFromLive(input);
   }, []);
 }
 

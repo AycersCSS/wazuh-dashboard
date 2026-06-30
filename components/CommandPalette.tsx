@@ -2,8 +2,9 @@
 import { useEffect, useReducer, useRef, useMemo } from "react";
 import { useCommandPalette } from "@/hooks/useCommandPalette";
 import { useRouter } from "next/navigation";
-import { alerts, agents, vulnerabilities, rules } from "@/data/seed";
 import { severityBucket } from "@/types";
+import { useWazuhResource, buildPath } from "@/lib/wazuh";
+import type { Alert, Agent, Vulnerability, Rule } from "@/types";
 import { cn } from "@/lib/cn";
 
 type Hit = {
@@ -28,11 +29,10 @@ const pages: Hit[] = [
   { id: "p10", type: "page", label: "Settings",        hint: "Cluster and integrations",      href: "/settings",        group: "Go to" }
 ];
 
-const recent: Hit[] = [
-  { id: "r1", type: "alert", label: "EVT-3F7A - SSH brute force",     hint: "agent 0104 · 1m ago",    href: "/alerts",         group: "Jump to" },
-  { id: "r2", type: "agent", label: "ubuntu-018",                     hint: "10.4.12.7 · active",     href: "/agents",         group: "Jump to" },
-  { id: "r3", type: "cve",   label: "CVE-2024-3094",                  hint: "liblzma5 · 5 critical",   href: "/vulnerabilities",group: "Jump to" }
-];
+// TODO(replace-when-endpoint-ready): recent items are derived from the
+// latest live alerts + agents + vulns once those endpoints are wired up.
+// For now we expose the "Go to" pages and live search only.
+const recent: Hit[] = [];
 
 type State = { q: string; idx: number };
 type Action = { type: "open" } | { type: "close" } | { type: "setQ"; q: string } | { type: "setIdx"; idx: number };
@@ -54,6 +54,20 @@ export function CommandPalette() {
   const setIdx = (idx: number) => dispatch({ type: "setIdx", idx });
   const ref = useRef<HTMLInputElement>(null);
   const router = useRouter();
+
+  // Search source data — all four live lists. While the upstream endpoints
+  // are not yet implemented these will return empty data and the palette
+  // will only show page hits.
+  // TODO(replace-when-endpoint-ready): GET /alerts, /agents, /vulnerability, /rules
+  const { data: alertsRes } = useWazuhResource<{ alerts: Alert[] }>(open ? buildPath("/api/wazuh/alerts", { limit: 200 }) : null);
+  const { data: agentsRes }  = useWazuhResource<{ agents: Agent[] }>(open ? buildPath("/api/wazuh/agents", { limit: 200 }) : null);
+  const { data: vulnsRes }   = useWazuhResource<{ vulnerabilities: Vulnerability[] }>(open ? buildPath("/api/wazuh/vulnerabilities", { limit: 200 }) : null);
+  const { data: rulesRes }   = useWazuhResource<{ rules: Rule[] }>(open ? buildPath("/api/wazuh/rules", { limit: 200 }) : null);
+
+  const alerts = alertsRes?.alerts ?? [];
+  const agents = agentsRes?.agents ?? [];
+  const vulnerabilities = vulnsRes?.vulnerabilities ?? [];
+  const rules = rulesRes?.rules ?? [];
 
   useEffect(() => {
     if (!open) return;
@@ -109,7 +123,7 @@ export function CommandPalette() {
     const pageHits = pages.filter(p => p.label.toLowerCase().includes(needle));
 
     return [...alertHits, ...agentHits, ...cveHits, ...ruleHits, ...pageHits];
-  }, [q]);
+  }, [q, alerts, agents, vulnerabilities, rules]);
 
   if (!open) return null;
 

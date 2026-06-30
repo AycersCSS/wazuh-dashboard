@@ -52,6 +52,10 @@ const SCOPE_TONE: Record<AuditScope, "low" | "medium" | "high" | "critical" | "i
 };
 
 export default function AuditPage() {
+  // TODO(replace-when-endpoint-ready): GET /security/audit (server-side
+  // audit feed from Wazuh). For now the page renders only the client-side
+  // localStorage log; once the upstream endpoint lands, merge its events
+  // with the local recorder.
   const { events } = useAuditEvents();
   const { user } = useSession();
   const { tenants: liveTenantIds } = useConnectorStats();

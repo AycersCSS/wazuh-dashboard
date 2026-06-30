@@ -4,7 +4,8 @@ import { Page, Card, CardTitle, Button, Badge, Tooltip } from "@/components/ui";
 import { useToasts } from "@/hooks/useToasts";
 import { useReset, useAlertsStore } from "@/hooks/useAlertsStore";
 import { useAudit } from "@/hooks/useAudit";
-import { alerts } from "@/data/seed";
+import { useWazuhResource, buildPath, type WazuhClusterStatus } from "@/lib/wazuh";
+import type { Alert } from "@/types";
 
 const integrations = [
   { name: "VirusTotal",   status: "connected",  desc: "Hash and URL lookups" },
@@ -20,17 +21,29 @@ export default function SettingsPage() {
   useAlertsStore();
   const [confirmReset, setConfirmReset] = useState(false);
 
+  // TODO(replace-when-endpoint-ready): GET /manager/status
+  const { data: cluster } = useWazuhResource<WazuhClusterStatus>(
+    buildPath("/api/wazuh/manager")
+  );
+  // TODO(replace-when-endpoint-ready): GET /alerts (used here only for the
+  // export-alerts feature — the count and the payload both come from live
+  // data once the upstream endpoint is wired up).
+  const { data: alertsRes } = useWazuhResource<{ alerts: Alert[]; total: number }>(
+    buildPath("/api/wazuh/alerts", { limit: 1000 })
+  );
+  const liveAlerts = alertsRes?.alerts ?? [];
+
   function doExport() {
     try {
-      const data = { alerts, exportedAt: new Date().toISOString() };
+      const data = { alerts: liveAlerts, exportedAt: new Date().toISOString() };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url; a.download = `sentinel-stack-alerts-${Date.now()}.json`;
       document.body.appendChild(a); a.click(); a.remove();
       URL.revokeObjectURL(url);
-      audit.record({ scope: "data", type: "data.export_alerts", summary: `Exported ${alerts.length} alerts as JSON`, outcome: "success", meta: { count: alerts.length, format: "json" } });
-      toasts.push({ variant: "success", title: "Export complete", description: `${alerts.length} alerts downloaded` });
+      audit.record({ scope: "data", type: "data.export_alerts", summary: `Exported ${liveAlerts.length} alerts as JSON`, outcome: "success", meta: { count: liveAlerts.length, format: "json" } });
+      toasts.push({ variant: "success", title: "Export complete", description: `${liveAlerts.length} alerts downloaded` });
     } catch (e) {
       audit.record({ scope: "data", type: "data.export_alerts", summary: `Alert export failed`, outcome: "failure" });
       toasts.push({ variant: "error", title: "Export failed" });
@@ -48,10 +61,10 @@ export default function SettingsPage() {
           <CardTitle>Cluster</CardTitle>
         </div>
         <div className="p-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-          <div className="flex items-center justify-between"><span className="text-navy-600">Manager</span><span className="font-mono text-cream">prod-01</span></div>
-          <div className="flex items-center justify-between"><span className="text-navy-600">Workers</span><span className="font-mono text-cream">3 / 3</span></div>
-          <div className="flex items-center justify-between"><span className="text-navy-600">Indexer</span><span className="font-mono text-cream">opensearch 2.15</span></div>
-          <div className="flex items-center justify-between"><span className="text-navy-600">API latency p95</span><span className="font-mono text-cream">38 ms</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">Manager</span><span className="font-mono text-cream">{cluster?.manager ?? "—"}</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">Workers</span><span className="font-mono text-cream">{cluster?.workers ? `${cluster.workers.active} / ${cluster.workers.total}` : "—"}</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">Indexer</span><span className="font-mono text-cream">{cluster?.indexer ? `${cluster.indexer.name} ${cluster.indexer.version}` : "—"}</span></div>
+          <div className="flex items-center justify-between"><span className="text-navy-600">API latency p95</span><span className="font-mono text-cream">{cluster?.apiLatencyP95Ms !== undefined ? `${cluster.apiLatencyP95Ms} ms` : "—"}</span></div>
         </div>
       </Card>
 
@@ -97,7 +110,7 @@ export default function SettingsPage() {
               <div className="text-cream">Default environment</div>
               <div className="text-xs text-navy-600">Selected at sign-in.</div>
             </div>
-            <span className="text-sage">production - us-east-1</span>
+            <span className="text-sage font-mono">{process.env.NEXT_PUBLIC_ENV ?? "local"}</span>
           </div>
         </div>
       </Card>
