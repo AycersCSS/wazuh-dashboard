@@ -1,8 +1,8 @@
-// TODO(replace-when-endpoint-ready): GET /experimental/syscheck
-// Browser-facing proxy to Wazuh's FIM (syscheck) events.
+// Browser-facing proxy to the connector's /fim.
+// Flatten the Wazuh body to {events, total}.
 
-import { proxyWazuh } from "@/lib/wazuh/proxy";
-import type { WazuhFimList } from "@/lib/wazuh/types";
+import { isAuthenticated, proxyConnector } from "@/lib/connector/proxy";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -10,9 +10,15 @@ export const dynamic = "force-dynamic";
 const ALLOWED = new Set(["limit", "offset", "agent_id", "path", "action"]);
 
 export async function GET(req: Request): Promise<Response> {
-  return proxyWazuh<WazuhFimList>(req, {
-    path: "/experimental/syscheck",
+  if (!isAuthenticated()) {
+    return NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 });
+  }
+  return proxyConnector(req, {
+    path: "/fim",
     allowedQuery: ALLOWED,
-    emptyOnLocalTest: true
+    transform: (u) => {
+      const d = (u as { data?: { affected_items?: unknown[]; total_affected_items?: number } } | null)?.data;
+      return { events: d?.affected_items ?? [], total: d?.total_affected_items ?? 0 };
+    }
   });
 }

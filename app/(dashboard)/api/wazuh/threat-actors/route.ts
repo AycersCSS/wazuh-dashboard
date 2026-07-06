@@ -1,9 +1,8 @@
-// TODO(replace-when-endpoint-ready): GET /threat-intel/actors
-// Threat-actor feed. Wazuh itself has no actor concept; the MergeIT
-// platform tracks the intel list and exposes it through the connector.
+// Browser-facing proxy to the connector's /threat-actors.
+// Connector currently returns {actors: []}; pass through unchanged.
 
-import { proxyWazuh } from "@/lib/wazuh/proxy";
-import type { WazuhThreatActor } from "@/lib/wazuh/types";
+import { isAuthenticated, proxyConnector } from "@/lib/connector/proxy";
+import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,9 +10,8 @@ export const dynamic = "force-dynamic";
 const ALLOWED = new Set(["limit", "offset", "sector", "region"]);
 
 export async function GET(req: Request): Promise<Response> {
-  return proxyWazuh<{ actors: WazuhThreatActor[]; total: number }>(req, {
-    path: "/threat-intel/actors",
-    allowedQuery: ALLOWED,
-    emptyOnLocalTest: true
-  });
+  if (!isAuthenticated()) {
+    return NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 });
+  }
+  return proxyConnector(req, { path: "/threat-actors", allowedQuery: ALLOWED });
 }

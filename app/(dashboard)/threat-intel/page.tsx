@@ -2,7 +2,7 @@
 import { Page, Card, CardTitle, CardSubtitle, Badge } from "@/components/ui";
 import { useWazuhResource, buildPath } from "@/lib/wazuh";
 import type { WazuhThreatActor } from "@/lib/wazuh";
-import { mitreTactics } from "@/data/seed";
+import { mitreTactics } from "@/data/mitre";
 
 export default function ThreatIntelPage() {
   const techToTactic = new Map<string, string>();

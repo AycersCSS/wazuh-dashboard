@@ -7,7 +7,7 @@ import type { WazuhMitreCoverage } from "@/lib/wazuh";
 // Wazuh does not expose this roster on its own — it's a dashboard-side
 // concern. We use it to lay out the heatmap; the live alert counts come
 // from /api/wazuh/alerts (or /api/wazuh/mitre when that endpoint lands).
-import { mitreTactics } from "@/data/seed";
+import { mitreTactics } from "@/data/mitre";
 import { cn } from "@/lib/cn";
 
 export default function MitrePage() {

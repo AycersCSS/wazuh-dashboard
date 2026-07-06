@@ -3,8 +3,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
-import { useConnectorStats } from "@/lib/connector/useConnectorStats";
-import { displayNameFor, tierFor } from "@/lib/tenantDisplay";
 
 type Item = { href: string; label: string; count?: number; tag?: "new" | "beta" };
 type Group = { title: string; items: Item[] };
@@ -37,15 +35,6 @@ const rawWazuh: Item[] = [
 export function Sidebar() {
   const pathname = usePathname();
   const [rawOpen, setRawOpen] = useState(false);
-
-  // TODO(replace-when-endpoint-ready): the "Top tenant" widget used to be
-  // hardcoded ("Acme Corp / 87 / 100"). It now derives the top tenant from
-  // the live tenant list (alphabetical) and shows "—" for the score / open
-  // incidents until a per-tenant snapshot endpoint lands.
-  const { tenants: liveTenantIds } = useConnectorStats();
-  const topTenant = liveTenantIds[0];
-  const topTenantName = topTenant ? displayNameFor(topTenant) : "—";
-  const topTenantTier = topTenant ? tierFor(topTenant) : null;
 
   function isActive(href: string) {
     return href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -115,38 +104,6 @@ export function Sidebar() {
           </details>
         </div>
       </nav>
-
-      <div className="m-3 p-3 bg-navy-100 border border-navy-400 rounded-lg">
-        <div className="flex items-center justify-between mb-2">
-          <div className="text-[10px] uppercase tracking-[0.18em] text-navy-600 font-semibold">Tenant health</div>
-          <span className="flex items-center gap-1.5 text-[10px] text-emerald-400 font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse-soft" /> Healthy
-          </span>
-        </div>
-        <div className="space-y-1.5">
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-navy-600">Top tenant</span>
-            <span className="font-mono text-cream">{topTenantName}</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-navy-600">Tier</span>
-            <span className="font-mono text-emerald-400">{topTenantTier ?? "—"}</span>
-          </div>
-          {/* TODO(replace-when-endpoint-ready): score + open incidents come
-              from the per-tenant snapshot endpoint. */}
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-navy-600">Score</span>
-            <span className="font-mono text-emerald-400">—</span>
-          </div>
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-navy-600">Open incidents</span>
-            <span className="font-mono text-cream">—</span>
-          </div>
-        </div>
-        <Link href="/customer-portal" className="mt-2.5 w-full h-7 text-[11px] bg-navy border border-navy-500 rounded-md text-sage hover:text-cream hover:bg-navy-200 transition-colors flex items-center justify-center gap-1.5">
-          Open tenant portal
-        </Link>
-      </div>
     </aside>
   );
 }

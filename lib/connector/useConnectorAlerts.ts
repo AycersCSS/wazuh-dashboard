@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-export type AlertsStatus = "IDLE" | "LOADING" | "STALE" | "UNAUTHENTICATED" | "ERROR";
+export type AlertsStatus = "IDLE" | "LOADING" | "UNAUTHENTICATED" | "ERROR";
 
 export interface AlertCounts {
   critical: number;
@@ -13,110 +13,63 @@ export interface AlertCounts {
 
 export interface UseConnectorAlertsResult {
   status: AlertsStatus;
-  lastFetchedAt: number | null;
   alerts: AlertCounts;
   error: string | null;
-}
-
-type Fetcher = (path: string) => Promise<unknown>;
-
-let fetcher: Fetcher = async (path) => {
-  const res = await fetch(path);
-  if (!res.ok) {
-    const err: Error & { status?: number } = new Error(`HTTP ${res.status}`);
-    err.status = res.status;
-    throw err;
-  }
-  return res.json();
-};
-
-export function setAlertsFetcher(fn: Fetcher): void {
-  fetcher = fn;
+  refetch: () => void;
 }
 
 const POLL_MS = 30_000;
-const STALE_MS = 60_000;
-const LIMIT = 200;
-const TIME_RANGE = "7d";
-
 const EMPTY: AlertCounts = { critical: 0, high: 0, warning: 0, total: 0 };
 
+/**
+ * Polls the connector's alerts feed for a single tenant. Used by the Overview
+ * "TenantRow" cells (C/H/W counts).
+ */
 export function useConnectorAlerts(tenantId: string | null): UseConnectorAlertsResult {
   const [status, setStatus] = useState<AlertsStatus>(tenantId ? "LOADING" : "IDLE");
-  const [lastFetchedAt, setLastFetchedAt] = useState<number | null>(null);
   const [alerts, setAlerts] = useState<AlertCounts>(EMPTY);
   const [error, setError] = useState<string | null>(null);
-
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const staleRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const mountedRef = useRef(true);
-  const currentTenantRef = useRef(tenantId);
-
-  const doFetch = useCallback(async (tid: string) => {
-    try {
-      const path = `/api/connector/alerts?tenant=${encodeURIComponent(tid)}&limit=${LIMIT}&time_range=${TIME_RANGE}`;
-      const res = (await fetcher(path)) as { critical: unknown[]; high: unknown[]; warning: unknown[]; total: number };
-      if (!mountedRef.current || currentTenantRef.current !== tid) return;
-      setAlerts({
-        critical: res.critical.length,
-        high: res.high.length,
-        warning: res.warning.length,
-        total: res.total
-      });
-      setError(null);
-      // Success: stay in LOADING state. Per spec §5.2, the alerts
-      // hook's terminal state is LOADING (poll continues); 60s
-      // without a successful response flips to STALE. The
-      // "CONNECTED" enum value belongs to useConnectorStats, not
-      // here.
-      setLastFetchedAt(Date.now());
-    } catch (e) {
-      if (!mountedRef.current || currentTenantRef.current !== tid) return;
-      const err = e as Error & { status?: number };
-      if (err.status === 401) {
-        setStatus("UNAUTHENTICATED");
-      } else {
-        setStatus("ERROR");
-        setError(err.message ?? "Unknown error");
-      }
-    }
-  }, []);
+  const [tick, setTick] = useState(0);
 
   useEffect(() => {
-    mountedRef.current = true;
-    currentTenantRef.current = tenantId;
-
     if (!tenantId) {
       setStatus("IDLE");
       setAlerts(EMPTY);
       return;
     }
-
+    let cancelled = false;
     setStatus("LOADING");
-    void doFetch(tenantId);
-    intervalRef.current = setInterval(() => { void doFetch(tenantId); }, POLL_MS);
-    staleRef.current = setInterval(() => {
-      setLastFetchedAt((prev) => {
-        if (prev !== null && Date.now() - prev > STALE_MS && statusRef.current !== "STALE") {
-          setStatus("STALE");
-        }
-        return prev;
+    const url = `/api/connector/alerts?tenant=${encodeURIComponent(tenantId)}&limit=200&time_range=7d`;
+    fetch(url)
+      .then(async (res) => {
+        if (res.status === 401) throw Object.assign(new Error("Unauthorized"), { status: 401 });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const body = await res.json() as { critical: unknown[]; high: unknown[]; warning: unknown[]; total: number };
+        if (cancelled) return;
+        setAlerts({
+          critical: body.critical.length,
+          high: body.high.length,
+          warning: body.warning.length,
+          total: body.total
+        });
+        setError(null);
+      })
+      .catch((e: Error & { status?: number }) => {
+        if (cancelled) return;
+        if (e.status === 401) setStatus("UNAUTHENTICATED");
+        else { setStatus("ERROR"); setError(e.message); }
       });
-    }, 5_000);
+    return () => { cancelled = true; };
+  }, [tenantId, tick]);
 
-    return () => {
-      mountedRef.current = false;
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      if (staleRef.current) clearInterval(staleRef.current);
-    };
-  }, [tenantId, doFetch]);
+  useEffect(() => {
+    if (!tenantId) return;
+    const id = window.setInterval(() => setTick((t) => t + 1), POLL_MS);
+    return () => window.clearInterval(id);
+  }, [tenantId]);
 
-  const statusRef = useRef(status);
-  useEffect(() => { statusRef.current = status; }, [status]);
-
-  // Note: on fetch success we deliberately do NOT change status.
-  // The alerts hook's terminal "live" state is LOADING (polling
-  // continues); 60s without success flips to STALE. The CONNECTED
-  // enum value belongs to useConnectorStats, not here.
-  return { status, lastFetchedAt, alerts, error };
+  // refetch is unused by current callers; keep the callback shape for future
+  // use so callers don't have to know the tick-internals.
+  const refetch = useCallback(() => setTick((t) => t + 1), []);
+  return { status, alerts, error, refetch };
 }

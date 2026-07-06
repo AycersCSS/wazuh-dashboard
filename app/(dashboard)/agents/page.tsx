@@ -1,12 +1,11 @@
 "use client";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo } from "react";
 import { Page, DataGrid, type Column, Card, EmptyState, Badge } from "@/components/ui";
 import { AgentCard } from "./AgentCard";
 import { AgentDrawer } from "./AgentDrawer";
 import { AgentFiltersBar, type AgentFilters } from "./AgentFilters";
 import { formatRelativeTime } from "@/lib/format";
 import { useWazuhResource, buildPath } from "@/lib/wazuh";
-import { useHydrateFromLive } from "@/hooks/useAlertsStore";
 import type { WazuhAgentsList, WazuhAgentStatusCount } from "@/lib/wazuh";
 import type { Agent } from "@/types";
 
@@ -14,7 +13,6 @@ export default function AgentsPage() {
   const [view, setView] = useState<"grid" | "table">("grid");
   const [filters, setFilters] = useState<AgentFilters>({ search: "", status: "all", os: "all" });
   const [active, setActive] = useState<Agent | null>(null);
-  const hydrate = useHydrateFromLive();
 
   // TODO(replace-when-endpoint-ready): GET /agents
   const { data: agentsRes, status: agentsStatus } = useWazuhResource<WazuhAgentsList>(
@@ -25,20 +23,9 @@ export default function AgentsPage() {
     buildPath("/api/wazuh/agents/status-count")
   );
 
-  // Hydrate the local store (isolation state) from the live list.
-  useEffect(() => {
-    if (agentsRes?.agents) hydrate({ agents: agentsRes.agents });
-  }, [agentsRes, hydrate]);
-
-  // Until the Wazuh /agents endpoint returns alert counts per agent, we
-  // approximate the per-agent alert total client-side once the alerts list
-  // arrives. (See lib/wazuh/types.ts#WazuhAgentsList for the contract.)
-  const [alertCountByAgent, setAlertCountByAgent] = useState<Map<string, number>>(new Map());
-  useEffect(() => {
-    // Placeholder: the real implementation will key off
-    // useWazuhResource<{ alerts: Alert[] }>(...) and count by agent.id.
-    setAlertCountByAgent(new Map());
-  }, [agentsRes]);
+  // Per-agent alert count isn't available yet (see WazuhAgentsList comment).
+  // The card shows 0; the column will populate when the endpoint lands.
+  const alertCountByAgent = new Map<string, number>();
 
   const agents = agentsRes?.agents ?? [];
   const isLoading = agentsStatus === "LOADING";

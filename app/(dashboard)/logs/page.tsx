@@ -1,57 +1,27 @@
 "use client";
-import { useState, useRef, useEffect, useMemo } from "react";
-import { useVirtualizer } from "@tanstack/react-virtual";
-import { Page, Card, Badge, SearchInput, Select, Button } from "@/components/ui";
+import { useState, useMemo } from "react";
+import { Page, Card, Badge, SearchInput, Select } from "@/components/ui";
 import { formatRelativeTime } from "@/lib/format";
 import { useWazuhResource, buildPath } from "@/lib/wazuh";
 import type { WazuhLogEntry } from "@/lib/wazuh";
-import { cn } from "@/lib/cn";
 
 interface Row { id: string; ts: string; source: string; agent: string; severity: "low" | "medium" | "high" | "critical" | "info"; message: string; }
 
 export default function LogsPage() {
-  const [rows, setRows] = useState<Row[]>([]);
-  const [paused, setPaused] = useState(false);
   const [search, setSearch] = useState("");
   const [source, setSource] = useState("all");
   const [severity, setSeverity] = useState("all");
   const [active, setActive] = useState<Row | null>(null);
 
   // TODO(replace-when-endpoint-ready): GET /logs/archives — initial 400-row
-  // backfill. Subsequent rows come from the live SSE/poll endpoint (TBD).
+  // backfill. Live tail will arrive alongside the SSE/poll endpoint.
   const { data, status } = useWazuhResource<{ entries: WazuhLogEntry[]; total: number }>(
     buildPath("/api/wazuh/logs", { limit: 400 })
   );
-  useEffect(() => {
-    if (!data?.entries) return;
-    setRows(data.entries.map(e => ({
-      id: e.id,
-      ts: e.timestamp,
-      source: e.source,
-      agent: e.agent,
-      severity: e.severity,
-      message: e.message
-    })));
-  }, [data]);
-
-  // TODO(replace-when-endpoint-ready): live tail. Once the SSE/poll endpoint
-  // exists, replace this synthetic-tick fallback with a real stream. The
-  // tick fires every 2s and inserts a row at the top (capped at 800).
-  useEffect(() => {
-    if (paused || status === "LOADING") return;
-    if (rows.length === 0) return; // don't synthesise until the first real fetch lands
-    const t = window.setInterval(() => {
-      setRows(prev => [{
-        id: `L-${Date.now().toString(16).toUpperCase()}`,
-        ts: new Date().toISOString(),
-        source: ["sshd","auditd","nginx","kubelet","wazuh-modulesd"][Math.floor(Math.random()*5)],
-        agent: prev[0]?.agent ?? "unknown",
-        severity: (["low","medium","high","critical","info"] as const)[Math.floor(Math.random()*5)],
-        message: `event tick ${prev.length}`
-      }, ...prev].slice(0, 800));
-    }, 2000);
-    return () => window.clearInterval(t);
-  }, [paused, status, rows.length]);
+  const rows: Row[] = (data?.entries ?? []).map(e => ({
+    id: e.id, ts: e.timestamp, source: e.source, agent: e.agent,
+    severity: e.severity, message: e.message
+  }));
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -63,17 +33,13 @@ export default function LogsPage() {
     });
   }, [rows, search, source, severity]);
 
-  const parentRef = useRef<HTMLDivElement>(null);
-  const v = useVirtualizer({ count: filtered.length, getScrollElement: () => parentRef.current, estimateSize: () => 36, overscan: 12 });
-
   const sources = useMemo(() => Array.from(new Set(rows.map(r => r.source))).sort(), [rows]);
 
   return (
     <Page
       breadcrumb={[{ href: "/", label: "Configure" }, { label: "Logs" }]}
       title="Logs"
-      description={`${rows.length} events - ${paused ? "paused" : "live"}${status === "LOADING" ? " - loading..." : ""}`}
-      actions={<Button variant="secondary" onClick={() => setPaused(p => !p)}>{paused ? "Resume" : "Pause"}</Button>}
+      description={`${rows.length} events${status === "LOADING" ? " - loading..." : ""}`}
     >
       <Card padded={false}>
         <div className="p-3 flex flex-wrap items-center gap-2">
@@ -95,25 +61,19 @@ export default function LogsPage() {
           <div className="col-span-2">Agent</div>
           <div className="col-span-4">Message</div>
         </div>
-        <div ref={parentRef} className="h-[60vh] overflow-auto">
-          <div style={{ height: v.getTotalSize(), position: "relative" }}>
-            {v.getVirtualItems().map(vi => {
-              const r = filtered[vi.index];
-              return (
-                <button key={r.id}
-                  type="button"
-                  onClick={() => setActive(r)}
-                  className={cn("grid grid-cols-12 px-3 h-9 items-center text-xs border-b border-navy-400/60 hover:bg-navy-100 cursor-pointer absolute top-0 left-0 right-0 text-left")}
-                  style={{ transform: `translateY(${vi.start}px)` }}>
-                  <div className="col-span-2 text-navy-600 font-mono">{formatRelativeTime(r.ts)}</div>
-                  <div className="col-span-2 text-sage font-mono">{r.source}</div>
-                  <div className="col-span-2"><Badge tone={r.severity} dot>{r.severity}</Badge></div>
-                  <div className="col-span-2 text-sage font-mono truncate">{r.agent}</div>
-                  <div className="col-span-4 text-sage truncate font-mono">{r.message}</div>
-                </button>
-              );
-            })}
-          </div>
+        <div className="h-[60vh] overflow-auto">
+          {filtered.map(r => (
+            <button key={r.id}
+              type="button"
+              onClick={() => setActive(r)}
+              className="grid grid-cols-12 px-3 h-9 items-center text-xs border-b border-navy-400/60 hover:bg-navy-100 cursor-pointer text-left w-full">
+              <div className="col-span-2 text-navy-600 font-mono">{formatRelativeTime(r.ts)}</div>
+              <div className="col-span-2 text-sage font-mono">{r.source}</div>
+              <div className="col-span-2"><Badge tone={r.severity} dot>{r.severity}</Badge></div>
+              <div className="col-span-2 text-sage font-mono truncate">{r.agent}</div>
+              <div className="col-span-4 text-sage truncate font-mono">{r.message}</div>
+            </button>
+          ))}
         </div>
       </Card>
 

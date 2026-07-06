@@ -1,4 +1,4 @@
-import type { TenantTier } from "@/data/tenants";
+export type TenantTier = "Bronze" | "Silver" | "Gold" | "Platinum";
 
 /**
  * Single source of truth for turning connector-supplied tenant IDs into

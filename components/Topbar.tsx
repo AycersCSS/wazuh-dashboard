@@ -205,7 +205,6 @@ export function Topbar() {
             className={cn(
               "text-[10.5px] font-mono inline-flex items-center gap-1.5 px-2 py-1 rounded border",
               statsStatus === "CONNECTING"      && "text-slate-300 border-slate-500/40",
-              statsStatus === "STALE"           && "text-amber-300 border-amber-300/40",
               statsStatus === "UNAUTHENTICATED" && "text-severity-high border-severity-high/40",
               statsStatus === "ERROR"           && "text-severity-high border-severity-high/40"
             )}
@@ -213,7 +212,6 @@ export function Topbar() {
           >
             <span className="w-1.5 h-1.5 rounded-full bg-current" />
             {statsStatus === "CONNECTING"      ? "Connecting…"
-              : statsStatus === "STALE"           ? "Stale"
               : statsStatus === "UNAUTHENTICATED" ? "Sign in"
               : "Connector error"}
           </span>
@@ -442,15 +440,6 @@ export function Topbar() {
       </div>
 
       <div className="hidden lg:flex h-7 items-center gap-3 px-4 border-t border-navy-400 text-[11px] text-navy-600">
-        {/* TODO(replace-when-endpoint-ready): derive pending review count from
-            the compliance / review endpoints instead of a hardcoded "3". */}
-        <button type="button"
-          onClick={() => toasts.push({ variant: "warn", title: "3 Cyber Essentials reviews pending", description: "Opening review queue..." })}
-          className="flex items-center gap-1.5 hover:text-cream">
-          <span className="text-[10px] text-severity-medium">!</span>
-          <span><span className="text-cream">3 reviews</span> pending across tenants</span>
-        </button>
-        <span className="w-px h-3 bg-navy-400" />
         <span>Manager: <span className="font-mono text-cream">{cluster?.manager ?? "—"}</span></span>
         <span className="w-px h-3 bg-navy-400" />
         <span>SOC tip: <span className="text-cream">acknowledge within 15m to keep MTTR under target</span></span>

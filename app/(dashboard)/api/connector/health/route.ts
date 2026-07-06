@@ -1,33 +1,25 @@
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
-import { connectorFetch, ConnectorError } from "@/lib/connector/client";
+import { proxyConnector } from "@/lib/connector/proxy";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 const COOKIE_NAME = process.env.CONNECTOR_JWT_COOKIE ?? "connector_jwt";
 
-export async function GET(): Promise<Response> {
-  // Local test login — see app/(auth)/login/page.tsx and the login API route.
-  // The local-test token is not a real upstream JWT, so the connector will 401.
-  // Treat the user as authenticated for health-check purposes so the AuthGate
-  // keeps them on the dashboard. Will be removed before going live.
+export async function GET(req: Request): Promise<Response> {
   const jwt = cookies().get(COOKIE_NAME)?.value;
   if (!jwt) {
     return NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 });
   }
-  if (jwt.startsWith("local-test.")) {
-    return NextResponse.json({ ok: true, mode: "local-test" });
-  }
 
-  try {
-    await connectorFetch("/tenants");
+  // /tenants is the cheapest authenticated call; success = reachable + authed.
+  const upstream = await proxyConnector(req, { path: "/tenants" });
+  if (upstream.status === 200) {
     return NextResponse.json({ ok: true });
-  } catch (e) {
-    if (e instanceof ConnectorError) {
-      // Do not echo the raw upstream body to the browser
-      return NextResponse.json({ ok: false, error: "connector_unavailable" }, { status: 503 });
-    }
-    return NextResponse.json({ ok: false, error: "connector_unavailable" }, { status: 503 });
   }
+  if (upstream.status === 401) {
+    return NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 });
+  }
+  return NextResponse.json({ ok: false, error: "connector_unavailable" }, { status: 503 });
 }

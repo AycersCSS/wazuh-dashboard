@@ -45,31 +45,6 @@ export default function LoginPage() {
             <Button type="submit" variant="primary" size="md" disabled={busy}>{busy ? "Signing in…" : "Sign in"}</Button>
           </form>
         </Card>
-
-        <Card className="w-full max-w-sm justify-self-center md:justify-self-start border-severity-info/40">
-          <div className="flex items-center gap-2">
-            <CardTitle>Local test login</CardTitle>
-            <span className="text-[10px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded border border-severity-info/40 text-severity-info">
-              dev only
-            </span>
-          </div>
-          <CardSubtitle>
-            Temporary sign-in used while the upstream Wazuh connector is unavailable. Will be removed before going live.
-          </CardSubtitle>
-          <dl className="mt-4 space-y-2 text-sm">
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Username</dt>
-              <dd className="font-mono text-cream select-all">ADMIN</dd>
-            </div>
-            <div className="flex items-center justify-between gap-3">
-              <dt className="text-[11px] font-mono uppercase tracking-wider text-slate-400">Password</dt>
-              <dd className="font-mono text-cream select-all">ADMIN</dd>
-            </div>
-          </dl>
-          <p className="mt-4 text-[11px] text-navy-600">
-            Use the form on the left with these credentials. No upstream connector call is made.
-          </p>
-        </Card>
       </div>
     </div>
   );

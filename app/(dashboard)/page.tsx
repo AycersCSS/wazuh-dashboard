@@ -1,11 +1,8 @@
 "use client";
 import Link from "next/link";
 import { Page, Card, CardTitle, CardSubtitle, Badge, Button } from "@/components/ui";
-import { integrations } from "@/data/integrations";
 import { useConnectorStats } from "@/lib/connector/useConnectorStats";
 import { useConnectorAlerts } from "@/lib/connector/useConnectorAlerts";
-import { ConnectionBanner } from "@/components/connector/ConnectionBanner";
-import { tenants as fallbackTenants } from "@/data/tenants";
 import { displayNameFor, tierFor } from "@/lib/tenantDisplay";
 import { useWazuhResource, buildPath, useIntegrationStates, type IntegrationConnectionState } from "@/lib/wazuh";
 import type { WazuhAgentStatusCount, WazuhClusterStatus } from "@/lib/wazuh";
@@ -29,7 +26,7 @@ const useCaseOneLiner: Record<string, string> = {
 };
 
 export default function OverviewPage() {
-  const { status, lastFetchedAt, tenants: liveTenants, totalAgents } = useConnectorStats();
+  const { tenants: liveTenants, totalAgents } = useConnectorStats();
   const integrationStates = useIntegrationStates();
 
   // TODO(replace-when-endpoint-ready): GET /agents/summary/status — gives
@@ -46,20 +43,18 @@ export default function OverviewPage() {
     buildPath("/api/wazuh/manager")
   );
 
-  const tenants = liveTenants.length > 0
-    ? liveTenants.map((id) => ({
-        id,
-        name: displayNameFor(id),
-        tier: tierFor(id) ?? "Silver",
-        // TODO(replace-when-endpoint-ready): these are derived from a future
-        // /tenants/:id endpoint. Until that lands we show "—".
-        securityScore: null as number | null,
-        openIncidents: null as number | null,
-        lastSyncAt: new Date().toISOString(),
-        alerts24h: null as number | null,
-        cveCount: null as number | null
-      }))
-    : fallbackTenants;
+  const tenants = liveTenants.map((id) => ({
+    id,
+    name: displayNameFor(id),
+    tier: tierFor(id) ?? "Silver",
+    // TODO(replace-when-endpoint-ready): these are derived from a future
+    // /tenants/:id endpoint. Until that lands we show "—".
+    securityScore: null as number | null,
+    openIncidents: null as number | null,
+    lastSyncAt: new Date().toISOString(),
+    alerts24h: null as number | null,
+    cveCount: null as number | null
+  }));
 
   const totalAgentsKpi = totalAgents ?? agentStatus
     ? (agentStatus!.active + agentStatus!.disconnected + agentStatus!.pending + agentStatus!.never_connected)
@@ -71,10 +66,7 @@ export default function OverviewPage() {
       title="Overview"
       description={`${tenants.length} tenants - ${totalAgentsKpi !== null ? totalAgentsKpi : "—"} endpoints - fleet health nominal`}
       actions={
-        <>
-          <ConnectionBanner status={status} lastFetchedAt={lastFetchedAt} />
-          <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
-        </>
+        <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
       }
     >
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
