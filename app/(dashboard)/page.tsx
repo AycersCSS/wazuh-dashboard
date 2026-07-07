@@ -5,24 +5,36 @@ import { useConnectorStats } from "@/lib/connector/useConnectorStats";
 import { useConnectorAlerts } from "@/lib/connector/useConnectorAlerts";
 import { displayNameFor, tierFor } from "@/lib/tenantDisplay";
 import { useWazuhResource, buildPath, useIntegrationStates, type IntegrationConnectionState } from "@/lib/wazuh";
-import type { WazuhAgentStatusCount, WazuhClusterStatus } from "@/lib/wazuh";
+import type { WazuhAgentStatusCount } from "@/lib/wazuh";
 import { integrations as integrationMetadata } from "@/data/integrations";
 import type { IntegrationHealth } from "@/data/integrations";
 
-const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {
-  "microsoft-365":  { href: "/microsoft-365" },
-  "ninjaone":       { href: "/ninjaone" },
-  "bitdefender":    { href: "/bitdefender" },
-  "cyber-essentials": { href: "/cyber-essentials" },
-  "customer-portal":  { href: "/customer-portal", tag: "beta" }
-};
-
-const useCaseOneLiner: Record<string, string> = {
-  "microsoft-365":   "Identity, sign-in, and OAuth posture for every tenant in the fleet.",
-  "ninjaone":        "Reconcile RMM device inventory with Wazuh agent coverage.",
-  "bitdefender":     "Correlate GravityZone EDR detections with Wazuh alerts.",
-  "cyber-essentials":"Audit-ready evidence pack, auto-built from Wazuh data.",
-  "customer-portal": "Per-tenant security snapshot for the future MergeIT portal."
+// ---------------------------------------------------------------------------
+// Unified integration config — routes + one-liner descriptions in one place
+// so they can never get out of sync.
+// ---------------------------------------------------------------------------
+const USE_CASE_CONFIG: Record<string, { href: string; tag?: "new" | "beta"; description: string }> = {
+  "microsoft-365": {
+    href: "/microsoft-365",
+    description: "Identity, sign-in, and OAuth posture for every tenant in the fleet."
+  },
+  "ninjaone": {
+    href: "/ninjaone",
+    description: "Reconcile RMM device inventory with Wazuh agent coverage."
+  },
+  "bitdefender": {
+    href: "/bitdefender",
+    description: "Correlate GravityZone EDR detections with Wazuh alerts."
+  },
+  "cyber-essentials": {
+    href: "/cyber-essentials",
+    description: "Audit-ready evidence pack, auto-built from Wazuh data."
+  },
+  "customer-portal": {
+    href: "/customer-portal",
+    tag: "beta",
+    description: "Per-tenant security snapshot for the future MergeIT portal."
+  }
 };
 
 export default function OverviewPage() {
@@ -37,28 +49,30 @@ export default function OverviewPage() {
     buildPath("/api/wazuh/agents/status-count")
   );
 
-  // TODO(replace-when-endpoint-ready): GET /manager/status — feeds the
-  // "Avg MTTR" and "CE Plus ready" KPIs once the upstream exposes them.
-  const { data: clusterStatus } = useWazuhResource<WazuhClusterStatus>(
-    buildPath("/api/wazuh/manager")
-  );
+  // NOTE: clusterStatus (GET /manager/status) is intentionally not fetched
+  // here until the upstream endpoint is ready — polling a non-existent
+  // endpoint every 30s wastes resources. Re-enable when the connector
+  // exposes /manager with the required fields.
+  // const { data: clusterStatus } = useWazuhResource<WazuhClusterStatus>(
+  //   buildPath("/api/wazuh/manager")
+  // );
 
   const tenants = liveTenants.map((id) => ({
     id,
     name: displayNameFor(id),
     tier: tierFor(id) ?? "Silver",
-    // TODO(replace-when-endpoint-ready): these are derived from a future
-    // /tenants/:id endpoint. Until that lands we show "—".
-    securityScore: null as number | null,
-    openIncidents: null as number | null,
     lastSyncAt: new Date().toISOString(),
-    alerts24h: null as number | null,
-    cveCount: null as number | null
   }));
 
-  const totalAgentsKpi = totalAgents ?? agentStatus
-    ? (agentStatus!.active + agentStatus!.disconnected + agentStatus!.pending + agentStatus!.never_connected)
-    : null;
+  // Fixed: was `totalAgents ?? agentStatus ? ... : null` which is a
+  // precedence bug — `??` binds after `?:` so `agentStatus` (truthy object)
+  // always won, crashing when agentStatus was null.
+  const totalAgentsKpi: number | null =
+    totalAgents !== null
+      ? totalAgents
+      : agentStatus !== null && agentStatus !== undefined
+        ? agentStatus.active + agentStatus.disconnected + agentStatus.pending + agentStatus.never_connected
+        : null;
 
   return (
     <Page
@@ -71,19 +85,14 @@ export default function OverviewPage() {
     >
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
         {integrationMetadata.map((i: IntegrationHealth) => {
-          const route = useCaseRoutes[i.id];
-          const oneLiner = useCaseOneLiner[i.id];
+          const config = USE_CASE_CONFIG[i.id];
           const live = integrationStates[i.id as keyof typeof integrationStates];
-          // The connection state is driven by the live API. We do NOT show
-          // "Connected" unless the integration actually returned a Connected
-          // record. The seeded `i.status` field is the metadata default; the
-          // live state overrides it.
           const statusLabel = live?.statusName ?? connectionLabel(live?.state);
           const tone = connectionTone(live?.state);
           return (
             <Link
               key={i.id}
-              href={route?.href ?? "/"}
+              href={config?.href ?? "/"}
               className="group"
             >
               <Card className="h-full transition-colors group-hover:border-navy-500">
@@ -92,16 +101,16 @@ export default function OverviewPage() {
                     {i.id.slice(0, 3).toUpperCase()}
                   </div>
                   <div className="flex items-center gap-1.5">
-                    {route?.tag && (
+                    {config?.tag && (
                       <span className="text-[9px] font-semibold uppercase tracking-wider px-1.5 h-[18px] grid place-items-center rounded bg-emerald-400/20 text-emerald-400">
-                        {route.tag}
+                        {config.tag}
                       </span>
                     )}
                     <Badge tone={tone} dot>{statusLabel}</Badge>
                   </div>
                 </div>
                 <div className="text-[15px] font-oswald font-medium text-sage">{i.name}</div>
-                <p className="text-[11.5px] text-slate-300 mt-1.5 leading-relaxed min-h-[44px]">{oneLiner}</p>
+                <p className="text-[11.5px] text-slate-300 mt-1.5 leading-relaxed min-h-[44px]">{config?.description}</p>
                 <div className="mt-4 pt-3 border-t border-navy-400 flex items-center justify-between">
                   <span className="text-[10.5px] text-slate-400 font-mono">{i.vendor}</span>
                   <span className="inline-flex items-center gap-1 text-[11.5px] text-emerald-400 group-hover:brightness-110">
@@ -166,7 +175,8 @@ export default function OverviewPage() {
                 Manager
                 <span className="text-[9px] text-slate-400 bg-navy-200 px-1 py-0.5 rounded">wazuh</span>
               </span>
-              <span className="font-mono text-cream">{clusterStatus?.manager ?? "—"}</span>
+              {/* Populated once the /manager endpoint is live */}
+              <span className="font-mono text-cream">—</span>
             </li>
           </ul>
           <div className="mt-4 pt-3 border-t border-navy-400 text-[11px] text-slate-400">
@@ -198,9 +208,6 @@ function TenantRow({ tenantId, name, tier }: { tenantId: string; name: string; t
   );
 }
 
-// Map a live connection state to the badge label/tone shown on the
-// integration cards. NO "Connected" label unless the upstream actually
-// reported a Connected record.
 function connectionLabel(state: IntegrationConnectionState | undefined): string {
   switch (state) {
     case "CONNECTED":    return "Connected";

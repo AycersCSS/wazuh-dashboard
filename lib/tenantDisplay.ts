@@ -7,6 +7,10 @@ export type TenantTier = "Bronze" | "Silver" | "Gold" | "Platinum";
  * concern. Both the Topbar dropdown and the Overview page consume this
  * module so a new tenant ID added to the connector renders the same way
  * everywhere.
+ *
+ * When the connector reports a tenant ID that isn't in TENANT_LABELS, a
+ * console.warn is emitted in development so it's caught early. The raw ID
+ * is returned as a safe fallback so the UI never breaks.
  */
 
 export const ALL_TENANTS_KEY = "all" as const;
@@ -35,6 +39,13 @@ export const TIER_BY_TENANT: Record<string, TenantTier> = {
 };
 
 export function displayNameFor(tenantId: string): string {
+  if (!(tenantId in TENANT_LABELS)) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        `[tenantDisplay] Unknown tenant ID "${tenantId}" — add it to TENANT_LABELS and TIER_BY_TENANT in lib/tenantDisplay.ts`
+      );
+    }
+  }
   return TENANT_LABELS[tenantId] ?? tenantId;
 }
 

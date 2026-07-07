@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 
-export type AlertsStatus = "IDLE" | "LOADING" | "UNAUTHENTICATED" | "ERROR";
+export type AlertsStatus = "IDLE" | "LOADING" | "READY" | "UNAUTHENTICATED" | "ERROR";
 
 export interface AlertCounts {
   critical: number;
@@ -53,6 +53,7 @@ export function useConnectorAlerts(tenantId: string | null): UseConnectorAlertsR
           total: body.total
         });
         setError(null);
+        setStatus("READY"); // ← was missing; status was stuck at LOADING
       })
       .catch((e: Error & { status?: number }) => {
         if (cancelled) return;
@@ -68,8 +69,6 @@ export function useConnectorAlerts(tenantId: string | null): UseConnectorAlertsR
     return () => window.clearInterval(id);
   }, [tenantId]);
 
-  // refetch is unused by current callers; keep the callback shape for future
-  // use so callers don't have to know the tick-internals.
   const refetch = useCallback(() => setTick((t) => t + 1), []);
   return { status, alerts, error, refetch };
 }

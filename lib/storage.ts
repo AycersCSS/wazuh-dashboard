@@ -1,4 +1,7 @@
-const NS = "sentinel-stack:v1";
+// Namespace was previously "sentinel-stack:v1" (copy-paste from another
+// project). Fixed to "wazuh-dashboard:v1" to avoid localStorage key
+// collisions if both projects ever run on the same origin.
+const NS = "wazuh-dashboard:v1";
 
 function k(key: string) { return `${NS}:${key}`; }
 
@@ -26,7 +29,7 @@ export const storage = {
     window.localStorage.removeItem(k(key));
   },
   /**
-   * Removes every sentinel-stack:v1:* key from localStorage except the ones
+   * Removes every wazuh-dashboard:v1:* key from localStorage except the ones
    * listed in `preserve`. By default the audit log and selected-tenant
    * settings survive the reset so the data.reset_defaults event is
    * self-attesting — the last record in the log IS the reset itself, and
