@@ -14,6 +14,38 @@ function isPublic(pathname: string): boolean {
   return PUBLIC_PATHS.has(pathname);
 }
 
+/**
+ * Lightweight JWT validation — no crypto verify (we don't have the secret
+ * in middleware; the connector owns signature verification). We guard
+ * against forged/empty tokens by:
+ *   1. Requiring three dot-separated base64url segments.
+ *   2. Decoding the payload and rejecting tokens whose `exp` has passed.
+ *
+ * This is defence-in-depth: the connector will still reject an invalid
+ * signature on every proxied request, but this stops obviously forged or
+ * expired cookies from even reaching the dashboard pages.
+ */
+function isTokenStructurallyValid(token: string): boolean {
+  try {
+    const parts = token.split(".");
+    if (parts.length !== 3) return false;
+
+    // Pad the base64url segment before decoding.
+    const padded = parts[1].replace(/-/g, "+").replace(/_/g, "/");
+    const json = atob(padded.padEnd(padded.length + (4 - (padded.length % 4)) % 4, "="));
+    const payload = JSON.parse(json) as Record<string, unknown>;
+
+    // Reject expired tokens.
+    if (typeof payload.exp === "number" && payload.exp * 1000 < Date.now()) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -31,7 +63,8 @@ export function middleware(request: NextRequest) {
   }
 
   const jwt = request.cookies.get(COOKIE_NAME)?.value;
-  if (!jwt) {
+
+  if (!jwt || !isTokenStructurallyValid(jwt)) {
     // API routes: return 401 JSON.
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ ok: false, error: "unauthenticated" }, { status: 401 });

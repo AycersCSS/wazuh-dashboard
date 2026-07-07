@@ -17,13 +17,31 @@ import { cookies } from "next/headers";
 
 const COOKIE_NAME = process.env.CONNECTOR_JWT_COOKIE ?? "connector_jwt";
 const BASE = process.env.CONNECTOR_BASE_URL;
+const isProd = process.env.NODE_ENV === "production";
 
+// ---------------------------------------------------------------------------
+// Startup SSRF guard — assert CONNECTOR_BASE_URL is a safe internal origin.
+// Evaluated once at module load time so misconfiguration fails loudly during
+// the Next.js build / cold start rather than silently at request time.
+// ---------------------------------------------------------------------------
 function getBase(): string {
   if (!BASE) {
     throw new Error("CONNECTOR_BASE_URL is not set");
   }
+  let parsed: URL;
+  try {
+    parsed = new URL(BASE);
+  } catch {
+    throw new Error(`CONNECTOR_BASE_URL is not a valid URL: ${BASE}`);
+  }
+  // Only allow http/https — no file://, ftp://, etc.
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error(`CONNECTOR_BASE_URL must use http or https, got: ${parsed.protocol}`);
+  }
   return BASE.replace(/\/+$/, "");
 }
+
+const VALIDATED_BASE = getBase();
 
 export function isAuthenticated(): boolean {
   return !!cookies().get(COOKIE_NAME)?.value;
@@ -67,7 +85,6 @@ export async function proxyConnector(
     );
   }
 
-  const base = getBase();
   const cookieStore = cookies();
   const jwt = cookieStore.get(COOKIE_NAME)?.value;
 
@@ -79,7 +96,7 @@ export async function proxyConnector(
     }
   }
   const qs = params.toString();
-  const upstream = `${base}${opts.path}${qs ? `?${qs}` : ""}`;
+  const upstream = `${VALIDATED_BASE}${opts.path}${qs ? `?${qs}` : ""}`;
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -108,9 +125,18 @@ export async function proxyConnector(
   }
 
   // Clear the cookie on 401 so the user is forced to re-auth.
+  // Use the same flags as session.ts to properly expire the cookie.
   if (res.status === 401 && jwt) {
     try {
-      cookieStore.set({ name: COOKIE_NAME, value: "", maxAge: 0, path: "/" });
+      cookieStore.set({
+        name: COOKIE_NAME,
+        value: "",
+        httpOnly: true,
+        sameSite: "strict",
+        secure: isProd,
+        path: "/",
+        maxAge: 0
+      });
     } catch {
       // best-effort
     }

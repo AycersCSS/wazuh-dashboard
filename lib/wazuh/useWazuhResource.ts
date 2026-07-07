@@ -52,7 +52,7 @@ export function useWazuhResource<T>(
           setData(body as T);
         }
         setError(null);
-        setStatus("READY");
+        setStatus("READY"); // ← was missing on the null-body branch too
       })
       .catch((e: Error & { status?: number }) => {
         if (cancelled) return;
