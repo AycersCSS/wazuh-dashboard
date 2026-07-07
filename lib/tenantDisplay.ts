@@ -1,38 +1,38 @@
-export type TenantTier = "Bronze" | "Silver" | "Gold" | "Platinum";
+export type { TenantTier } from "@/config/site";
 
 /**
  * Single source of truth for turning connector-supplied tenant IDs into
  * dashboard-side display strings. The MergeIT-WazuhConnector returns only
- * tenant IDs (e.g. "acme-corp"); display names and tier are a dashboard
- * concern. Both the Topbar dropdown and the Overview page consume this
- * module so a new tenant ID added to the connector renders the same way
- * everywhere.
+ * tenant IDs (e.g. "acme-corp"); display names and tier come from the
+ * site config so you can change them without touching dashboard code.
+ *
+ * Both the Topbar dropdown and the Overview page consume this module so a
+ * new tenant ID added to the connector renders the same way everywhere.
  */
 
 export const ALL_TENANTS_KEY = "all" as const;
 export type AllTenantsKey = typeof ALL_TENANTS_KEY;
 
-/**
- * id -> human-readable tenant name. Falls back to the raw ID for any
- * tenant the connector reports that we don't have a label for yet.
- */
-export const TENANT_LABELS: Record<string, string> = {
-  "acme-corp":        "Acme Corp",
-  "globex-inc":       "Globex",
-  "initech":          "Initech",
-  "stark-industries": "Stark Industries"
-};
+import { TENANTS as CONFIG_TENANTS } from "@/config/site";
+import type { TenantTier } from "@/config/site";
 
 /**
- * id -> service tier. Honest about missing data: returns `null` rather
+ * id → human-readable tenant name. Falls back to the raw ID for any
+ * tenant the connector reports that we don't have a label for yet.
+ */
+export const TENANT_LABELS: Record<string, string> = {};
+for (const [id, cfg] of Object.entries(CONFIG_TENANTS)) {
+  TENANT_LABELS[id] = cfg.name;
+}
+
+/**
+ * id → service tier. Honest about missing data: returns `null` rather
  * than a default; call sites decide their fallback UX.
  */
-export const TIER_BY_TENANT: Record<string, TenantTier> = {
-  "acme-corp":        "Platinum",
-  "globex-inc":       "Gold",
-  "initech":          "Silver",
-  "stark-industries": "Platinum"
-};
+export const TIER_BY_TENANT: Record<string, TenantTier> = {};
+for (const [id, cfg] of Object.entries(CONFIG_TENANTS)) {
+  TIER_BY_TENANT[id] = cfg.tier;
+}
 
 export function displayNameFor(tenantId: string): string {
   return TENANT_LABELS[tenantId] ?? tenantId;

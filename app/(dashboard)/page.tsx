@@ -8,22 +8,17 @@ import { useWazuhResource, buildPath, useIntegrationStates, type IntegrationConn
 import type { WazuhAgentStatusCount, WazuhClusterStatus } from "@/lib/wazuh";
 import { integrations as integrationMetadata } from "@/data/integrations";
 import type { IntegrationHealth } from "@/data/integrations";
+import { USE_CASES } from "@/config/site";
 
-const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {
-  "microsoft-365":  { href: "/microsoft-365" },
-  "ninjaone":       { href: "/ninjaone" },
-  "bitdefender":    { href: "/bitdefender" },
-  "cyber-essentials": { href: "/cyber-essentials" },
-  "customer-portal":  { href: "/customer-portal", tag: "beta" }
-};
+const useCaseRoutes: Record<string, { href: string; tag?: "new" | "beta" }> = {};
+for (const [id, meta] of Object.entries(USE_CASES)) {
+  useCaseRoutes[id] = { href: meta.href, tag: meta.tag };
+}
 
-const useCaseOneLiner: Record<string, string> = {
-  "microsoft-365":   "Identity, sign-in, and OAuth posture for every tenant in the fleet.",
-  "ninjaone":        "Reconcile RMM device inventory with Wazuh agent coverage.",
-  "bitdefender":     "Correlate GravityZone EDR detections with Wazuh alerts.",
-  "cyber-essentials":"Audit-ready evidence pack, auto-built from Wazuh data.",
-  "customer-portal": "Per-tenant security snapshot for the future MergeIT portal."
-};
+const useCaseOneLiner: Record<string, string> = {};
+for (const [id, meta] of Object.entries(USE_CASES)) {
+  useCaseOneLiner[id] = meta.oneLiner;
+}
 
 export default function OverviewPage() {
   const { tenants: liveTenants, totalAgents } = useConnectorStats();
@@ -64,7 +59,7 @@ export default function OverviewPage() {
     <Page
       breadcrumb={[{ label: "SOC" }, { label: "Overview" }]}
       title="Overview"
-      description={`${tenants.length} tenants - ${totalAgentsKpi !== null ? totalAgentsKpi : "—"} endpoints - fleet health nominal`}
+      description={`${tenants.length} tenants · ${totalAgentsKpi !== null ? totalAgentsKpi : "—"} endpoints`}
       actions={
         <Link href="/alerts"><Button variant="primary">Open alert queue</Button></Link>
       }

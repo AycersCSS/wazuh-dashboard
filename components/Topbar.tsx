@@ -15,6 +15,7 @@ import { useTenantSelection } from "@/hooks/useTenantSelection";
 import { useAudit } from "@/hooks/useAudit";
 import { useWazuhResource, buildPath, type WazuhAgentStatusCount, type WazuhClusterStatus } from "@/lib/wazuh";
 import type { Alert } from "@/types";
+import { SITE } from "@/config/site";
 
 const ranges: { key: TimeRangeKey; label: string }[] = [
   { key: "1h",  label: "Last 1 hour" },
@@ -387,7 +388,7 @@ export function Topbar() {
             <span className="w-6 h-6 rounded-md bg-emerald-400/20 border border-emerald-400/40 grid place-items-center text-[10px] font-semibold text-emerald-400">{initials}</span>
             <span className="hidden md:flex flex-col text-left leading-tight">
               <span className="text-xs font-medium text-cream">{displayName}</span>
-              <span className="text-[10px] text-navy-600">MergeIT SOC Analyst - L2</span>
+              <span className="text-[10px] text-navy-600">{SITE.name} {SITE.subtitle} Analyst</span>
             </span>
             <span className={cn("text-navy-600 transition-transform text-[10px]", menu === "user" && "rotate-180")}>v</span>
           </button>

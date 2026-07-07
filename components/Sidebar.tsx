@@ -3,19 +3,20 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
+import { SITE, USE_CASES } from "@/config/site";
 
 type Item = { href: string; label: string; count?: number; tag?: "new" | "beta" };
 type Group = { title: string; items: Item[] };
 
 const operate: Item[] = [
-  { href: "/microsoft-365", label: "Microsoft 365" },
-  { href: "/ninjaone",       label: "NinjaOne" },
-  { href: "/bitdefender",    label: "Bitdefender" }
+  { href: USE_CASES["microsoft-365"]!.href, label: USE_CASES["microsoft-365"]!.label },
+  { href: USE_CASES["ninjaone"]!.href,       label: USE_CASES["ninjaone"]!.label },
+  { href: USE_CASES["bitdefender"]!.href,    label: USE_CASES["bitdefender"]!.label },
 ];
 
 const report: Item[] = [
-  { href: "/cyber-essentials", label: "Cyber Essentials" },
-  { href: "/customer-portal",  label: "Customer Portal", tag: "beta" }
+  { href: USE_CASES["cyber-essentials"]!.href, label: USE_CASES["cyber-essentials"]!.label, tag: USE_CASES["cyber-essentials"]!.tag },
+  { href: USE_CASES["customer-portal"]!.href,  label: USE_CASES["customer-portal"]!.label, tag: USE_CASES["customer-portal"]!.tag },
 ];
 
 const rawWazuh: Item[] = [
@@ -47,8 +48,8 @@ export function Sidebar() {
       <div className="flex items-center h-14 px-4 border-b border-navy-400">
         <Link href="/" aria-label="MergeIT SOC home" className="flex items-center min-w-0">
           <div className="leading-tight min-w-0">
-            <div className="font-oswald font-medium tracking-wide text-sage text-sm truncate">MERGEIT</div>
-            <div className="text-[9.5px] uppercase tracking-[0.18em] text-navy-600 font-mono">SOC</div>
+            <div className="font-oswald font-medium tracking-wide text-sage text-sm truncate">{SITE.shortName}</div>
+            <div className="text-[9.5px] uppercase tracking-[0.18em] text-navy-600 font-mono">{SITE.subtitle}</div>
           </div>
         </Link>
       </div>
