@@ -1,15 +1,12 @@
 // Server-only proxy to the MergeIT-WazuhConnector.
 //
-// Every dashboard /api/* route is a thin forwarder. This helper handles:
-//   1. Reading the customer JWT from the connector_jwt cookie.
-//   2. Building the upstream URL from CONNECTOR_BASE_URL + path.
-//   3. Forwarding the Authorization header and any whitelisted query params.
-//   4. Returning the upstream response with the same status code and JSON body.
+// When CONNECTOR_BASE_URL is set, each /api/* route forwards to the connector.
+// When it's NOT set (dev mode), every route returns empty/noop data so the
+// dashboard UI renders without a live backend — pages show "no data" states
+// instead of error banners.
 //
-// 401 from the connector means the customer JWT is invalid/expired — we clear
-// the cookie so the user is forced to re-auth. Other non-2xx responses are
-// passed through unchanged so the dashboard can render specific error states
-// (e.g. 503 "not_connected" from /integrations/:id).
+// Credential safety: The connector JWT is held in an httpOnly cookie; the
+// browser never sees it.
 
 import "server-only";
 import { NextResponse } from "next/server";
@@ -18,56 +15,72 @@ import { cookies } from "next/headers";
 const COOKIE_NAME = process.env.CONNECTOR_JWT_COOKIE ?? "connector_jwt";
 const BASE = process.env.CONNECTOR_BASE_URL;
 
-function getBase(): string {
-  if (!BASE) {
-    throw new Error("CONNECTOR_BASE_URL is not set");
-  }
-  return BASE.replace(/\/+$/, "");
+function isConnectorConfigured(): boolean {
+  return !!BASE;
 }
 
 export function isAuthenticated(): boolean {
   return !!cookies().get(COOKIE_NAME)?.value;
 }
 
+/**
+ * Dev-mode fallback: returns a "no connector" response that the frontend
+ * treats as empty data rather than an error. Each path gets the right shape
+ * so the dashboard pages don't crash.
+ */
+function devFallback(path: string): NextResponse {
+  // Map connector paths to the shape the dashboard expects
+  const fallbacks: Record<string, unknown> = {
+    "/stats/agents":     { total_agents: 0 },
+    "/agents":           { data: { affected_items: [], total_affected_items: 0 } },
+    "/alerts":           { critical: [], high: [], warning: [], total: 0 },
+    "/vulnerability":    { data: { affected_items: [], total_affected_items: 0 } },
+    "/compliance":       { data: { affected_items: [], total_affected_items: 0 } },
+    "/experimental/syscheck": { data: { affected_items: [], total_affected_items: 0 } },
+    "/rules":            { data: { affected_items: [], total_affected_items: 0 } },
+    "/manager/logs":     { data: { affected_items: [], total_affected_items: 0 } },
+    "/manager/status":   { data: { affected_items: [] } },
+    "/cluster/healthcheck": { data: { affected_items: [] } },
+    "/tenants":          { tenants: [] },
+  };
+
+  // Exact match first
+  if (fallbacks[path]) {
+    return NextResponse.json(fallbacks[path]);
+  }
+
+  // Prefix match for parametric paths like /compliance/pci-dss
+  for (const [k, v] of Object.entries(fallbacks)) {
+    if (path.startsWith(k)) return NextResponse.json(v);
+  }
+
+  return NextResponse.json({ data: { affected_items: [] } });
+}
+
 export interface ProxyOptions {
-  /** Connector path, e.g. "/agents". Must start with "/". */
   path: string;
-  /** Allowed query-param keys for this route. Others are dropped. */
   allowedQuery?: Set<string>;
-  /** HTTP method. Defaults to GET. */
   method?: "GET" | "POST" | "PUT" | "DELETE";
-  /** JSON body to forward. Only used for non-GET. */
   body?: unknown;
-  /** Override init headers (added on top of the bearer). */
   headers?: Record<string, string>;
-  /**
-   * Optional response transform. The connector returns the Wazuh body shape
-   * ({data: {affected_items, total_affected_items}}); the dashboard consumes
-   * a flatter shape ({agents, total}). Use this to map the two until the
-   * connector normalizes itself.
-   */
   transform?: (upstream: unknown) => unknown;
 }
 
-/**
- * Forward the current request to the connector. Returns a NextResponse with
- * the upstream status and body. Sets a "x-connector-error" header on non-2xx
- * for easier client-side logging, but otherwise passes the body through.
- */
 export async function proxyConnector(
   req: Request,
   opts: ProxyOptions
 ): Promise<Response> {
-  // Guard against path traversal / SSRF: path must be a simple absolute path.
   if (!opts.path.startsWith("/") || opts.path.includes("..") || opts.path.includes("//")) {
     console.error("[proxy] rejected unsafe path:", opts.path);
-    return NextResponse.json(
-      { ok: false, error: "bad_gateway" },
-      { status: 502 }
-    );
+    return NextResponse.json({ ok: false, error: "bad_gateway" }, { status: 502 });
   }
 
-  const base = getBase();
+  // Dev mode — no connector, return empty data
+  if (!isConnectorConfigured()) {
+    return devFallback(opts.path);
+  }
+
+  const base = BASE!.replace(/\/+$/, "");
   const cookieStore = cookies();
   const jwt = cookieStore.get(COOKIE_NAME)?.value;
 
@@ -83,14 +96,14 @@ export async function proxyConnector(
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
-    ...(opts.headers ?? {})
+    ...(opts.headers ?? {}),
   };
   if (jwt) headers.Authorization = `Bearer ${jwt}`;
 
   const init: RequestInit = {
     method: opts.method ?? "GET",
     headers,
-    cache: "no-store"
+    cache: "no-store",
   };
   if (opts.body !== undefined) {
     init.body = typeof opts.body === "string" ? opts.body : JSON.stringify(opts.body);
@@ -107,7 +120,6 @@ export async function proxyConnector(
     );
   }
 
-  // Clear the cookie on 401 so the user is forced to re-auth.
   if (res.status === 401 && jwt) {
     try {
       cookieStore.set({ name: COOKIE_NAME, value: "", maxAge: 0, path: "/" });
@@ -123,10 +135,7 @@ export async function proxyConnector(
       body = opts.transform(body);
     } catch (e) {
       console.error("[proxy] transform failed:", (e as Error).message);
-      return NextResponse.json(
-        { ok: false, error: "transform_failed" },
-        { status: 502 }
-      );
+      return NextResponse.json({ ok: false, error: "transform_failed" }, { status: 502 });
     }
   }
   return NextResponse.json(body, { status: res.status });
