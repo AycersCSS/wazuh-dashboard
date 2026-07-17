@@ -147,8 +147,8 @@
       <div class="gauge-ring">
         <svg width="100" height="100" viewBox="0 0 120 120">
           <circle cx="60" cy="60" r="52" fill="none" stroke="var(--navy-200)" stroke-width="8"/>
-          <circle cx="60" cy="60" r="52" fill="none" stroke="var(--emerald)" stroke-width="8"
-            stroke-dasharray="326.7" stroke-dashoffset="42.5"
+          <circle id="gauge-arc" cx="60" cy="60" r="52" fill="none" stroke="var(--emerald)" stroke-width="8"
+            stroke-dasharray="326.7" stroke-dashoffset="326.7"
             stroke-linecap="round" transform="rotate(-90,60,60)"/>
           <text x="60" y="68" text-anchor="middle" fill="var(--cream)" font-family="var(--font-mono)" font-size="26" font-weight="600">87%</text>
         </svg>
@@ -597,6 +597,25 @@
       });
     }
   });
+
+  // Animate gauge on load
+  (function animateGauge() {
+    var arc = document.getElementById('gauge-arc');
+    if (!arc) return;
+    var target = 42.5;
+    var start = 326.7;
+    var dur = 800;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var elapsed = ts - startTime;
+      var t = Math.min(elapsed / dur, 1);
+      var p = 1 - Math.pow(1 - t, 3);
+      arc.setAttribute('stroke-dashoffset', start + (target - start) * p);
+      if (p < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  })();
 })();
 </script>
 
