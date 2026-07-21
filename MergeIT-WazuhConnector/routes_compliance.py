@@ -1,0 +1,70 @@
+import re
+
+import requests
+from flask import Blueprint, jsonify, request
+
+from mock_wazuh import is_mock
+from mock_data import mock_compliance
+
+from wazuh_auth import (
+    WAZUH_API_URL,
+    WAZUH_SSL_VERIFY,
+    _get_request_context,
+    clear_wazuh_token,
+)
+
+bp = Blueprint("compliance", __name__)
+
+_SAFE_FRAMEWORK_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
+
+
+@bp.route("/compliance", methods=["GET"])
+def get_compliance():
+    if is_mock():
+        framework = request.args.get("framework")
+        if not framework:
+            return jsonify({"error": "framework query parameter is required"}), 400
+        if not _SAFE_FRAMEWORK_RE.match(framework):
+            return jsonify({"error": "Invalid framework name"}), 400
+        return jsonify(mock_compliance(framework, dict(request.args))), 200
+
+    groups, wazuh_token, err = _get_request_context()
+    if err:
+        return jsonify(err[0]), err[1]
+
+    framework = request.args.get("framework")
+    if not framework:
+        return jsonify({"error": "framework query parameter is required"}), 400
+
+    if not _SAFE_FRAMEWORK_RE.match(framework):
+        return jsonify({"error": "Invalid framework name"}), 400
+
+    framework = request.args.get("framework")
+    if not framework:
+        return jsonify({"error": "framework query parameter is required"}), 400
+
+    if not _SAFE_FRAMEWORK_RE.match(framework):
+        return jsonify({"error": "Invalid framework name"}), 400
+
+    params = {}
+    for key in ("limit", "offset"):
+        val = request.args.get(key)
+        if val is not None:
+            params[key] = val
+
+    try:
+        resp = requests.get(
+            f"{WAZUH_API_URL}/compliance/{framework}",
+            params=params,
+            headers={"Authorization": f"Bearer {wazuh_token}"},
+            verify=WAZUH_SSL_VERIFY,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return jsonify(resp.json()), 200
+    except requests.HTTPError as e:
+        if resp.status_code == 401:
+            clear_wazuh_token()
+        return jsonify({"error": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 502

@@ -1,0 +1,223 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* design.md — CSS custom properties */
+:root {
+  --bg: #121212;
+  --bg-1: #1e1e1e;
+  --bg-2: #2a2a2a;
+  --border: #3a3a3a;
+  --muted: #9a9a9a;
+  --text: #f3e4c9;
+  --text2: #d3d4c0;
+  --accent: #5bd0a0;
+  --red: #ff5c75;
+  --orange: #ff9a4d;
+  --yellow: #f5c04a;
+  --green: #5bd0a0;
+
+  --font-sans: "Segoe UI", Arial, Helvetica, system-ui, sans-serif;
+  --font-mono: Consolas, "Courier New", ui-monospace, monospace;
+  --font-oswald: var(--font-sans);
+  --font-display: var(--font-sans);
+  color-scheme: dark;
+}
+
+.light {
+  color-scheme: light;
+  --bg: #f5f5f5;
+  --bg-1: #ffffff;
+  --bg-2: #ebebeb;
+  --border: #d4d4d4;
+  --muted: #6b6b6b;
+  --text: #1a1a1a;
+  --text2: #2d2d2d;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body,
+table,
+.num {
+  font-variant-numeric: tabular-nums;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-oswald,
+.font-display {
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+
+/* design.md scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #444;
+  border-radius: 6px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+  background-clip: content-box;
+}
+.light ::-webkit-scrollbar-thumb {
+  background: #bbb;
+}
+.light ::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+::selection {
+  background: rgba(91, 208, 160, 0.3);
+  color: var(--text);
+}
+
+@layer components {
+  .kbd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    font-weight: 500;
+    color: var(--text2);
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    line-height: 1;
+  }
+
+  /* design.md card primitive */
+  .card-surface {
+    background: var(--bg-1);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .stat-label {
+    font-size: 11.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  .stat-value {
+    font-size: 28px;
+    font-family: var(--font-mono);
+    color: var(--text);
+    line-height: 1.15;
+  }
+}
+
+/* Light theme: remapped navy utilities → light greys */
+.light .bg-navy {
+  background-color: #f5f5f5 !important;
+}
+.light .bg-navy-50 {
+  background-color: #f5f5f5 !important;
+}
+.light .bg-navy-100 {
+  background-color: #ffffff !important;
+}
+.light .bg-navy-200 {
+  background-color: #ebebeb !important;
+}
+.light .bg-navy-300 {
+  background-color: #e0e0e0 !important;
+}
+.light .bg-navy\/95 {
+  background-color: rgba(245, 245, 245, 0.95) !important;
+}
+.light .bg-navy\/80 {
+  background-color: rgba(245, 245, 245, 0.85) !important;
+}
+.light .border-navy-400 {
+  border-color: #d4d4d4 !important;
+}
+.light .border-navy-500 {
+  border-color: #b0b0b0 !important;
+}
+.light .border-navy-400\/60 {
+  border-color: rgba(212, 212, 212, 0.6) !important;
+}
+.light .text-cream {
+  color: #1a1a1a !important;
+}
+.light .text-sage {
+  color: #2d2d2d !important;
+}
+.light .text-navy-600 {
+  color: #6b6b6b !important;
+}
+.light .hover\:bg-navy-100:hover {
+  background-color: #ebebeb !important;
+}
+.light .hover\:bg-navy-200:hover {
+  background-color: #e0e0e0 !important;
+}
+.light .hover\:text-cream:hover {
+  color: #1a1a1a !important;
+}
+.light .hover\:border-navy-500:hover {
+  border-color: #5bd0a0 !important;
+}
+.light .text-emerald-400 {
+  color: #2ea478 !important;
+}
+.light .bg-emerald-400\/20 {
+  background-color: rgba(91, 208, 160, 0.15) !important;
+}
+.light .bg-emerald-400\/15 {
+  background-color: rgba(91, 208, 160, 0.12) !important;
+}
+.light .border-emerald-400\/40 {
+  border-color: rgba(91, 208, 160, 0.35) !important;
+}
+.light .focus-visible\:ring-emerald-400:focus-visible {
+  --tw-ring-color: #5bd0a0 !important;
+}
+.light a[href="#main"] {
+  background: #5bd0a0 !important;
+  color: #121212 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
+}

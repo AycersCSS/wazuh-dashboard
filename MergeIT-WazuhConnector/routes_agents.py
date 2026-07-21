@@ -1,0 +1,88 @@
+import requests
+from flask import Blueprint, jsonify, request
+
+from mock_wazuh import is_mock
+from mock_data import mock_agents, mock_agents_status_count
+
+from wazuh_auth import (
+    WAZUH_API_URL,
+    WAZUH_SSL_VERIFY,
+    _get_request_context,
+    clear_wazuh_token,
+)
+
+bp = Blueprint("agents", __name__)
+
+
+@bp.route("/agents", methods=["GET"])
+def list_agents():
+    if is_mock():
+        return jsonify(mock_agents(dict(request.args))), 200
+
+    groups, wazuh_token, err = _get_request_context()
+    if err:
+        return jsonify(err[0]), err[1]
+
+    params = {}
+    for key in ("limit", "offset", "status", "group", "search"):
+        val = request.args.get(key)
+        if val is not None:
+            params[key] = val
+
+    if groups:
+        params["q"] = "agent.groups=" + ",".join(groups)
+
+    try:
+        resp = requests.get(
+            f"{WAZUH_API_URL}/agents",
+            params=params,
+            headers={"Authorization": f"Bearer {wazuh_token}"},
+            verify=WAZUH_SSL_VERIFY,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        return jsonify(resp.json()), 200
+    except requests.HTTPError as e:
+        if resp.status_code == 401:
+            clear_wazuh_token()
+        return jsonify({"error": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 502
+
+
+@bp.route("/agents/status-count", methods=["GET"])
+def agents_status_count():
+    if is_mock():
+        return jsonify(mock_agents_status_count()), 200
+
+    groups, wazuh_token, err = _get_request_context()
+    if err:
+        return jsonify(err[0]), err[1]
+
+    params = {"summary": "true"}
+    if groups:
+        params["q"] = "agent.groups=" + ",".join(groups)
+
+    try:
+        resp = requests.get(
+            f"{WAZUH_API_URL}/agents",
+            params=params,
+            headers={"Authorization": f"Bearer {wazuh_token}"},
+            verify=WAZUH_SSL_VERIFY,
+            timeout=30,
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        summary = data.get("data", {}).get("summary", {})
+        return jsonify({
+            "active": summary.get("active", 0),
+            "disconnected": summary.get("disconnected", 0),
+            "pending": summary.get("pending", 0),
+            "never_connected": summary.get("never_connected", 0),
+        }), 200
+    except requests.HTTPError as e:
+        if resp.status_code == 401:
+            clear_wazuh_token()
+        return jsonify({"error": str(e)}), 502
+    except Exception as e:
+        return jsonify({"error": str(e)}), 502
