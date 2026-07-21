@@ -1,0 +1,344 @@
+- generic [ref=f2e34]:
+  - banner [ref=f2e36]:
+    - generic [ref=f2e37]:
+      - link "VMware.com" [ref=f2e38] [cursor=pointer]:
+        - /url: //www.vmware.com
+      - generic [ref=f2e39]: ESXi Host Client
+    - list [ref=f2e40]:
+      - listitem [ref=f2e41]:
+        - link "Students@192.168.1.10" [ref=f2e42] [cursor=pointer]:
+          - /url: ""
+          - text: Students@192.168.1.10
+      - listitem [ref=f2e44]:
+        - link "Help" [ref=f2e45] [cursor=pointer]:
+          - /url: ""
+          - text: Help
+      - listitem [ref=f2e47]:
+        - search [ref=f2e48]:
+          - searchbox "Search" [ref=f2e49]
+          - img [ref=f2e50]
+  - generic [ref=f2e58]:
+    - generic "Navigator" [ref=f2e59]:
+      - emphasis [ref=f2e62] [cursor=pointer]
+    - generic [ref=f2e63]:
+      - generic "Host" [ref=f2e64]:
+        - emphasis [ref=f2e67] [cursor=pointer]
+      - generic "Manage" [ref=f2e68]:
+        - emphasis [ref=f2e71] [cursor=pointer]
+      - generic "Monitor" [ref=f2e72]:
+        - emphasis [ref=f2e75] [cursor=pointer]
+      - generic "Virtual Machines" [ref=f2e76]:
+        - emphasis [ref=f2e79] [cursor=pointer]
+      - generic "Storage" [ref=f2e80]:
+        - emphasis [ref=f2e83] [cursor=pointer]
+      - generic "Networking" [ref=f2e84]:
+        - emphasis [ref=f2e87] [cursor=pointer]
+    - generic [ref=f2e89]:
+      - generic [ref=f2e90]:
+        - emphasis [ref=f2e149]
+        - text: MIT-ESX1-01.home
+      - generic [ref=f2e93]:
+        - generic [ref=f2e150]:
+          - list [ref=f2e153]:
+            - listitem [ref=f2e154]:
+              - link "Get vCenter Server" [ref=f2e155] [cursor=pointer]:
+                - /url: ""
+                - text: Get vCenter Server
+            - listitem [ref=f2e157]
+            - listitem [ref=f2e159]:
+              - link "Create/Register VM" [ref=f2e160] [cursor=pointer]:
+                - /url: ""
+                - text: Create/Register VM
+            - listitem [ref=f2e162]
+            - listitem [ref=f2e164]:
+              - link "Shut down" [ref=f2e165] [cursor=pointer]:
+                - /url: ""
+                - text: Shut down
+            - listitem [ref=f2e167]:
+              - link "Reboot" [ref=f2e168] [cursor=pointer]:
+                - /url: ""
+                - text: Reboot
+            - listitem [ref=f2e170]
+            - listitem [ref=f2e172]:
+              - link "Refresh" [ref=f2e173] [cursor=pointer]:
+                - /url: ""
+                - text: Refresh
+            - listitem [ref=f2e175]
+            - listitem [ref=f2e177]:
+              - link "Actions" [ref=f2e178] [cursor=pointer]:
+                - /url: ""
+                - text: Actions
+          - generic [ref=f2e180]:
+            - generic "CPU" [ref=f2e181]:
+              - generic [ref=f2e183]:
+                - generic [ref=f2e184]:
+                  - generic [ref=f2e186]: CPU
+                  - generic [ref=f2e188]: "FREE: 28.4 GHz"
+                - generic [ref=f2e193]:
+                  - progressbar [ref=f2e194]
+                  - generic [ref=f2e196]: 1%
+                - generic [ref=f2e197]:
+                  - generic [ref=f2e199]: "USED: 380 MHz"
+                  - generic [ref=f2e201]: "CAPACITY: 28.8 GHz"
+            - generic "MEMORY" [ref=f2e202]:
+              - generic [ref=f2e204]:
+                - generic [ref=f2e205]:
+                  - generic [ref=f2e207]: MEMORY
+                  - generic [ref=f2e209]: "FREE: 28.98 GB"
+                - generic [ref=f2e214]:
+                  - progressbar [ref=f2e215]
+                  - generic [ref=f2e217]: 48%
+                - generic [ref=f2e218]:
+                  - generic [ref=f2e220]: "USED: 26.89 GB"
+                  - generic [ref=f2e222]: "CAPACITY: 55.88 GB"
+            - generic "STORAGE" [ref=f2e223]:
+              - generic [ref=f2e225]:
+                - generic [ref=f2e226]:
+                  - generic [ref=f2e228]: STORAGE
+                  - generic [ref=f2e230]: "FREE: 3.18 TB"
+                - generic [ref=f2e235]:
+                  - progressbar [ref=f2e236]
+                  - generic [ref=f2e238]: 10%
+                - generic [ref=f2e239]:
+                  - generic [ref=f2e241]: "USED: 345.14 GB"
+                  - generic [ref=f2e243]: "CAPACITY: 3.51 TB"
+          - generic [ref=f2e244]:
+            - img "Host" [ref=f2e246]
+            - generic [ref=f2e249]:
+              - generic [ref=f2e251]: MIT-ESX1-01.home
+              - generic [ref=f2e252]:
+                - generic [ref=f2e253]:
+                  - generic "Version:" [ref=f2e254]
+                  - paragraph [ref=f2e256]: 8.0 Update 3
+                - generic [ref=f2e257]:
+                  - generic "State:" [ref=f2e258]
+                  - paragraph [ref=f2e260]: Normal (not connected to any vCenter Server)
+                - generic [ref=f2e261]:
+                  - generic "Uptime:" [ref=f2e262]
+                  - paragraph [ref=f2e264]: 210.16 days
+        - alert [ref=f2e266]:
+          - button "Close" [ref=f2e267] [cursor=pointer]:
+            - generic [ref=f2e268]: Close
+          - generic [ref=f2e269]: This host is potentially vulnerable to issues described in CVE-2018-3646, please refer to https://kb.vmware.com/s/article/55636 for details and VMware recommendations.
+        - generic [ref=f2e271]:
+          - generic [ref=f2e273]:
+            - generic "Hardware" [ref=f2e276] [cursor=pointer]
+            - generic [ref=f2e280]:
+              - generic [ref=f2e281]:
+                - generic [ref=f2e282]: Manufacturer
+                - generic [ref=f2e284]: HP
+              - generic [ref=f2e285]:
+                - generic [ref=f2e286]: Model
+                - generic [ref=f2e288]: ProLiant DL380 Gen9
+              - generic [ref=f2e289]:
+                - generic [ref=f2e290]: CPU
+                - generic [ref=f2e293]: 12 CPUs x Intel(R) Xeon(R) CPU E5-2620 v3 @ 2.40GHz
+              - generic [ref=f2e294]:
+                - generic [ref=f2e295]: Memory
+                - generic [ref=f2e298]: 55.88 GB
+              - generic [ref=f2e299]:
+                - generic [ref=f2e300]: Virtual flash
+                - generic [ref=f2e303]: 0 B used, 0 B capacity
+              - generic [ref=f2e305]: Networking
+              - generic [ref=f2e308]:
+                - generic [ref=f2e310]: Hostname
+                - generic [ref=f2e311]: MIT-ESX1-01.home
+              - generic [ref=f2e312]:
+                - generic [ref=f2e314]: IP addresses
+                - list [ref=f2e317]:
+                  - listitem [ref=f2e318]: "vmk0: 192.168.1.10"
+                  - listitem [ref=f2e319]: "vmk0: fe80::eeb1:d7ff:fe8a:ae4"
+              - generic [ref=f2e320]:
+                - generic [ref=f2e322]: DNS servers
+                - list [ref=f2e325]:
+                  - listitem [ref=f2e326]: 192.168.1.254
+              - generic [ref=f2e327]:
+                - generic [ref=f2e329]: Default gateway
+                - generic [ref=f2e330]: 192.168.1.1
+              - generic [ref=f2e331]:
+                - generic [ref=f2e333]: IPv6 enabled
+                - generic [ref=f2e334]: "Yes"
+              - generic [ref=f2e335]:
+                - generic [ref=f2e337]: Host adapters
+                - generic [ref=f2e338]: "6"
+              - generic [ref=f2e339]:
+                - generic [ref=f2e341]: Networks
+                - generic [ref=f2e344]:
+                  - grid [ref=f2e347]:
+                    - rowgroup [ref=f2e351]:
+                      - row "Name VMs" [ref=f2e352]:
+                        - columnheader "Name" [ref=f2e353]
+                        - columnheader "VMs" [ref=f2e354]
+                  - grid [ref=f2e356]:
+                    - rowgroup [ref=f2e360]:
+                      - row "VM Network 6" [ref=f2e361]:
+                        - gridcell "VM Network" [ref=f2e362]:
+                          - link "VM Network" [ref=f2e365] [cursor=pointer]:
+                            - /url: "#/host/networking/portgroups/HaNetwork-VM Network"
+                        - gridcell "6" [ref=f2e366]
+              - generic [ref=f2e368]: Storage
+              - generic [ref=f2e371]:
+                - generic [ref=f2e373]: Physical adapters
+                - generic [ref=f2e374]: "6"
+              - generic [ref=f2e375]:
+                - generic [ref=f2e377]: Datastores
+                - generic [ref=f2e380]:
+                  - grid [ref=f2e383]:
+                    - rowgroup [ref=f2e389]:
+                      - row "Name Type Capacity Free" [ref=f2e390]:
+                        - columnheader "Name" [ref=f2e391]
+                        - columnheader "Type" [ref=f2e392]
+                        - columnheader "Capacity" [ref=f2e393]
+                        - columnheader "Free" [ref=f2e394]
+                  - grid [ref=f2e396]:
+                    - rowgroup [ref=f2e402]:
+                      - row "DataStore01 VMFS6 3.51 TB 3.18 TB" [ref=f2e403]:
+                        - gridcell "DataStore01" [ref=f2e404]:
+                          - link "DataStore01" [ref=f2e407] [cursor=pointer]:
+                            - /url: "#/host/storage/datastores/68f631b8-9e158340-0245-ecb1d78a0ae4"
+                        - gridcell "VMFS6" [ref=f2e408]
+                        - gridcell "3.51 TB" [ref=f2e409]
+                        - gridcell "3.18 TB" [ref=f2e410]
+          - generic [ref=f2e411]:
+            - generic [ref=f2e412]:
+              - generic "Configuration" [ref=f2e415] [cursor=pointer]
+              - generic [ref=f2e419]:
+                - generic [ref=f2e420]:
+                  - generic [ref=f2e421]: Image profile
+                  - generic [ref=f2e423]: ESXi-8.0U3e-24677879-standard (VMware, Inc.)
+                - generic [ref=f2e424]:
+                  - generic [ref=f2e425]: vSphere HA state
+                  - generic [ref=f2e427]: Not configured
+                - generic [ref=f2e428]:
+                  - generic [ref=f2e429]: vMotion
+                  - generic [ref=f2e431]: Not supported
+            - generic [ref=f2e432]:
+              - generic "System Information" [ref=f2e435] [cursor=pointer]
+              - generic [ref=f2e439]:
+                - generic [ref=f2e440]:
+                  - generic [ref=f2e441]: Date/time on host
+                  - generic [ref=f2e443]: Tuesday, July 07, 2026, 16:46:42 UTC
+                - generic [ref=f2e444]:
+                  - generic [ref=f2e445]: Install date
+                  - generic [ref=f2e447]: Monday, October 20, 2025, 12:27:26 UTC
+                - generic [ref=f2e449]: Asset tag
+                - generic [ref=f2e451]:
+                  - generic [ref=f2e452]: Serial number
+                  - generic [ref=f2e454]: CZJ5170C5S
+                - generic [ref=f2e455]:
+                  - generic [ref=f2e456]: BIOS version
+                  - generic [ref=f2e458]: P89
+                - generic [ref=f2e459]:
+                  - generic [ref=f2e460]: BIOS release date
+                  - generic [ref=f2e462]: Thursday, March 05, 2015, 00:00:00 +0000
+            - generic [ref=f2e463]:
+              - generic "Performance summary, last hour" [ref=f2e466] [cursor=pointer]: Performance summary last hour
+              - img [ref=f2e469]:
+                - generic [ref=f2e471]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: 16:35
+                        - generic:
+                          - generic: 16:43
+                        - generic:
+                          - generic: 16:51
+                        - generic:
+                          - generic: 17:00
+                        - generic:
+                          - generic: 17:08
+                        - generic:
+                          - generic: 17:16
+                        - generic:
+                          - generic: 17:25
+                        - generic: Time
+                      - generic:
+                        - generic: 16:31
+                      - generic:
+                        - generic: 17:31
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: "0"
+                        - generic:
+                          - generic: "20"
+                        - generic:
+                          - generic: "40"
+                        - generic:
+                          - generic: "60"
+                        - generic:
+                          - generic: "80"
+                        - generic:
+                          - generic: "100"
+                        - generic: Consumed host CPU (%)
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: "0"
+                        - generic:
+                          - generic: "10"
+                        - generic:
+                          - generic: "20"
+                        - generic:
+                          - generic: "30"
+                        - generic:
+                          - generic: "40"
+                        - generic:
+                          - generic: "50"
+                        - generic: Consumed host memory (GB)
+                  - generic [ref=f2e496]:
+                    - generic [ref=f2e499] [cursor=pointer]: Consumed host CPU
+                    - generic "Consumed host memory (right axis)" [ref=f2e500] [cursor=pointer]:
+                      - generic [ref=f2e502]: Consumed host memory...
+    - generic [ref=f2e97]:
+      - generic [ref=f2e98]:
+        - emphasis [ref=f2e99]
+        - text: Recent tasks
+        - emphasis [ref=f2e100] [cursor=pointer]
+      - generic [ref=f2e104]:
+        - grid [ref=f2e107]:
+          - rowgroup [ref=f2e116]:
+            - row "Task Target Initiator Queued Started Result Completed" [ref=f2e117]:
+              - columnheader "Task" [ref=f2e118]:
+                - link [ref=f2e119] [cursor=pointer]:
+                  - /url: "#"
+                - link "Task" [ref=f2e121] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Target" [ref=f2e122]:
+                - link [ref=f2e123] [cursor=pointer]:
+                  - /url: "#"
+                - link "Target" [ref=f2e125] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Initiator" [ref=f2e126]:
+                - link [ref=f2e127] [cursor=pointer]:
+                  - /url: "#"
+                - link "Initiator" [ref=f2e129] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Queued" [ref=f2e130]:
+                - link [ref=f2e131] [cursor=pointer]:
+                  - /url: "#"
+                - link "Queued" [ref=f2e133] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Started" [ref=f2e134]:
+                - link [ref=f2e135] [cursor=pointer]:
+                  - /url: "#"
+                - link "Started" [ref=f2e137] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Result" [ref=f2e138]:
+                - link [ref=f2e139] [cursor=pointer]:
+                  - /url: "#"
+                - link "Result" [ref=f2e141] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Result
+              - columnheader "Completed" [ref=f2e143]:
+                - link [ref=f2e144] [cursor=pointer]:
+                  - /url: "#"
+                - link "Completed" [ref=f2e146] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Completed
+        - generic [ref=f2e148]:
+          - grid:
+            - rowgroup

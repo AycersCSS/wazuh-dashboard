@@ -1,0 +1,324 @@
+- generic [ref=f1e8]:
+  - banner [ref=f1e10]:
+    - generic [ref=f1e11]:
+      - link "VMware.com" [ref=f1e12] [cursor=pointer]:
+        - /url: //www.vmware.com
+      - generic [ref=f1e13]: ESXi Host Client
+    - list [ref=f1e14]:
+      - listitem [ref=f1e15]:
+        - link "Students@192.168.1.10" [ref=f1e16] [cursor=pointer]:
+          - /url: ""
+          - text: Students@192.168.1.10
+      - listitem [ref=f1e18]:
+        - link "Help" [ref=f1e19] [cursor=pointer]:
+          - /url: ""
+          - text: Help
+      - listitem [ref=f1e21]:
+        - search [ref=f1e22]:
+          - searchbox "Search" [ref=f1e23]
+          - img [ref=f1e24]
+  - generic [ref=f1e28]:
+    - generic "Navigator" [ref=f1e29]:
+      - emphasis [ref=f1e32] [cursor=pointer]
+    - generic [ref=f1e33]:
+      - generic "Host" [ref=f1e34]:
+        - emphasis [ref=f1e37] [cursor=pointer]
+      - generic "Manage" [ref=f1e38]:
+        - emphasis [ref=f1e41] [cursor=pointer]
+      - generic "Monitor" [ref=f1e42]:
+        - emphasis [ref=f1e45] [cursor=pointer]
+      - generic "Virtual Machines" [ref=f1e46]:
+        - emphasis [ref=f1e49] [cursor=pointer]
+      - generic "Storage" [ref=f1e50]:
+        - emphasis [ref=f1e53] [cursor=pointer]
+      - generic "Networking" [ref=f1e54]:
+        - emphasis [ref=f1e57] [cursor=pointer]
+    - generic [ref=f1e59]:
+      - generic [ref=f1e60]:
+        - emphasis [ref=f1e61]
+        - text: MIT-Wazuh-Dashboard
+      - generic [ref=f1e65]:
+        - generic [ref=f1e67]:
+          - generic [ref=f1e68]:
+            - generic [ref=f1e71]:
+              - img "Click to open a browser console to this virtual machine" [ref=f1e72]
+              - img "Refresh console screen shot" [ref=f1e74]
+            - generic [ref=f1e75]:
+              - generic [ref=f1e77]: MIT-Wazuh-Dashboard
+              - generic [ref=f1e78]:
+                - generic [ref=f1e79]:
+                  - generic "Guest OS" [ref=f1e80]
+                  - paragraph [ref=f1e82]: Ubuntu Linux (64-bit)
+                - generic [ref=f1e83]:
+                  - generic "Compatibility" [ref=f1e84]
+                  - paragraph [ref=f1e86]: ESXi 8.0 U2 virtual machine
+                - generic [ref=f1e87]:
+                  - generic "VMware Tools" [ref=f1e88]
+                  - paragraph [ref=f1e90]: "Yes"
+                - generic [ref=f1e91]:
+                  - generic "CPUs" [ref=f1e92]
+                  - paragraph [ref=f1e94]: "2"
+                - generic [ref=f1e95]:
+                  - generic "Memory" [ref=f1e96]
+                  - paragraph [ref=f1e98]: 4 GB
+                - generic [ref=f1e99]:
+                  - generic "Host name" [ref=f1e100]
+                  - paragraph [ref=f1e102]:
+                    - link "mit-wazuh-dashboard" [ref=f1e103] [cursor=pointer]:
+                      - /url: http://mit-wazuh-dashboard
+          - generic [ref=f1e104]:
+            - generic [ref=f1e106]:
+              - img "CPU" [ref=f1e107]
+              - text: CPU
+              - paragraph [ref=f1e108]: 60 MHz
+            - generic [ref=f1e110]:
+              - img "MEMORY" [ref=f1e111]
+              - text: MEMORY
+              - paragraph [ref=f1e112]: 4.06 GB
+            - generic [ref=f1e114]:
+              - img "STORAGE" [ref=f1e115]
+              - text: STORAGE
+              - paragraph [ref=f1e116]: 29.08 GB
+        - list [ref=f1e118]:
+          - listitem [ref=f1e119]:
+            - link "Console" [ref=f1e120] [cursor=pointer]:
+              - /url: ""
+              - text: Console
+          - listitem [ref=f1e122]:
+            - link "Monitor" [ref=f1e123] [cursor=pointer]:
+              - /url: ""
+              - text: Monitor
+          - listitem [ref=f1e125]
+          - listitem [ref=f1e127]:
+            - link "Power on":
+              - /url: ""
+              - text: Power on
+          - listitem [ref=f1e128]:
+            - link "Shut down" [ref=f1e129] [cursor=pointer]:
+              - /url: ""
+              - text: Shut down
+          - listitem [ref=f1e131]:
+            - link "Suspend" [ref=f1e132] [cursor=pointer]:
+              - /url: ""
+              - text: Suspend
+          - listitem [ref=f1e134]:
+            - link "Restart" [ref=f1e135] [cursor=pointer]:
+              - /url: ""
+              - text: Restart
+          - listitem [ref=f1e137]
+          - listitem [ref=f1e139]:
+            - link "Edit" [ref=f1e140] [cursor=pointer]:
+              - /url: ""
+              - text: Edit
+          - listitem [ref=f1e142]
+          - listitem [ref=f1e144]:
+            - link "Refresh" [ref=f1e145] [cursor=pointer]:
+              - /url: ""
+              - text: Refresh
+          - listitem [ref=f1e147]
+          - listitem [ref=f1e149]:
+            - link "Actions" [ref=f1e150] [cursor=pointer]:
+              - /url: ""
+              - text: Actions
+        - generic [ref=f1e153]:
+          - generic [ref=f1e154]:
+            - generic [ref=f1e155]:
+              - generic "General Information" [ref=f1e158] [cursor=pointer]
+              - generic [ref=f1e162]:
+                - generic [ref=f1e164]: Networking
+                - generic [ref=f1e167]:
+                  - generic [ref=f1e169]: Host name
+                  - link "mit-wazuh-dashboard" [ref=f1e172] [cursor=pointer]:
+                    - /url: http://mit-wazuh-dashboard
+                - generic [ref=f1e173]:
+                  - generic [ref=f1e175]: IP addresses
+                  - list [ref=f1e178]:
+                    - listitem [ref=f1e179]:
+                      - text: "1."
+                      - link "192.168.1.225" [ref=f1e180] [cursor=pointer]:
+                        - /url: http://192.168.1.225
+                    - listitem [ref=f1e181]:
+                      - text: "2."
+                      - link "fe80::20c:29ff:fe42:8122" [ref=f1e182] [cursor=pointer]:
+                        - /url: http://[fe80::20c:29ff:fe42:8122]
+                - generic [ref=f1e183]:
+                  - generic [ref=f1e184]: VMware Tools
+                  - generic [ref=f1e187]: VMware Tools is not managed by vSphere
+                - generic [ref=f1e188]:
+                  - generic [ref=f1e189]: Storage
+                  - generic [ref=f1e192]: 1 disk
+                - generic [ref=f1e193]:
+                  - generic [ref=f1e194]: Notes
+                  - list [ref=f1e200]:
+                    - listitem [ref=f1e201]:
+                      - generic [ref=f1e202] [cursor=pointer]: Edit notes
+            - generic [ref=f1e204]:
+              - generic "Performance summary, last hour" [ref=f1e207] [cursor=pointer]: Performance summary last hour
+              - img [ref=f1e210]:
+                - generic [ref=f1e212]:
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: 17:16
+                        - generic:
+                          - generic: 17:25
+                        - generic:
+                          - generic: 17:33
+                        - generic:
+                          - generic: 17:41
+                        - generic:
+                          - generic: 17:50
+                        - generic:
+                          - generic: 17:58
+                        - generic:
+                          - generic: 18:06
+                        - generic: Time
+                      - generic:
+                        - generic: 17:10
+                      - generic:
+                        - generic: 18:10
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: "0"
+                        - generic:
+                          - generic: "20"
+                        - generic:
+                          - generic: "40"
+                        - generic:
+                          - generic: "60"
+                        - generic:
+                          - generic: "80"
+                        - generic:
+                          - generic: "100"
+                        - generic: Consumed host CPU / Ready (%)
+                  - generic:
+                    - generic:
+                      - generic:
+                        - generic:
+                          - generic: "0"
+                        - generic:
+                          - generic: "1"
+                        - generic:
+                          - generic: "2"
+                        - generic:
+                          - generic: "3"
+                        - generic:
+                          - generic: "4"
+                        - generic: Consumed host memory (GB)
+                  - generic [ref=f1e240]:
+                    - generic [ref=f1e243] [cursor=pointer]: Consumed host CPU
+                    - generic [ref=f1e246] [cursor=pointer]: Ready
+                    - generic "Consumed host memory (right axis)" [ref=f1e247] [cursor=pointer]:
+                      - generic [ref=f1e249]: Consumed host memory...
+          - generic [ref=f1e250]:
+            - generic [ref=f1e251]:
+              - generic "Hardware Configuration" [ref=f1e254] [cursor=pointer]
+              - generic [ref=f1e258]:
+                - generic [ref=f1e259]:
+                  - generic [ref=f1e260]: CPU
+                  - generic [ref=f1e263]: 2 vCPUs
+                - generic [ref=f1e264]:
+                  - generic [ref=f1e265]: Memory
+                  - generic [ref=f1e268]: 4 GB
+                - generic [ref=f1e269]:
+                  - generic [ref=f1e270]: Hard disk 1
+                  - generic [ref=f1e273]: 25 GB
+                - generic [ref=f1e274]:
+                  - generic [ref=f1e275]: USB controller
+                  - generic [ref=f1e278]: USB 2.0
+                - generic [ref=f1e279]:
+                  - generic [ref=f1e280]: Network adapter 1
+                  - link "VM Network (Connected)" [ref=f1e284] [cursor=pointer]:
+                    - /url: "#/host/networking/portgroups/HaNetwork-VM%20Network"
+                - generic [ref=f1e285]:
+                  - generic [ref=f1e286]: Video card
+                  - generic [ref=f1e289]: 16 MB
+                - generic [ref=f1e290]:
+                  - generic [ref=f1e291]: CD/DVD drive 1
+                  - generic [ref=f1e293]:
+                    - generic [ref=f1e294]: ISO [DataStore01] ISO/ubuntu-24.04.3-live-server-amd64.iso
+                    - list [ref=f1e296]:
+                      - listitem [ref=f1e297]:
+                        - link "Select disc image" [ref=f1e298] [cursor=pointer]:
+                          - /url: ""
+                          - text: Select disc image
+                - generic [ref=f1e303]:
+                  - generic [ref=f1e304]: Others
+                  - generic [ref=f1e307]: Additional Hardware
+            - generic [ref=f1e308]:
+              - generic "Resource Consumption" [ref=f1e311] [cursor=pointer]
+              - generic [ref=f1e315]:
+                - generic [ref=f1e316]:
+                  - generic [ref=f1e317]: Consumed host CPU
+                  - generic [ref=f1e320]: 60 MHz
+                - generic [ref=f1e321]:
+                  - generic [ref=f1e322]: Consumed host memory
+                  - generic [ref=f1e325]: 4.06 GB
+                - generic [ref=f1e326]:
+                  - generic [ref=f1e327]: Active guest memory
+                  - generic [ref=f1e330]: 81 MB
+                - generic [ref=f1e332]: Storage
+                - generic [ref=f1e335]:
+                  - generic [ref=f1e337]: Provisioned
+                  - generic [ref=f1e338]: 25 GB
+                - generic [ref=f1e339]:
+                  - generic [ref=f1e341]: Uncommitted
+                  - generic [ref=f1e342]: 0 B
+                - generic [ref=f1e343]:
+                  - generic [ref=f1e345]: Not-shared
+                  - generic [ref=f1e346]: 29.08 GB
+                - generic [ref=f1e347]:
+                  - generic [ref=f1e349]: Used
+                  - generic [ref=f1e350]: 29.08 GB
+    - generic [ref=f1e353]:
+      - generic [ref=f1e354]:
+        - emphasis [ref=f1e355]
+        - text: Recent tasks
+        - emphasis [ref=f1e356] [cursor=pointer]
+      - generic [ref=f1e360]:
+        - grid [ref=f1e363]:
+          - rowgroup [ref=f1e372]:
+            - row "Task Target Initiator Queued Started Result Completed" [ref=f1e373]:
+              - columnheader "Task" [ref=f1e374]:
+                - link [ref=f1e375] [cursor=pointer]:
+                  - /url: "#"
+                - link "Task" [ref=f1e377] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Target" [ref=f1e378]:
+                - link [ref=f1e379] [cursor=pointer]:
+                  - /url: "#"
+                - link "Target" [ref=f1e381] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Initiator" [ref=f1e382]:
+                - link [ref=f1e383] [cursor=pointer]:
+                  - /url: "#"
+                - link "Initiator" [ref=f1e385] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Queued" [ref=f1e386]:
+                - link [ref=f1e387] [cursor=pointer]:
+                  - /url: "#"
+                - link "Queued" [ref=f1e389] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Started" [ref=f1e390]:
+                - link [ref=f1e391] [cursor=pointer]:
+                  - /url: "#"
+                - link "Started" [ref=f1e393] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Result" [ref=f1e394]:
+                - link [ref=f1e395] [cursor=pointer]:
+                  - /url: "#"
+                - link "Result" [ref=f1e397] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Result
+              - columnheader "Completed" [ref=f1e399]:
+                - link [ref=f1e400] [cursor=pointer]:
+                  - /url: "#"
+                - link "Completed" [ref=f1e402] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Completed
+        - generic [ref=f1e404]:
+          - grid:
+            - rowgroup

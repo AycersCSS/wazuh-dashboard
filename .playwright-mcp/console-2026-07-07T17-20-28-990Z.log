@@ -1,0 +1,371 @@
+[   10145ms] [ERROR] Failed to load resource: the server responded with a status of 404 (NOT FOUND) @ http://127.0.0.1:5000/favicon.ico:0
+[   10527ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   10543ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[   10543ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[   10543ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[   10544ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[   10966ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   11387ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   11811ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   12224ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   40542ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[   40542ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[   40544ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[   40544ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[   41046ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   41465ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   41803ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   42207ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   70538ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[   70539ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[   70542ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[   70543ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[   71000ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   71442ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   71911ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[   72330ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  100539ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  100541ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  100541ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  100544ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  100984ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  101306ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  101592ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  101925ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  103046ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/agents?limit=200:0
+[  103460ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  104065ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/alerts?limit=200&time_range=7d:0
+[  104411ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  104883ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/vulnerabilities?limit=100:0
+[  105305ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  105761ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/manager:0
+[  106172ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  107415ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  107416ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  107419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  107421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  107844ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  108253ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  108682ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  109100ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  137418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  137419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  137421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  137423ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  137878ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  138294ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  138705ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  139118ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  167419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  167419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  167420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  167423ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  167841ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  168261ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  168674ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  169095ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  197418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  197420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  197421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  197423ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  197838ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  198254ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  198682ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  199096ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  227417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  227419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  227420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  227422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  227845ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  228182ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  228509ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  228917ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  257417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  257418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  257419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  257420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  257833ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  258246ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  258660ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  259070ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  287418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  287418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  287420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  287422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  287846ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  288265ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  288676ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  289087ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  317419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  317419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  317420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  317420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  317837ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  318232ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  318556ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  318933ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  347417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  347418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  347419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  347421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  347841ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  348253ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  348665ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  349082ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  377417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  377417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  377420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  377422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  377838ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  378247ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  378666ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  379086ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  407417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  407418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  407421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  407422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  407845ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  408259ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  408678ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  409102ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  437418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  437419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  437422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  437424ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  437847ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  438271ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  438685ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  439170ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  467419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  467419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  467419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  467423ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  467845ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  468257ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  468710ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  469122ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  497417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  497418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  497420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  497423ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  497834ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  498247ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  498561ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  498903ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  527420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  527421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  527421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  527422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  527843ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  528255ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  528667ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  529074ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  557418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  557419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  557420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  557422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  557844ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  558256ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  558668ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  559161ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  587420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  587421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  587421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  587422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  587836ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  588304ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  588718ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  589136ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  617418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  617418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  617420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  617422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  617868ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  618282ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  618695ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  619102ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  647418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  647420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  647420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  647425ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  647844ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  648257ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  648668ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  649078ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  677417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  677418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  677420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  677423ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  677838ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  678249ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  678659ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  679113ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  707418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  707419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  707420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  707420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  707841ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  708231ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  708539ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  708803ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  737416ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  737417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  737421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  737421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  737834ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  738249ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  738660ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  739067ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  767419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  767419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  767420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  767421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  767845ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  768263ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  768742ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  769182ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  797418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  797418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  797420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  797422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  797835ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  798244ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  798653ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  799068ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  827419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  827419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  827420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  827420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  827834ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  828246ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  828678ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  829059ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  857417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  857418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  857419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  857421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  857834ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  858244ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  858654ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  859144ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  887419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  887419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  887420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  887422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  887841ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  888260ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  888676ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  889085ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  917426ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  917431ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  917440ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  917450ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  918043ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  918526ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  918961ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  919513ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  947419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  947419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  947420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  947422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  947852ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  948268ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  948710ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  949265ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  977417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[  977418ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[  977420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[  977421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[  977833ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  978242ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  978653ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[  979062ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1007419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1007419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1007422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1007422ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1007839ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1008254ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1008663ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1009072ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1037417ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1037419ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1037420ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1037421ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1037849ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1038274ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1038701ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1039126ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1057224ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1057234ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1057234ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1057236ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1057237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1057673ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1058134ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1058564ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1058995ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1087234ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1087235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1087237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1087238ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1087668ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1088093ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1088431ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1088827ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1117235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1117235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1117238ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1117239ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1117678ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1118103ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1118531ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1118959ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1147235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1147236ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1147237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1147240ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1147681ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1148124ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1148563ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1148997ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1177234ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1177237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1177238ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1177238ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1177679ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1178155ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1178596ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1179030ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1207236ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1207236ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1207237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1207237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1207679ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1208116ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1208551ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1209009ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1237235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1237236ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1237236ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1237238ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1237673ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1238095ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1238423ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1238747ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1267234ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1267235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1267237ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1267239ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1267668ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1268093ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1268523ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1268951ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1297235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=active:0
+[ 1297235ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=disconnected:0
+[ 1297238ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=pending:0
+[ 1297240ms] [ERROR] Failed to load resource: the server responded with a status of 401 (UNAUTHORIZED) @ http://127.0.0.1:5000/stats/agents?status=never_connected:0
+[ 1297678ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1298107ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1298540ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0
+[ 1299008ms] [ERROR] Failed to load resource: the server responded with a status of 503 (SERVICE UNAVAILABLE) @ http://127.0.0.1:5000/dashboard/init:0

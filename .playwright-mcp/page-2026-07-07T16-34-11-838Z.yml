@@ -1,0 +1,299 @@
+- generic [ref=f3e8]:
+  - banner [ref=f3e10]:
+    - generic [ref=f3e11]:
+      - link "VMware.com" [ref=f3e12] [cursor=pointer]:
+        - /url: //www.vmware.com
+      - generic [ref=f3e13]: ESXi Host Client
+    - list [ref=f3e14]:
+      - listitem [ref=f3e15]:
+        - link "Students@192.168.1.10" [ref=f3e16] [cursor=pointer]:
+          - /url: ""
+          - text: Students@192.168.1.10
+      - listitem [ref=f3e18]:
+        - link "Help" [ref=f3e19] [cursor=pointer]:
+          - /url: ""
+          - text: Help
+      - listitem [ref=f3e21]:
+        - search [ref=f3e22]:
+          - searchbox "Search" [ref=f3e23]
+          - img [ref=f3e24]
+  - generic [ref=f3e28]:
+    - generic "Navigator" [ref=f3e29]:
+      - emphasis [ref=f3e32] [cursor=pointer]
+    - generic [ref=f3e33]:
+      - generic "Host" [ref=f3e34]:
+        - emphasis [ref=f3e37] [cursor=pointer]
+      - generic "Manage" [ref=f3e38]:
+        - emphasis [ref=f3e41] [cursor=pointer]
+      - generic "Monitor" [ref=f3e42]:
+        - emphasis [ref=f3e45] [cursor=pointer]
+      - generic "Virtual Machines" [ref=f3e46]:
+        - emphasis [ref=f3e49] [cursor=pointer]
+      - generic "Storage" [ref=f3e50]:
+        - emphasis [ref=f3e53] [cursor=pointer]
+      - generic "Networking" [ref=f3e54]:
+        - emphasis [ref=f3e57] [cursor=pointer]
+    - generic [ref=f3e59]:
+      - generic [ref=f3e60]:
+        - emphasis [ref=f3e61]
+        - text: MIT-ESX1-01.home - Virtual Machines
+      - generic [ref=f3e68]:
+        - generic [ref=f3e69]:
+          - list [ref=f3e71]:
+            - listitem [ref=f3e72]:
+              - link "Create / Register VM" [ref=f3e73] [cursor=pointer]:
+                - /url: ""
+                - text: Create / Register VM
+            - listitem [ref=f3e75]
+            - listitem [ref=f3e77]:
+              - link "Console":
+                - /url: ""
+                - text: Console
+            - listitem [ref=f3e78]
+            - listitem [ref=f3e80]:
+              - link "Power on":
+                - /url: ""
+                - text: Power on
+            - listitem [ref=f3e81]:
+              - link "Power off":
+                - /url: ""
+                - text: Power off
+            - listitem [ref=f3e82]:
+              - link "Suspend":
+                - /url: ""
+                - text: Suspend
+            - listitem [ref=f3e83]
+            - listitem [ref=f3e85]:
+              - link "Refresh" [ref=f3e86] [cursor=pointer]:
+                - /url: ""
+                - text: Refresh
+            - listitem [ref=f3e88]
+            - listitem [ref=f3e90]:
+              - link "Actions":
+                - /url: ""
+                - text: Actions
+          - searchbox "Search" [ref=f3e93]
+        - grid [ref=f3e97]:
+          - rowgroup [ref=f3e107]:
+            - row "Virtual machine Status Used space Guest OS Host name Host CPU Host memory" [ref=f3e108]:
+              - columnheader [ref=f3e109]:
+                - checkbox [ref=f3e110]
+              - columnheader "Virtual machine" [ref=f3e111]:
+                - link [ref=f3e112] [cursor=pointer]:
+                  - /url: "#"
+                - link "Virtual machine" [ref=f3e114] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Status" [ref=f3e115]:
+                - link [ref=f3e116] [cursor=pointer]:
+                  - /url: "#"
+                - link "Status" [ref=f3e118] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Used space" [ref=f3e119]:
+                - link [ref=f3e120] [cursor=pointer]:
+                  - /url: "#"
+                - link "Used space" [ref=f3e122] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Guest OS" [ref=f3e123]:
+                - link [ref=f3e124] [cursor=pointer]:
+                  - /url: "#"
+                - link "Guest OS" [ref=f3e126] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Host name" [ref=f3e127]:
+                - link [ref=f3e128] [cursor=pointer]:
+                  - /url: "#"
+                - link "Host name" [ref=f3e130] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Host CPU" [ref=f3e131]:
+                - link [ref=f3e132] [cursor=pointer]:
+                  - /url: "#"
+                - link "Host CPU" [ref=f3e134] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Host memory" [ref=f3e135]:
+                - link [ref=f3e136] [cursor=pointer]:
+                  - /url: "#"
+                - link "Host memory" [ref=f3e138] [cursor=pointer]:
+                  - /url: "#"
+        - grid [ref=f3e140]:
+          - rowgroup [ref=f3e150]:
+            - row "MIT-APP-01 Normal 54.08 GB Ubuntu Linux (64-bit) mit-app-01 61 MHz 4.03 GB" [ref=f3e151]:
+              - gridcell [ref=f3e152] [cursor=pointer]:
+                - checkbox [ref=f3e153]
+              - gridcell "MIT-APP-01" [ref=f3e154] [cursor=pointer]:
+                - generic "MIT-APP-01" [ref=f3e155]:
+                  - generic "Powered on" [ref=f3e156]
+                  - link "MIT-APP-01" [ref=f3e157]:
+                    - /url: "#/host/vms/5"
+              - gridcell "Normal" [ref=f3e158] [cursor=pointer]:
+                - generic [ref=f3e159]: Normal
+              - gridcell "54.08 GB" [ref=f3e161] [cursor=pointer]:
+                - generic [ref=f3e162]: 54.08 GB
+              - gridcell "Ubuntu Linux (64-bit)" [ref=f3e163] [cursor=pointer]:
+                - generic [ref=f3e164]: Ubuntu Linux (64-bit)
+              - gridcell "mit-app-01" [ref=f3e165] [cursor=pointer]:
+                - link "mit-app-01" [ref=f3e167]:
+                  - /url: http://mit-app-01
+              - gridcell "61 MHz" [ref=f3e168] [cursor=pointer]:
+                - generic [ref=f3e169]: 61 MHz
+              - gridcell "4.03 GB" [ref=f3e170] [cursor=pointer]:
+                - generic [ref=f3e171]: 4.03 GB
+            - row "Powered off MIT-LOG-01 Normal 28.51 GB Other Linux (64-bit) Unknown 0 MHz 0 MB" [ref=f3e172]:
+              - gridcell [ref=f3e173] [cursor=pointer]:
+                - checkbox [ref=f3e174]
+              - gridcell "Powered off MIT-LOG-01" [ref=f3e175] [cursor=pointer]:
+                - generic "MIT-LOG-01" [ref=f3e176]:
+                  - generic "Powered off" [ref=f3e177]
+                  - link "MIT-LOG-01" [ref=f3e178]:
+                    - /url: "#/host/vms/6"
+              - gridcell "Normal" [ref=f3e179] [cursor=pointer]:
+                - generic [ref=f3e180]: Normal
+              - gridcell "28.51 GB" [ref=f3e182] [cursor=pointer]:
+                - generic [ref=f3e183]: 28.51 GB
+              - gridcell "Other Linux (64-bit)" [ref=f3e184] [cursor=pointer]:
+                - generic [ref=f3e185]: Other Linux (64-bit)
+              - gridcell "Unknown" [ref=f3e186] [cursor=pointer]:
+                - generic [ref=f3e187]: Unknown
+              - gridcell "0 MHz" [ref=f3e188] [cursor=pointer]:
+                - generic [ref=f3e189]: 0 MHz
+              - gridcell "0 MB" [ref=f3e190] [cursor=pointer]:
+                - generic [ref=f3e191]: 0 MB
+            - row "Powered off MIT-Student-Wazuh Normal 64 GB Ubuntu Linux (64-bit) Unknown 0 MHz 0 MB" [ref=f3e192]:
+              - gridcell [ref=f3e193] [cursor=pointer]:
+                - checkbox [ref=f3e194]
+              - gridcell "Powered off MIT-Student-Wazuh" [ref=f3e195] [cursor=pointer]:
+                - generic "MIT-Student-Wazuh" [ref=f3e196]:
+                  - generic "Powered off" [ref=f3e197]
+                  - link "MIT-Student-Wazuh" [ref=f3e198]:
+                    - /url: "#/host/vms/7"
+              - gridcell "Normal" [ref=f3e199] [cursor=pointer]:
+                - generic [ref=f3e200]: Normal
+              - gridcell "64 GB" [ref=f3e202] [cursor=pointer]:
+                - generic [ref=f3e203]: 64 GB
+              - gridcell "Ubuntu Linux (64-bit)" [ref=f3e204] [cursor=pointer]:
+                - generic [ref=f3e205]: Ubuntu Linux (64-bit)
+              - gridcell "Unknown" [ref=f3e206] [cursor=pointer]:
+                - generic [ref=f3e207]: Unknown
+              - gridcell "0 MHz" [ref=f3e208] [cursor=pointer]:
+                - generic [ref=f3e209]: 0 MHz
+              - gridcell "0 MB" [ref=f3e210] [cursor=pointer]:
+                - generic [ref=f3e211]: 0 MB
+            - row "MIT-Wazuh-Server Normal 108.08 GB Ubuntu Linux (64-bit) mit-wazuh-server 80 MHz 8.07 GB" [ref=f3e212]:
+              - gridcell [ref=f3e213] [cursor=pointer]:
+                - checkbox [ref=f3e214]
+              - gridcell "MIT-Wazuh-Server" [ref=f3e215] [cursor=pointer]:
+                - generic "MIT-Wazuh-Server" [ref=f3e216]:
+                  - generic "Powered on" [ref=f3e217]
+                  - link "MIT-Wazuh-Server" [ref=f3e218]:
+                    - /url: "#/host/vms/8"
+              - gridcell "Normal" [ref=f3e219] [cursor=pointer]:
+                - generic [ref=f3e220]: Normal
+              - gridcell "108.08 GB" [ref=f3e222] [cursor=pointer]:
+                - generic [ref=f3e223]: 108.08 GB
+              - gridcell "Ubuntu Linux (64-bit)" [ref=f3e224] [cursor=pointer]:
+                - generic [ref=f3e225]: Ubuntu Linux (64-bit)
+              - gridcell "mit-wazuh-server" [ref=f3e226] [cursor=pointer]:
+                - link "mit-wazuh-server" [ref=f3e228]:
+                  - /url: http://mit-wazuh-server
+              - gridcell "80 MHz" [ref=f3e229] [cursor=pointer]:
+                - generic [ref=f3e230]: 80 MHz
+              - gridcell "8.07 GB" [ref=f3e231] [cursor=pointer]:
+                - generic [ref=f3e232]: 8.07 GB
+            - row "MIT-Wazuh-Dashboard Normal 29.08 GB Ubuntu Linux (64-bit) mit-wazuh-dashboard 63 MHz 4.06 GB" [ref=f3e233]:
+              - gridcell [ref=f3e234] [cursor=pointer]:
+                - checkbox [ref=f3e235]
+              - gridcell "MIT-Wazuh-Dashboard" [ref=f3e236] [cursor=pointer]:
+                - generic "MIT-Wazuh-Dashboard" [ref=f3e237]:
+                  - generic "Powered on" [ref=f3e238]
+                  - link "MIT-Wazuh-Dashboard" [ref=f3e239]:
+                    - /url: "#/host/vms/9"
+              - gridcell "Normal" [ref=f3e240] [cursor=pointer]:
+                - generic [ref=f3e241]: Normal
+              - gridcell "29.08 GB" [ref=f3e243] [cursor=pointer]:
+                - generic [ref=f3e244]: 29.08 GB
+              - gridcell "Ubuntu Linux (64-bit)" [ref=f3e245] [cursor=pointer]:
+                - generic [ref=f3e246]: Ubuntu Linux (64-bit)
+              - gridcell "mit-wazuh-dashboard" [ref=f3e247] [cursor=pointer]:
+                - link "mit-wazuh-dashboard" [ref=f3e249]:
+                  - /url: http://mit-wazuh-dashboard
+              - gridcell "63 MHz" [ref=f3e250] [cursor=pointer]:
+                - generic [ref=f3e251]: 63 MHz
+              - gridcell "4.06 GB" [ref=f3e252] [cursor=pointer]:
+                - generic [ref=f3e253]: 4.06 GB
+            - row "MIT-Wazuh-Indexer Normal 58.08 GB Ubuntu Linux (64-bit) mit-wazuh-indexer 78 MHz 8.07 GB" [ref=f3e254]:
+              - gridcell [ref=f3e255] [cursor=pointer]:
+                - checkbox [ref=f3e256]
+              - gridcell "MIT-Wazuh-Indexer" [ref=f3e257] [cursor=pointer]:
+                - generic "MIT-Wazuh-Indexer" [ref=f3e258]:
+                  - generic "Powered on" [ref=f3e259]
+                  - link "MIT-Wazuh-Indexer" [ref=f3e260]:
+                    - /url: "#/host/vms/10"
+              - gridcell "Normal" [ref=f3e261] [cursor=pointer]:
+                - generic [ref=f3e262]: Normal
+              - gridcell "58.08 GB" [ref=f3e264] [cursor=pointer]:
+                - generic [ref=f3e265]: 58.08 GB
+              - gridcell "Ubuntu Linux (64-bit)" [ref=f3e266] [cursor=pointer]:
+                - generic [ref=f3e267]: Ubuntu Linux (64-bit)
+              - gridcell "mit-wazuh-indexer" [ref=f3e268] [cursor=pointer]:
+                - link "mit-wazuh-indexer" [ref=f3e270]:
+                  - /url: http://mit-wazuh-indexer
+              - gridcell "78 MHz" [ref=f3e271] [cursor=pointer]:
+                - generic [ref=f3e272]: 78 MHz
+              - gridcell "8.07 GB" [ref=f3e273] [cursor=pointer]:
+                - generic [ref=f3e274]: 8.07 GB
+        - generic [ref=f3e275]:
+          - generic [ref=f3e276]: 6 items
+          - combobox [ref=f3e280] [cursor=pointer]:
+            - option "Quick filters..." [selected]
+            - option "VMs without VMware Tools"
+            - option "Powered on VMs"
+            - option "Powered off VMs"
+            - option "Suspended VMs"
+            - option "VMs participating in Autostart"
+    - generic [ref=f3e283]:
+      - generic [ref=f3e284]:
+        - emphasis [ref=f3e285]
+        - text: Recent tasks
+        - emphasis [ref=f3e286] [cursor=pointer]
+      - generic [ref=f3e290]:
+        - grid [ref=f3e293]:
+          - rowgroup [ref=f3e302]:
+            - row "Task Target Initiator Queued Started Result Completed" [ref=f3e303]:
+              - columnheader "Task" [ref=f3e304]:
+                - link [ref=f3e305] [cursor=pointer]:
+                  - /url: "#"
+                - link "Task" [ref=f3e307] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Target" [ref=f3e308]:
+                - link [ref=f3e309] [cursor=pointer]:
+                  - /url: "#"
+                - link "Target" [ref=f3e311] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Initiator" [ref=f3e312]:
+                - link [ref=f3e313] [cursor=pointer]:
+                  - /url: "#"
+                - link "Initiator" [ref=f3e315] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Queued" [ref=f3e316]:
+                - link [ref=f3e317] [cursor=pointer]:
+                  - /url: "#"
+                - link "Queued" [ref=f3e319] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Started" [ref=f3e320]:
+                - link [ref=f3e321] [cursor=pointer]:
+                  - /url: "#"
+                - link "Started" [ref=f3e323] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Result" [ref=f3e324]:
+                - link [ref=f3e325] [cursor=pointer]:
+                  - /url: "#"
+                - link "Result" [ref=f3e327] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Result
+              - columnheader "Completed" [ref=f3e329]:
+                - link [ref=f3e330] [cursor=pointer]:
+                  - /url: "#"
+                - link "Completed" [ref=f3e332] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Completed
+        - generic [ref=f3e334]:
+          - grid:
+            - rowgroup

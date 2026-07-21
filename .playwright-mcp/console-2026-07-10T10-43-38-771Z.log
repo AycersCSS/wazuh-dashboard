@@ -1,0 +1,17 @@
+[    1996ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://192.168.1.10/ui/welcome.txt:0
+[    2113ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://192.168.1.10/ui/welcome.txt:0
+[    2381ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://192.168.1.10/ui/welcome.txt:0
+[    2699ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://192.168.1.10/ui/welcome.txt:0
+[    3114ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://192.168.1.10/ui/welcome.txt:0
+[    3629ms] [ERROR] Failed to load resource: the server responded with a status of 404 () @ https://192.168.1.10/ui/welcome.txt:0
+[   53674ms] [ERROR] Failed to load resource: the server responded with a status of 500 () @ https://192.168.1.10/sdk/:0
+[   53963ms] [LOG] 2026-07-10T10:44:32.729Z [Warn ] relativepad : RELATIVEPAD @ https://192.168.1.10/ui/scripts/main.js:92649
+[   53968ms] [LOG] 2026-07-10T10:44:32.739Z [Info ] Not a touch device, and hence skip touch handler @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54040ms] [LOG] 2026-07-10T10:44:32.811Z [Info ] WebSocket HAS binary support @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54041ms] [LOG] 2026-07-10T10:44:32.811Z [Info ] WebSocket created protocol: binary @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54052ms] [LOG] 2026-07-10T10:44:32.822Z [Info ] Server security types: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54052ms] [LOG] 2026-07-10T10:44:32.823Z [Info ] Using authentication scheme: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54187ms] [LOG] 2026-07-10T10:44:32.957Z [Info ] Screen: 1280 x 800, bits-per-pixel: 32, depth: 24, big-endian-flag: 0, true-color-flag: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54188ms] [LOG] 2026-07-10T10:44:32.959Z [Info ] Connected (unencrypted) to: MIT-Wazuh-Dashboard @ https://192.168.1.10/ui/scripts/main.js:92649
+[   54207ms] [LOG] 2026-07-10T10:44:32.977Z [Info ] sending initing resolution after confirming server cap @ https://192.168.1.10/ui/scripts/main.js:92649
+[ 2917916ms] [WARNING] Scripts may close only the windows that were opened by them. @ https://192.168.1.10/ui/scripts/main.js:35058

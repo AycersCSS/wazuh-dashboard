@@ -1,0 +1,87 @@
+- generic [ref=f1e8]:
+  - banner [ref=f1e10]:
+    - generic [ref=f1e11]:
+      - link "VMware.com" [ref=f1e12] [cursor=pointer]:
+        - /url: //www.vmware.com
+      - generic [ref=f1e13]: ESXi Host Client
+    - list [ref=f1e14]:
+      - listitem [ref=f1e15]:
+        - link "Students@192.168.1.10" [ref=f1e16] [cursor=pointer]:
+          - /url: ""
+          - text: Students@192.168.1.10
+      - listitem [ref=f1e18]:
+        - link "Help" [ref=f1e19] [cursor=pointer]:
+          - /url: ""
+          - text: Help
+      - listitem [ref=f1e21]:
+        - search [ref=f1e22]:
+          - searchbox "Search" [ref=f1e23]
+          - img [ref=f1e24]
+  - generic [ref=f1e28]:
+    - generic "Navigator" [ref=f1e29]:
+      - emphasis [ref=f1e32] [cursor=pointer]
+    - generic [ref=f1e33]:
+      - generic "Host" [ref=f1e34]:
+        - emphasis [ref=f1e37] [cursor=pointer]
+      - generic "Manage" [ref=f1e38]:
+        - emphasis [ref=f1e41] [cursor=pointer]
+      - generic "Monitor" [ref=f1e42]:
+        - emphasis [ref=f1e45] [cursor=pointer]
+      - generic "Virtual Machines" [ref=f1e46]:
+        - emphasis [ref=f1e49] [cursor=pointer]
+      - generic "Storage" [ref=f1e50]:
+        - emphasis [ref=f1e53] [cursor=pointer]
+      - generic "Networking" [ref=f1e54]:
+        - emphasis [ref=f1e57] [cursor=pointer]
+    - generic [ref=f1e60]:
+      - emphasis [ref=f1e61]
+      - text: MIT-Wazuh-Dashboard
+    - generic [ref=f1e353]:
+      - generic [ref=f1e354]:
+        - emphasis [ref=f1e355]
+        - text: Recent tasks
+        - emphasis [ref=f1e356] [cursor=pointer]
+      - generic [ref=f1e360]:
+        - grid [ref=f1e363]:
+          - rowgroup [ref=f1e372]:
+            - row "Task Target Initiator Queued Started Result Completed" [ref=f1e373]:
+              - columnheader "Task" [ref=f1e374]:
+                - link [ref=f1e375] [cursor=pointer]:
+                  - /url: "#"
+                - link "Task" [ref=f1e377] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Target" [ref=f1e378]:
+                - link [ref=f1e379] [cursor=pointer]:
+                  - /url: "#"
+                - link "Target" [ref=f1e381] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Initiator" [ref=f1e382]:
+                - link [ref=f1e383] [cursor=pointer]:
+                  - /url: "#"
+                - link "Initiator" [ref=f1e385] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Queued" [ref=f1e386]:
+                - link [ref=f1e387] [cursor=pointer]:
+                  - /url: "#"
+                - link "Queued" [ref=f1e389] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Started" [ref=f1e390]:
+                - link [ref=f1e391] [cursor=pointer]:
+                  - /url: "#"
+                - link "Started" [ref=f1e393] [cursor=pointer]:
+                  - /url: "#"
+              - columnheader "Result" [ref=f1e394]:
+                - link [ref=f1e395] [cursor=pointer]:
+                  - /url: "#"
+                - link "Result" [ref=f1e397] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Result
+              - columnheader "Completed" [ref=f1e399]:
+                - link [ref=f1e400] [cursor=pointer]:
+                  - /url: "#"
+                - link "Completed" [ref=f1e402] [cursor=pointer]:
+                  - /url: "#"
+                  - text: Completed
+        - generic [ref=f1e404]:
+          - grid:
+            - rowgroup

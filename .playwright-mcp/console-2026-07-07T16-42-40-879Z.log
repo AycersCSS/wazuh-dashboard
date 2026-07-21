@@ -1,0 +1,9 @@
+[    1081ms] [LOG] 2026-07-07T16:42:41.959Z [Warn ] relativepad : RELATIVEPAD @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1086ms] [LOG] 2026-07-07T16:42:41.964Z [Info ] Not a touch device, and hence skip touch handler @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1103ms] [LOG] 2026-07-07T16:42:41.982Z [Info ] WebSocket HAS binary support @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1103ms] [LOG] 2026-07-07T16:42:41.982Z [Info ] WebSocket created protocol: binary @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1118ms] [LOG] 2026-07-07T16:42:41.996Z [Info ] Server security types: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1118ms] [LOG] 2026-07-07T16:42:41.996Z [Info ] Using authentication scheme: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1152ms] [LOG] 2026-07-07T16:42:42.030Z [Info ] Screen: 1280 x 800, bits-per-pixel: 32, depth: 24, big-endian-flag: 0, true-color-flag: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1154ms] [LOG] 2026-07-07T16:42:42.032Z [Info ] Connected (unencrypted) to: MIT-Wazuh-Dashboard @ https://192.168.1.10/ui/scripts/main.js:92649
+[    1172ms] [LOG] 2026-07-07T16:42:42.051Z [Info ] sending initing resolution after confirming server cap @ https://192.168.1.10/ui/scripts/main.js:92649

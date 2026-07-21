@@ -1,0 +1,19 @@
+- generic [ref=f2e11]:
+  - generic [ref=f2e12]:
+    - generic "ESXi Host Client" [ref=f2e13]
+    - generic "VMware ESXi" [ref=f2e14]
+    - generic [ref=f2e15]: ESXi Host Client™
+  - generic:
+    - generic [ref=f2e16]:
+      - textbox [ref=f2e19]:
+        - /placeholder: User name
+      - textbox [ref=f2e22]:
+        - /placeholder: Password
+      - paragraph [ref=f2e23]
+      - generic [ref=f2e24]:
+        - button "Login" [disabled]
+    - generic [ref=f2e25]:
+      - img
+  - link "Open the VMware Host Client documentation" [ref=f2e27] [cursor=pointer]:
+    - /url: https://www.vmware.com//support/pubs/
+    - text: Open the VMware Host Client documentation

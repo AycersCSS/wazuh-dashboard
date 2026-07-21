@@ -1,7 +1,0 @@
-.claude/
-.playwright-mcp/
-*.png
-*.tar.gz
-connector.tar.gz
-test-project.tar.gz
-login.json

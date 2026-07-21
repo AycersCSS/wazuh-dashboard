@@ -1,0 +1,21 @@
+[      12ms] [ERROR] Transition Rejection($id: 3 type: 6, message: The transition errored, detail: Error: Transition Rejection($id: 2 type: 4, message: This transition is invalid, detail: The following parameter values are not valid for state 'host.vms.item': [id:undefined])) @ https://192.168.1.10/ui/scripts/main.js:108080
+[      12ms] [ERROR] Error: Transition Rejection($id: 2 type: 4, message: This transition is invalid, detail: The following parameter values are not valid for state 'host.vms.item': [id:undefined])
+    at Fr (https://192.168.1.10/ui/scripts/main.js:108081:76819)
+    at e.invokeHook (https://192.168.1.10/ui/scripts/main.js:108081:40969)
+    at e.invokeHooks (https://192.168.1.10/ui/scripts/main.js:108081:40375)
+    at e.run (https://192.168.1.10/ui/scripts/main.js:108081:50848)
+    at e.transitionTo (https://192.168.1.10/ui/scripts/main.js:108081:84449)
+    at e.go (https://192.168.1.10/ui/scripts/main.js:108081:82790)
+    at new <anonymous> (https://192.168.1.10/ui/scripts/main.js:35148:26)
+    at Object.instantiate (https://192.168.1.10/ui/scripts/main.js:53:365)
+    at https://192.168.1.10/ui/scripts/main.js:107:267
+    at Object.<anonymous> (https://192.168.1.10/ui/scripts/main.js:108081:107142) @ https://192.168.1.10/ui/scripts/main.js:108080
+[   63654ms] [LOG] 2026-07-07T17:12:17.482Z [Warn ] relativepad : RELATIVEPAD @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63659ms] [LOG] 2026-07-07T17:12:17.486Z [Info ] Not a touch device, and hence skip touch handler @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63681ms] [LOG] 2026-07-07T17:12:17.509Z [Info ] WebSocket HAS binary support @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63681ms] [LOG] 2026-07-07T17:12:17.509Z [Info ] WebSocket created protocol: binary @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63698ms] [LOG] 2026-07-07T17:12:17.525Z [Info ] Server security types: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63698ms] [LOG] 2026-07-07T17:12:17.525Z [Info ] Using authentication scheme: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63741ms] [LOG] 2026-07-07T17:12:17.568Z [Info ] Screen: 1280 x 800, bits-per-pixel: 32, depth: 24, big-endian-flag: 0, true-color-flag: 1 @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63742ms] [LOG] 2026-07-07T17:12:17.570Z [Info ] Connected (unencrypted) to: MIT-Wazuh-Dashboard @ https://192.168.1.10/ui/scripts/main.js:92649
+[   63758ms] [LOG] 2026-07-07T17:12:17.585Z [Info ] sending initing resolution after confirming server cap @ https://192.168.1.10/ui/scripts/main.js:92649
